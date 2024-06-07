@@ -33,7 +33,11 @@ export const viewDocuments = async (req: Request, res: Response) => {
               
               const ids = fileIds.map(file => file.file_id);
             console.log(ids);
-            if(ids){
+            if(ids.length === 0){
+              
+                res.render('viewVectors', { title: 'All Documents', vectors :null });
+            }
+            else{
                 const fetchResult = await index.namespace('dfcc-vector-db').fetch(ids);
                 const vectors = Object.values(fetchResult.records).map(record => ({
                     id: record.id,
@@ -41,9 +45,6 @@ export const viewDocuments = async (req: Request, res: Response) => {
                     text: record.metadata?.Text
                 }));
                 res.render('viewVectors', { title: 'All Documents', vectors  });
-            }
-            else{
-                res.render('viewVectors', { title: 'All Documents', vectors :null });
             }
                 
 
