@@ -139,12 +139,11 @@ app.get('/activate-admin/:id', adminLogged, async (req: Request, res: Response) 
   res.redirect("/manage-admins");
 });
 app.get('/edit-admin', adminLogged, async (req: Request, res: Response) => {
-    let user_id =  parseInt(req.params.id, 10);
-
+    let user_id: number | undefined = parseInt(req.query.id as string, 10);
     let admin_details = await prisma.admin.findFirst({
       where: { user_id: user_id },
     });
-    
+  
     const login_details = await prisma.user.findFirst({
       where: { id: user_id },
     });
