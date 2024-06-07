@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import Sector from '../../models/Sector';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 
 export const sectorAdd = async (req: Request, res: Response) => {
     const {sector_name, email} = req.body;
     //console.log(req.body);
     try {
-        await Sector.create(
-              { 
-              email: email,
-              sector_name: sector_name,
-              },
-        );
-         
+        await prisma.sector.create({
+          data: {
+            email: email,
+            sector_name: sector_name,
+          },
+        });
       return res.json({status:"success", message:"Sector Added"})
       
       } catch (error) {
@@ -26,11 +26,10 @@ export const sectorEdit = async (req: Request, res: Response) => {
   const {sector_name, email, id} = req.body;
   //console.log(req.body);
   try {
-      await Sector.update(
-        { email: email,sector_name: sector_name},
-        { where: { id: id } }
-      );
-
+      await prisma.sector.updateMany({
+        where: { id: id},
+        data: { email: email,sector_name: sector_name },
+      });
     return res.json({status:"success", message:"Sector Updated"})
     
     } catch (error) {

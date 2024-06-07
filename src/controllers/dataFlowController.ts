@@ -2,15 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 const bodyParser = require('body-parser');
 const pdfParse = require('pdf-parse');
 import "dotenv/config";
-import Node from '../../models/Node';
-import Edge from '../../models/Edge';
-import FlowTextOnly from '../../models/FlowTextOnly';
-import FlowTextBox from '../../models/FlowTextBox';
-import FlowButtonData from '../../models/FlowButtonData';
-import FlowCardData from '../../models/FlowCardData';
+
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import Question from '../../models/Question';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 interface intentData {
     type: string;
@@ -20,19 +16,22 @@ interface intentData {
 export const insertNode = async (req: Request, res: Response, next: Function) => {
    //console.log("insertNode",req.body);
    try {
-    await Node.create({
-    node_id: req.body.id,
-    dragging: req.body.dragging,
-    height: req.body.height,
-    position: req.body.position,
-    positionAbsolute: req.body.positionAbsolute,
-    selected: req.body.selected,
-    type: req.body.type,
-    width: req.body.width,
-    extent: req.body.extent,
-    parentId: req.body.parentId,
-    language: req.body.language,
-    });
+
+    await prisma.node.create({
+        data: {
+            node_id: req.body.id,
+            dragging: req.body.dragging,
+            height: req.body.height,
+            position: req.body.position,
+            position_absolute: req.body.positionAbsolute,
+            selected: req.body.selected,
+            type: req.body.type,
+            width: req.body.width,
+            extent: req.body.extent,
+            parent_id: req.body.parentId,
+            language: req.body.language,
+        },
+      });
     res.json({ status: "success"}) 
     } catch (error) {
     console.error('Error inserting data:', error);
@@ -43,14 +42,16 @@ export const insertNode = async (req: Request, res: Response, next: Function) =>
 export const insertEdge = async (req: Request, res: Response, next: Function) => {
     //console.log("insertEdge",req.body);
     try {
-        await Edge.create({
-        edge_id: req.body.id,
-        source: req.body.source,
-        sourceHandle: req.body.sourceHandle,
-        target: req.body.target,
-        targetHandle: req.body.targetHandle,
-        type: req.body.type
-        });
+        await prisma.edge.create({
+            data: {
+                edge_id: req.body.id,
+                source: req.body.source,
+                source_handle: req.body.sourceHandle,
+                target: req.body.target,
+                target_handle: req.body.targetHandle,
+                type: req.body.type
+            },
+          });
         res.json({ status: "success"}) 
         } catch (error) {
         console.error('Error inserting data:', error);
@@ -60,10 +61,10 @@ export const insertEdge = async (req: Request, res: Response, next: Function) =>
 export const updateNode = async (req: Request, res: Response, next: Function) => {
     //console.log("updateNode",req.body);
     try {
-    await Node.update(
-        { position: req.body.position },
-        { where: { node_id: req.body.id } }
-    );
+    await prisma.node.updateMany({
+        where: {  node_id: req.body.id },
+        data: {  position: req.body.position },
+    });
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
@@ -73,16 +74,16 @@ export const updateNode = async (req: Request, res: Response, next: Function) =>
 export const updateEdge = async (req: Request, res: Response, next: Function) => {
     //console.log("updateEdge",req.body);
     try {
-    await Edge.update(
-        { 
-        source: req.body.source,
-        sourceHandle: req.body.sourceHandle,
-        target: req.body.target,
-        targetHandle: req.body.targetHandle,
-        type: req.body.type 
+    await prisma.edge.updateMany({
+        where: {  edge_id: req.body.id },
+        data: {  
+            source: req.body.source,
+            source_handle: req.body.sourceHandle,
+            target: req.body.target,
+            target_handle: req.body.targetHandle,
+            type: req.body.type  
         },
-        { where: { edge_id: req.body.id } }
-    );
+    });
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
@@ -93,219 +94,74 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
     //console.log("deleteNode",req.body);
     try {
     if(req.body.type == "start"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
     
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
     }
     if(req.body.type == "end"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
-    
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
+
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
+
     }
     if(req.body.type == "textOnly"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
-        
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
-        await FlowTextOnly.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
+        await prisma.flowTextOnly.deleteMany({where: {node_id: req.body.id }});
+
     }
     if(req.body.type == "textinput"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
-        
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
-        await FlowTextBox.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
+        await prisma.flowTextBox.deleteMany({where: {node_id: req.body.id }});
     }
     if(req.body.type == "button"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
+        await prisma.flowButtonData.deleteMany({where: {node_id: req.body.id }});
         
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
-        await FlowButtonData.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
     }
     if(req.body.type == "cardGroup"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        const childs = await Node.findAll({
-            where: {
-              "parentId" : req.body.id,
-            },
-        });
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        const childs = await prisma.node.findMany({where: {parent_id : req.body.id}});
         for (var c = 0; c < childs.length; c++){
             if(childs[c].type == 'cardHeader'){
-                await FlowCardData.destroy({
-                    where: {
-                        node_id: childs[c].node_id
-                    }
-                });
+                await prisma.flowCardData.deleteMany({where: {node_id:  childs[c].node_id }});
             }
             else{
-                await FlowButtonData.destroy({
-                    where: {
-                        node_id: childs[c].node_id
-                    }
-                });
+                await prisma.flowButtonData.deleteMany({where: {node_id:  childs[c].node_id }});
             }
         }
-        await Node.destroy({
-            where: {
-                parentId: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
-        
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
+        await prisma.node.deleteMany({where: {parent_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
         
     }
     if(req.body.type == "buttonGroup"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        const child_buttons = await Node.findAll({
-            where: {
-              "parentId" : req.body.id,
-            },
-        });
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+
+        const child_buttons = await prisma.node.findMany({where: {parent_id : req.body.id}});
         for (var c = 0; c < child_buttons.length; c++){
-            await FlowButtonData.destroy({
-                where: {
-                    node_id: child_buttons[c].node_id
-                }
-            });
+            await prisma.flowButtonData.deleteMany({where: {node_id:  child_buttons[c].node_id }});
         }
-        await Node.destroy({
-            where: {
-                parentId: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
-        
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
+        await prisma.node.deleteMany({where: {parent_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
         
     }
 
     if(req.body.type == "cardStyleOne"){
-        await Node.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
-        await Node.destroy({
-            where: {
-                parentId: req.body.id
-            }
-        });
-        await Edge.destroy({
-            where: {
-                source: req.body.id
-            }
-        });
-        
-        await Edge.destroy({
-            where: {
-                target: req.body.id
-            }
-        });
-        await FlowCardData.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        await prisma.node.deleteMany({where: {parent_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
+        await prisma.flowCardData.deleteMany({where: {node_id: req.body.id }});
+
     }
 
      res.json({ status: "success"}) 
@@ -317,11 +173,7 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
 export const deleteEdge = async (req: Request, res: Response, next: Function) => {
     //console.log("deleteNode",req.body);
     try {
-    await Edge.destroy({
-        where: {
-            edge_id: req.body.id
-        }
-    });
+    await prisma.edge.deleteMany({where: {edge_id: req.body.id }});
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
@@ -332,14 +184,12 @@ export const retrieveData = async (req: Request, res: Response, next: Function) 
     //console.log("deleteNode",req.body);
 
     try {
-        const nodes = await Node.findAll({where: {
-            language: req.body.language
-        }});
-        const edges = await Edge.findAll({});
-        const textOnly = await FlowTextOnly.findAll({});
-        const textBox = await FlowTextBox.findAll({});
-        const buttonData = await FlowButtonData.findAll({});
-        const cardData = await FlowCardData.findAll({});
+        const nodes = await prisma.node.findMany({ where: {language: req.body.language}});
+        const edges = await prisma.edge.findMany({});
+        const textOnly = await prisma.flowTextOnly.findMany({});
+        const textBox = await prisma.flowTextBox.findMany({});
+        const buttonData = await prisma.flowButtonData.findMany({});
+        const cardData = await prisma.flowCardData.findMany({});
 
      res.json({ status: "success", nodes: nodes, edges: edges, textOnly: textOnly, textBox: textBox, buttonData: buttonData, cardData: cardData}) 
 
@@ -352,29 +202,30 @@ export const retrieveData = async (req: Request, res: Response, next: Function) 
 export const textOnlyData = async (req: Request, res: Response, next: Function) => {
     //console.log("insertEdge",req.body);
     try {
-        const data_exist = await FlowTextOnly.findOne({
-            where: {
-              "node_id" : req.body.id,
-            },
+          const data_exist = await prisma.flowTextOnly.findFirst({
+            where: {  node_id: req.body.id},
           });
+
         if (data_exist) {
-            await FlowTextOnly.update(
-                { 
-                text: req.body.text,
-                },
-                { where: { node_id: req.body.id } }
-            );
+
+            await prisma.flowTextOnly.updateMany({
+                where: { node_id: req.body.id},
+                data: {  text: req.body.text},
+              });
         }
         else{
-            await FlowTextOnly.create({
-                node_id: req.body.id,
-                text: req.body.text,
-            });
+            await prisma.flowTextOnly.create({
+                data: {
+                    node_id: req.body.id,
+                    text: req.body.text,
+                },
+              });
         }
-        await Node.update(
-            { intent: req.body.intent },
-            { where: { node_id: req.body.id } }
-        );
+        await prisma.node.updateMany({
+            where: { node_id: req.body.id},
+            data: {  intent: req.body.intent},
+          });
+
         res.json({ status: "success"}) 
     } catch (error) {
     console.error('Error inserting data:', error);
@@ -383,31 +234,30 @@ export const textOnlyData = async (req: Request, res: Response, next: Function) 
 export const textBoxData = async (req: Request, res: Response, next: Function) => {
     //console.log("insertEdge",req.body);
     try {
-        const data_exist = await FlowTextBox.findOne({
-            where: {
-              "node_id" : req.body.id,
-            },
+          const data_exist = await prisma.flowTextBox.findFirst({
+            where: {  node_id: req.body.id},
           });
         if (data_exist) {
-            await FlowTextBox.update(
-                { 
-                title: req.body.title,
-                description: req.body.description,
-                },
-                { where: { node_id: req.body.id } }
-            );
+
+            await prisma.flowTextBox.updateMany({
+                where: { node_id: req.body.id},
+                data: {   title: req.body.title, description: req.body.description,},
+            });
+
         }
         else{
-            await FlowTextBox.create({
-                node_id: req.body.id,
-                title: req.body.title,
-                description: req.body.description,
+            await prisma.flowTextBox.create({
+                data: {
+                    node_id: req.body.id,
+                    title: req.body.title,
+                    description: req.body.description,
+                },
             });
         }
-        await Node.update(
-            { intent: req.body.intent },
-            { where: { node_id: req.body.id } }
-        );
+        await prisma.node.updateMany({
+            where: { node_id: req.body.id},
+            data: {  intent: req.body.intent},
+        });
         res.json({ status: "success"}) 
     } catch (error) {
     console.error('Error inserting data:', error);
@@ -417,25 +267,26 @@ export const textBoxData = async (req: Request, res: Response, next: Function) =
 export const ButtonData = async (req: Request, res: Response, next: Function) => {
     //console.log("insertEdge",req.body);
     try {
-        const data_exist = await FlowButtonData.findOne({
-            where: {
-              "node_id" : req.body.id,
-            },
+
+          const data_exist = await prisma.flowButtonData.findFirst({
+            where: {  node_id: req.body.id},
           });
+
         if (data_exist) {
-            await FlowButtonData.update(
-                { 
-                text: req.body.text,
-                link: req.body.link,
-                },
-                { where: { node_id: req.body.id } }
-            );
+
+            await prisma.flowButtonData.updateMany({
+                where: { node_id: req.body.id},
+                data: {   text: req.body.text, link: req.body.link},
+            });
+
         }
         else{
-            await FlowButtonData.create({
-                node_id: req.body.id,
-                text: req.body.text,
-                link: req.body.link,
+            await prisma.flowButtonData.create({
+                data: {
+                    node_id: req.body.id,
+                    text: req.body.text,
+                    link: req.body.link,
+                },
             });
         }
         
@@ -447,10 +298,10 @@ export const ButtonData = async (req: Request, res: Response, next: Function) =>
 export const ButtonGroup = async (req: Request, res: Response, next: Function) => {
     //console.log("insertEdge",req.body);
     try {
-        await Node.update(
-            { intent: req.body.intent },
-            { where: { node_id: req.body.id } }
-        );
+        await prisma.node.updateMany({
+            where: { node_id: req.body.id},
+            data: {  intent: req.body.intent },
+        });
         res.json({ status: "success"}) 
     } catch (error) {
     console.error('Error inserting data:', error);
@@ -460,40 +311,36 @@ export const ButtonGroup = async (req: Request, res: Response, next: Function) =
 export const CardData = async (req: Request, res: Response, next: Function) => {
     console.log("CARD REQ DATA",req.body);
     try {
-        const data_exist = await FlowCardData.findOne({
-            where: {
-              "node_id" : req.body.id,
-            },
+          const data_exist = await prisma.flowCardData.findFirst({
+            where: {  node_id: req.body.id},
           });
         if (data_exist) {
-            await FlowCardData.update(
-                { 
-                title: req.body.title,
-                description: req.body.description,
-                image: "card-test-image.png",
-                },
-                { where: { node_id: req.body.id } }
-            );
+            await prisma.flowCardData.updateMany({
+                where: { node_id: req.body.id},
+                data: {    title: req.body.title,description: req.body.description,image: "card-test-image.png",},
+            });
         }
         else{
-            await FlowCardData.create({
-                node_id: req.body.id,
-                title: req.body.title,
-                description: req.body.description,
-                image: "card-test-image.png",
+            await prisma.flowCardData.create({
+                data: {
+                    node_id: req.body.id,
+                    title: req.body.title,
+                    description: req.body.description,
+                    image: "card-test-image.png",
+                },
             });
         }
         if(req.body.type=="group"){
-            await Node.update(
-                { intent: req.body.intent },
-                { where: { node_id: req.body.parentID } }
-            );
+            await prisma.node.updateMany({
+                where: { node_id: req.body.parentID},
+                data: {   intent: req.body.intent},
+            });
         }
         else{
-            await Node.update(
-                { intent: req.body.intent },
-                { where: { node_id: req.body.id } }
-            );
+            await prisma.node.updateMany({
+                where: { node_id: req.body.id},
+                data: {   intent: req.body.intent},
+            });
         }
         res.json({ status: "success"}) 
     } catch (error) {
@@ -503,28 +350,22 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
 export const getIntentData = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        const question_details = await Question.findOne({
-            where: {
-                id: req.body.intent,
-            },
-        });
+        const question_details = await prisma.question.findFirst({
+            where: {  id: req.body.intent},
+          });
+
         let intent = "";
         if(question_details){
-            const node = await Node.findOne({
-                where: {
-                    id: question_details.intent,
-                },
-            });
+            const node = await prisma.node.findFirst({
+                where: {  id: question_details.intent},
+              });
             if(node){
-            intent = node.intent;
+            intent = node.intent ?? '';
             }
         }
         let intentData: any[] = [];
-        const node_details = await Node.findAll({
-            where: {
-                intent: intent,
-            },
-        });
+
+        const node_details = await prisma.node.findMany({ where: {intent: intent}});
 
         for (const node of node_details) {
             const { type, node_id } = node;
@@ -532,29 +373,29 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
 
             switch (type) {
                 case 'textOnly':
-                    nodeData = await FlowTextOnly.findOne({ where: { node_id } });
+                    nodeData = await prisma.flowTextOnly.findFirst({ where: { node_id } });
                     break;
                 case 'textinput':
-                    nodeData = await FlowTextBox.findOne({ where: { node_id } });
+                    nodeData = await prisma.flowTextBox.findFirst({ where: { node_id } });
                     break;
                 case 'cardStyleOne':
-                    nodeData = await FlowCardData.findOne({ where: { node_id } });
+                    nodeData = await prisma.flowCardData.findFirst({ where: { node_id } });
                     break;
                 case 'buttonGroup': {
-                    const buttons = await Node.findAll({ where: { parentId: node_id } });
+                    const buttons = await prisma.node.findMany({ where: { parent_id: node_id } });
                     let buttonData = await Promise.all(buttons.map(async button => ({
-                        button: await FlowButtonData.findOne({ where: { node_id: button.node_id } }),
+                        button: await prisma.flowButtonData.findFirst({ where: { node_id: button.node_id } }),
                     })));
                     nodeData = buttonData;
                     break;
                 }
                 case 'cardGroup': {
-                    const childs = await Node.findAll({ where: { parentId: node_id } });
+                    const childs = await prisma.node.findMany({ where: { parent_id: node_id } });
                     let childData = await Promise.all(childs.map(async child => {
                         if (child.type === 'cardHeader') {
-                            return { card: await FlowCardData.findOne({ where: { node_id: child.node_id } }) };
+                            return { card: await prisma.flowCardData.findFirst({ where: { node_id: child.node_id } }) };
                         } else {
-                            return { button: await FlowButtonData.findOne({ where: { node_id: child.node_id } }) };
+                            return { button: await prisma.flowButtonData.findFirst({ where: { node_id: child.node_id } }) };
                         }
                     }));
                     nodeData = childData;
@@ -693,43 +534,40 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
 export const getTargetData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let sourceData: any[] = [];
-        const targets = await Edge.findAll({
-            where: {
-                source: req.body.source,
-            },
-        });
+
+        const targets = await prisma.edge.findMany({where: {source: req.body.source}});
 
         for (const singleTarget of targets) {
             const { target} = singleTarget;
-            const target_node = await Node.findOne({ where: { node_id:target } });
+            const target_node =  await prisma.node.findFirst({ where: { node_id:target } });
             const type = target_node?.type;
             let data;
 
             switch (type) {
                 case 'textOnly':
-                    data = await FlowTextOnly.findOne({ where: { node_id:target_node?.node_id } });
+                    data = await prisma.flowTextOnly.findFirst({ where: { node_id:target_node?.node_id } });
                     break;
                 case 'textinput':
-                    data = await FlowTextBox.findOne({ where: { node_id:target_node?.node_id } });
+                    data = await prisma.flowTextBox.findFirst({ where: { node_id:target_node?.node_id } });
                     break;
                 case 'cardStyleOne':
-                    data = await FlowCardData.findOne({ where: { node_id:target_node?.node_id } });
+                    data = await prisma.flowCardData.findFirst({ where: { node_id:target_node?.node_id } });
                     break;
                 case 'buttonGroup': {
-                    const buttons = await Node.findAll({ where: { parentId: target_node?.node_id } });
+                    const buttons = await prisma.node.findMany({ where: { parent_id: target_node?.node_id } });
                     let buttonData = await Promise.all(buttons.map(async button => ({
-                        button: await FlowButtonData.findOne({ where: { node_id: button.node_id } }),
+                        button: await prisma.flowButtonData.findFirst({ where: { node_id: button.node_id } }),
                     })));
                     data = buttonData;
                     break;
                 }
                 case 'cardGroup': {
-                    const childs = await Node.findAll({ where: { parentId: target_node?.node_id } });
+                    const childs = await prisma.node.findMany({ where: { parent_id: target_node?.node_id } });
                     let childData = await Promise.all(childs.map(async child => {
                         if (child.type === 'cardHeader') {
-                            return { card: await FlowCardData.findOne({ where: { node_id: child.node_id } }) };
+                            return { card: await prisma.flowCardData.findFirst({ where: { node_id: child.node_id } }) };
                         } else {
-                            return { button: await FlowButtonData.findOne({ where: { node_id: child.node_id } }) };
+                            return { button: await prisma.flowButtonData.findFirst({ where: { node_id: child.node_id } }) };
                         }
                     }));
                     data = childData;

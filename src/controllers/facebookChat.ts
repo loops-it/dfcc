@@ -3,8 +3,6 @@ import { Pinecone } from '@pinecone-database/pinecone'
 import axios from 'axios';
 import "dotenv/config";
 import { Request as ExpressRequest } from 'express';
-import File from '../../models/File';
-import BotChats from '../../models/BotChats';
 import {Translate} from '@google-cloud/translate/build/src/v2';
 import { Request, Response } from 'express';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

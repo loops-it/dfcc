@@ -2,17 +2,10 @@ import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
 import "dotenv/config";
 import { Request as ExpressRequest, Response } from 'express';
-import File from '../../models/File';
-import FacebookChats from '../../models/FacebookChats';
 import {Translate} from '@google-cloud/translate/build/src/v2';
 import axios from 'axios';
-import Node from "../../models/Node";
-import FlowTextOnly from "../../models/FlowTextOnly";
-import FlowTextBox from "../../models/FlowTextBox";
-import FlowCardData from "../../models/FlowCardData";
-import FlowButtonData from "../../models/FlowButtonData";
-import Edge from "../../models/Edge";
-import Question from "../../models/Question";
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
@@ -31,22 +24,22 @@ interface ChatEntry {
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
 export const chatControllerFacebook = async (req: RequestWithChatId, res: Response) => {
-    const intentsList = await Node.findAll({
-        attributes: ["intent"],
-        group: ["intent"],
-    });
-    const questionList = await Question.findAll({
-        where: {
-            language: "english",
-        },
-        attributes: ["question"],
-        group: ["question"], 
-    });
 
-    let cachedIntentsList: string[] = [];
-    cachedIntentsList = intentsList
-        .filter((intent) => intent.intent !== null)
-        .map((intent) => intent.intent);
+      const questionArray = await prisma.question.findMany({
+        where: {
+          language:  "english",
+        },
+        distinct: ['question'],
+        select: {
+          id: true,
+          question: true,
+        },
+      });
+
+      const questionList = questionArray.map(item => ({
+        question: item.question,
+        id: item.id
+    }));
         
     const body = req.body;
     //let message_body; 
@@ -80,14 +73,14 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         }
         });
         
- 
-    const old_chats = await FacebookChats.findAll({
+    const old_chats = await prisma.facebookChats.findMany({
         where: {
-          sender_id: message_body.sender.id
-        },
-        limit: 10,
-        order: [['createdAt', 'DESC']]
-    });
+            sender_id: message_body.sender.id
+          },
+        orderBy: { created_at: 'desc' }, 
+        take: 10, 
+      });
+
     for (var i = 0; i < old_chats.length; i++) {
         chatHistory.push({ role: old_chats[i].message_sent_by, content:  old_chats[i].message });
     }
@@ -138,7 +131,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
 
         const productOrServiceQuestion = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
-            prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, if it is in the intent list state Only matching intent name from the list. Do not add any other words. If it is not just say this word "not a product".`,
+            prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${questionList}, if it is in the intent list state Only matching intent name from the list. Do not add any other words. If it is not just say this word "not a product".`,
             max_tokens: 20,
             temperature: 0,
         });
@@ -151,14 +144,14 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
             if (lastUserIndex !== -1) {
                 chatHistory[lastUserIndex].content = translatedQuestion;
             }
-            await FacebookChats.create(
-                { 
-                sender_id: message_body.sender.id,
-                message_sent_by: 'user',
-                message: translatedQuestion,
+
+            await prisma.facebookChats.create({
+                data: {
+                    sender_id: message_body.sender.id,
+                    message_sent_by: 'user',
+                    message: translatedQuestion,
                 },
-            );
-    
+              });
             let kValue = 2
     
             //============= change context ======================
@@ -291,15 +284,16 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
                 //chatHistory.push({ role: 'assistant', content: botResponse });
     
                 // }
-    
-                await FacebookChats.create(
-                    { 
-                    sender_id: message_body.sender.id,
-                    message_sent_by: 'assistant',
-                    message: botResponse,
-                    },
-                );
-    
+                if (botResponse !== null) {
+                    await prisma.facebookChats.create({
+                        data: {
+                            sender_id: message_body.sender.id,
+                            message_sent_by: 'assistant',
+                            message: botResponse,
+                        },
+                      });
+                }
+                
                 //console.log("botResponse",botResponse);
                 // console.log("translatedResponse",translatedResponse);
                 
@@ -331,19 +325,19 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
 
 try {
     let intentData: any[] = [];
-    const node_details = await Node.findAll({
+
+    const node_details = await prisma.node.findMany({
         where: {
             intent: intentToSend,
         },
-    });
-
+      });
     for (const node of node_details) {
         const { type, node_id } = node;
         let nodeData : any;
         let message_data: any;
         switch (type) {
             case 'textOnly':
-                nodeData = await FlowTextOnly.findOne({ where: { node_id } });
+                nodeData = await prisma.flowTextOnly.findFirst({ where: { node_id } });
                 message_data = {
                     recipient: {
                         id: message_body.sender.id
@@ -355,7 +349,7 @@ try {
                 };
                 break;
             case 'textinput':
-                nodeData = await FlowTextBox.findOne({ where: { node_id } });
+                nodeData = await prisma.flowTextBox.findFirst({ where: { node_id } });
                 message_data = {
                     recipient: {
                         id: message_body.sender.id
@@ -377,7 +371,7 @@ try {
                 };
                 break;
             case 'cardStyleOne':
-                nodeData = await FlowCardData.findOne({ where: { node_id } });
+                nodeData = await prisma.flowCardData.findFirst({ where: { node_id } });
                 message_data = {
                     recipient: {
                         id: message_body.sender.id
@@ -400,11 +394,11 @@ try {
                 };
                 break;
             case 'buttonGroup': {
-                const buttonsFromDb = await Node.findAll({ where: { parentId: node_id } });
+                const buttonsFromDb = await prisma.node.findMany({ where: { parent_id: node_id } });
                 const buttons = await Promise.all(
                     buttonsFromDb.map(async (button: any) => {
-                        const button_data = await FlowButtonData.findOne({ where: { node_id: button.node_id } });
-                        const button_edge = await Edge.findOne({ where: { source: button.node_id } });
+                        const button_data = await prisma.flowButtonData.findFirst({ where: { node_id: button.node_id } });
+                        const button_edge = await prisma.edge.findFirst({ where: { source: button.node_id } });
                         if(button_data){
                         if(button_edge){
                             return {
@@ -446,7 +440,7 @@ try {
                 break;
             }
             case 'cardGroup': {
-                const childs = await Node.findAll({ where: { parentId: node_id } });
+                const childs = await prisma.node.findMany({ where: { parent_id: node_id } });
                 let cardElements: any[] = [];
                 let buttons: any[] = [];
                 let title = "-";
@@ -454,17 +448,17 @@ try {
                 let image_url = "-";
                 await Promise.all(childs.map(async child => {
                     if (child.type === 'cardHeader') {
-                        const cardData = await FlowCardData.findOne({ where: { node_id: child.node_id } });
+                        const cardData = await prisma.flowCardData.findFirst({ where: { node_id: child.node_id } });
                        
                         if (cardData) {
-                            title = cardData.title;
-                            subtitle = cardData.description;
+                            title = cardData.title ?? '';  
+                            subtitle = cardData.description ?? '';
                             image_url = 'https://flow-builder-chi.vercel.app/images/Slide%2006.png';
             
                         }
                     } else {
-                        const buttonData = await FlowButtonData.findOne({ where: { node_id: child.node_id } });
-                        const button_edge = await Edge.findOne({ where: { source: child.node_id } });
+                        const buttonData = await prisma.flowButtonData.findFirst({ where: { node_id: child.node_id } });
+                        const button_edge = await prisma.edge.findFirst({ where: { source: child.node_id } });
                         if (buttonData) {
                             if(button_edge){
                                 buttons.push({

@@ -3,7 +3,8 @@ import { Request, Response } from 'express';
 import { Pinecone } from '@pinecone-database/pinecone';
 import "dotenv/config";
 
-import File from '../../models/File';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
     throw new Error('Pinecone API key is not defined or is not a string.');
@@ -24,10 +25,12 @@ export const viewDocuments = async (req: Request, res: Response) => {
 
 
             const index = pc.index('dfccchatbot');
-            const fileIds  = await File.findAll({
-                attributes: ['file_id']
+            const fileIds  = await prisma.file.findMany({
+                select: {
+                    file_id: true,
+                }
               });
-
+              
               const ids = fileIds.map(file => file.file_id);
             console.log(ids);
             const fetchResult = await index.namespace('dfcc-vector-db').fetch(ids);

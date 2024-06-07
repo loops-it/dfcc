@@ -5,10 +5,10 @@ import multer from 'multer';
 import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
 import "dotenv/config";
-import User from '../../models/User';
-import Admin from '../../models/Admin';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 interface UserDecodedToken extends JwtPayload {
   id: string;
@@ -22,32 +22,30 @@ export const adminAccountCreate = async (req: Request, res: Response, next: Func
     let user_role = req.body.user_role;
 
     try {
-      const email_exist = await User.findAll({
-        where: {
-        email : email,
-        },
+      const email_exist = await prisma.user.findFirst({
+        where: { email: email },
       });
-    if(email_exist[0]){
+    if(email_exist){
         return res.json({status:"failed", message:"Email has already registered"})
     }
     else{
         const crypt_password = await (bcrypt.hash(password, 10));
-        let user = await User.create(
-            { 
+        const user = await prisma.user.create({
+          data: {
             email: email,
             password: crypt_password,
-            user_role:user_role,
-            status:"active",
-            },
-          );
-        await Admin.create(
-            { 
+            user_role: user_role,
+            status: "active",
+          },
+        });
+        await prisma.admin.create({
+          data: {
             user_id: user.id,
             name: name,
-            phone:phone,
-            status:"active",
-            },
-          );
+            phone: phone,
+            status: "active",
+          },
+        });
           return res.json({status:"success", message:"Admin Added"})
     }
     } catch (error) {
@@ -59,22 +57,22 @@ export const adminAccountCreate = async (req: Request, res: Response, next: Func
     const {admin_name, phone, email, user_id} = req.body
 
     try {
-      const email_exist = await User.findAll({
-        where: {
-        email : email,
-        },
+      const email_exist = await prisma.user.findFirst({
+        where: { email: email },
       });
-    if(email_exist[0]){
-        if(email_exist[0].id == user_id){
-            await Admin.update(
-                { name: admin_name,phone: phone},
-                { where: { user_id: user_id } }
-              );
-            await User.update(
-                { email: email},
-                { where: { id: user_id } }
-              );
-    
+    if(email_exist){
+        if(email_exist.id == user_id){
+
+            await prisma.admin.updateMany({
+                where: { user_id: user_id },
+                data: { name: admin_name,phone: phone},
+              });
+
+            await prisma.user.updateMany({
+                where: { id: user_id },
+                data: { email: email},
+              });
+
             return res.json({status:"success", message:"Admin Updated"})
         }
         else{
@@ -82,14 +80,15 @@ export const adminAccountCreate = async (req: Request, res: Response, next: Func
         }    
     }
     else{
-        await Admin.update(
-            { name: admin_name,phone: phone},
-            { where: { user_id: user_id } }
-          );
-        await User.update(
-            { email: email},
-            { where: { id: user_id } }
-          );
+      await prisma.admin.updateMany({
+        where: { user_id: user_id },
+        data: { name: admin_name,phone: phone},
+      });
+
+      await prisma.user.updateMany({
+        where: { id: user_id },
+        data: { email: email},
+      });
 
         return res.json({status:"success", message:"Admin Updated"})
     }
@@ -102,12 +101,12 @@ export const adminAccountCreate = async (req: Request, res: Response, next: Func
     const {current_password, user_id} = req.body
 
     try {
-      const user = await User.findAll({
-        where: {
-        id : user_id,
-        },
-      });
-    if(!user[0] || !await bcrypt.compare(current_password, user[0].password)){
+
+      const user = await prisma.user.findFirst({
+        where: { id: user_id },
+      })
+      ;
+    if(!user || !await bcrypt.compare(current_password, user.password)){
         return res.json({status:"failed", message:"Current password is incorrect"})
     }
     else {
@@ -122,37 +121,35 @@ export const adminAccountCreate = async (req: Request, res: Response, next: Func
     const {admin_name, phone, email, user_id, password} = req.body
     const crypt_password = await (bcrypt.hash(password, 10));
     try {
-      const email_exist = await User.findAll({
-        where: {
-        email : email,
-        },
+      const email_exist = await prisma.user.findFirst({
+        where: { email: email },
       });
-    if(email_exist[0]){
-        if(email_exist[0].id == user_id){
-            await Admin.update(
-                { name: admin_name,phone: phone},
-                { where: { user_id: user_id } }
-              );
-            await User.update(
-                { email: email,password: crypt_password},
-                { where: { id: user_id } }
-              );
-    
-            return res.json({status:"success", message:"Admin Updated"})
+    if(email_exist){
+        if(email_exist.id == user_id){
+          await prisma.admin.updateMany({
+            where: { user_id: user_id },
+            data: { name: admin_name,phone: phone},
+          });
+          await prisma.user.updateMany({
+            where: { id: user_id },
+            data: { email: email,password: crypt_password},
+          });
+
+          return res.json({status:"success", message:"Admin Updated"})
         }
         else{
             return res.json({status:"failed", message:"Email has already registered"})
         }    
     }
     else{
-        await Admin.update(
-            { name: admin_name,phone: phone},
-            { where: { user_id: user_id } }
-          );
-        await User.update(
-            { email: email,password: crypt_password},
-            { where: { id: user_id } }
-          );
+      await prisma.admin.updateMany({
+        where: { user_id: user_id },
+        data: { name: admin_name,phone: phone},
+      });
+      await prisma.user.updateMany({
+        where: { id: user_id },
+        data: { email: email,password: crypt_password},
+      });
 
         return res.json({status:"success", message:"Admin Updated"})
     }

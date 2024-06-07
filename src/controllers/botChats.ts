@@ -1,48 +1,46 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import User from '../../models/User';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import ChatHeader from '../../models/ChatHeader';
-import LiveChat from '../../models/LiveChat';
-import AgentLanguages from '../../models/AgentLanguages';
-import ChatTimer from '../../models/ChatTimer';
-import BotChats from '../../models/BotChats';
-interface UserDecodedToken extends JwtPayload {
-  id: string;
-  
-}
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 export const botChatsOnload = async (req: Request, res: Response, next: NextFunction) => {
 
     var chat = ''
-    const chats = await BotChats.findAll({
-        attributes: ['message_id'],
-        group: ['message_id'],
-        order: [['id', 'DESC']],
-        limit: 20,
-    });
-    for (var i = 0; i < chats.length; i++) {
-        const newMessageCount = await BotChats.count({
-            where: {
-              viewed_by_admin: 'no',
-              message_id: chats[i].message_id,
-            },
 
-          });
-          const lastMessage = await BotChats.findAll({
-            where: {
-              message_id: chats[i].message_id,
-            },
-            order: [['id', 'DESC']],
-          });
-        const timestamp = new Date("'"+lastMessage[0].createdAt+"'");
-        const time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });  
+    const chats = await prisma.botChats.findMany({
+      distinct: ['message_id'],
+      orderBy: { id: 'desc' }, 
+      take: 20, 
+      select: {
+        message_id: true,
+      },
+    });
+
+    for (var i = 0; i < chats.length; i++) {
+        const newMessageCount = await prisma.botChats.count({
+          where: {  viewed_by_admin: 'no',message_id: chats[i].message_id},
+        });
+          
+        const lastMessage = await prisma.botChats.findFirst({
+          where: {  message_id: chats[i].message_id},
+          orderBy: { id: 'desc' }, 
+        });
+        let time = "";
+        let message = "";
+
+        if(lastMessage){
+          const timestamp = new Date("'"+lastMessage.created_at+"'");
+          time = timestamp.toLocaleTimeString([], { timeStyle: 'short' }); 
+          message = lastMessage[0].message.slice(0, 30);
+        }
+         
         chat += `<div class="p-20 bb-1 d-flex align-items-center justify-content-between pull-up" onclick="GetAllChats('`+chats[i].message_id+`')">
         <div class="d-flex align-items-center">
             <a class="me-15  avatar avatar-lg" href="#"><img class="bg-primary-light" src="../images/avatar/avatar-1.png" alt="..."></a>
             <div>
               <a class="hover-primary mb-5" href="#"><strong>#`+chats[i].message_id+`</strong></a>
-              <p class="mb-0">`+lastMessage[0].message.slice(0, 30)+` ...</p>
+              <p class="mb-0">`+message+` ...</p>
             </div>
         </div>
         <div class="text-end">
@@ -59,16 +57,16 @@ export const botChatsOnload = async (req: Request, res: Response, next: NextFunc
 export const botChatsGetMessages = async (req: Request, res: Response, next: NextFunction) => {
 const {message_id} = req.body
 
-BotChats.update(
-    { viewed_by_admin: 'yes' },
-    { where: { message_id: message_id } }
-);
-const chats  = await BotChats.findAll({
-    where: {
-        "message_id" : message_id,
-    },
-    order: [['id', 'ASC']],
-  });
+await prisma.botChats.updateMany({
+  where: { message_id: message_id},
+  data: { viewed_by_admin: 'yes'},
+});
+
+const chats = await prisma.botChats.findMany({
+    where: {  message_id: message_id},
+    orderBy: { id: 'desc' }, 
+});
+
 var message_history = ''
 
 message_history += ` <div class="box">
@@ -86,7 +84,7 @@ message_history += ` <div class="box">
 <div class="box-body mb-30">
     <div class="chat-box-six" >`
     for (var i = 0; i < chats.length; i++) {
-        const timestamp = new Date("'"+chats[i].createdAt+"'");
+        const timestamp = new Date("'"+chats[i].created_at+"'");
         const formattedDateTime = timestamp.toLocaleString();   
         if(chats[i].message_sent_by == "customer"){
             message_history += `<div class="rt-bx mb-30 d-flex align-items-start w-p100">
@@ -137,32 +135,40 @@ return res.json({status:"success", message:message_history})
 export const botChatsRefresh = async (req: Request, res: Response, next: NextFunction) => {
 
     var chat = ''
-    const chats = await BotChats.findAll({
-        attributes: ['message_id'],
-        group: ['message_id']
+  const chats = await prisma.botChats.findMany({
+      distinct: ['message_id'],
+      orderBy: { id: 'desc' }, 
+      take: 20, 
+      select: {
+        message_id: true,
+      },
     });
-    for (var i = 0; i < chats.length; i++) {
-        const newMessageCount = await BotChats.count({
-            where: {
-              viewed_by_admin: 'no',
-              message_id: chats[i].message_id,
-            },
 
-          });
-          const lastMessage = await BotChats.findAll({
-            where: {
-              message_id: chats[i].message_id,
-            },
-            order: [['id', 'DESC']],
-          });
-        const timestamp = new Date("'"+lastMessage[0].createdAt+"'");
-        const time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });  
+    
+    for (var i = 0; i < chats.length; i++) {
+      
+        const newMessageCount = await prisma.botChats.count({
+          where: {  viewed_by_admin: 'no',message_id: chats[i].message_id},
+        });
+          
+        const lastMessage = await prisma.botChats.findFirst({
+          where: {  message_id: chats[i].message_id},
+          orderBy: { id: 'desc' }, 
+        });
+        let time = "";
+        let message = "";
+
+        if(lastMessage){
+          const timestamp = new Date("'"+lastMessage.created_at+"'");
+          time = timestamp.toLocaleTimeString([], { timeStyle: 'short' }); 
+          message = lastMessage[0].message.slice(0, 30);
+        }
         chat += `<div class="p-20 bb-1 d-flex align-items-center justify-content-between pull-up" onclick="GetAllChats('`+chats[i].message_id+`')">
         <div class="d-flex align-items-center">
             <a class="me-15  avatar avatar-lg" href="#"><img class="bg-primary-light" src="../images/avatar/avatar-1.png" alt="..."></a>
             <div>
               <a class="hover-primary mb-5" href="#"><strong>#`+chats[i].message_id+`</strong></a>
-              <p class="mb-0">`+lastMessage[0].message.slice(0, 30)+` ...</p>
+              <p class="mb-0">`+message+` ...</p>
             </div>
         </div>
         <div class="text-end">
@@ -178,18 +184,18 @@ export const botChatsRefresh = async (req: Request, res: Response, next: NextFun
 
 export const botChatsRefreshMessage = async (req: Request, res: Response, next: NextFunction) => {
     const {message_id} = req.body
-    BotChats.update(
-        { viewed_by_admin: 'yes' },
-        { where: { message_id: message_id } }
-    );
+
+    await prisma.botChats.updateMany({
+      where: { message_id: message_id},
+      data: { viewed_by_admin: 'yes'},
+    });
+    
     var message_history = ''
-    const chats  = await BotChats.findAll({
-        where: {
-            "message_id" : message_id,
-        },
-        order: [['id', 'ASC']],
-      });
-    var message_history = ''
+
+    const chats = await prisma.botChats.findMany({
+        where: {  message_id: message_id},
+        orderBy: { id: 'desc' }, 
+    });
     
     message_history += ` <div class="box">
     <div class="box-body px-20 py-10 bb-1 bbsr-0 bber-0">
@@ -206,7 +212,7 @@ export const botChatsRefreshMessage = async (req: Request, res: Response, next: 
     <div class="box-body mb-30">
         <div class="chat-box-six" >`
         for (var i = 0; i < chats.length; i++) {
-            const timestamp = new Date("'"+chats[i].createdAt+"'");
+            const timestamp = new Date("'"+chats[i].created_at+"'");
             const formattedDateTime = timestamp.toLocaleString();   
             if(chats[i].message_sent_by == "customer"){
                 message_history += `<div class="rt-bx mb-30 d-flex align-items-start w-p100">

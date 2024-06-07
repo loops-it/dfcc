@@ -2,7 +2,8 @@ import OpenAI from "openai";
 import { Request, Response } from 'express';
 import { Pinecone } from '@pinecone-database/pinecone';
 import "dotenv/config";
-import File from '../../models/File';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
     throw new Error('Pinecone API key is not defined or is not a string.');
@@ -10,15 +11,16 @@ if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'st
 const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 
 export const deleteDocument = async (req: Request, res: Response) => {
-    const id = req.query.id;
+    let id: string = req.query.id as string;
     const index = pc.index("dfccchatbot")
     const ns = index.namespace('dfcc-vector-db')
     await ns.deleteOne(`${id}`);
 
-    const row = await File.findOne({ where: { file_id: req.query.id }, }); 
-    if (row) { 
-        await row.destroy(); 
-    }
+    await prisma.file.deleteMany({ where: { file_id: id }, }); 
+    // if (row) { 
+    //     await row.destroy(); 
+    //     await prisma.file.deleteMany({ where: { file_id: id }, }); 
+    // }
 
     res.redirect('view-documents');
     

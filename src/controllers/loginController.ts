@@ -5,8 +5,9 @@ import multer from 'multer';
 import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
 import "dotenv/config";
-import User from '../../models/User';
 import bcrypt from 'bcrypt';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 interface UserDecodedToken extends JwtPayload {
@@ -17,14 +18,8 @@ export const login = async (req: Request, res: Response, next: Function) => {
     let email = req.body.email;
     let password = req.body.password;
     try {
-      const user = await User.findOne({
-        where: {
-        email,
-        "user_role" : "1",
-        "status" : "active",
-        },
-      });
-  
+      const user = await prisma.user.findFirst({where: { email: email,user_role: 1,status: "active" } });
+      
       if (user) {
         if(!await bcrypt.compare(password, user.password)){
         req.flash('error', 'Invalid login details');
@@ -58,13 +53,7 @@ export const login = async (req: Request, res: Response, next: Function) => {
     let email = req.body.email;
     let password = req.body.password;
     try {
-      const user = await User.findOne({
-        where: {
-        email,
-        "user_role" : "2",
-        "status" : "active",
-        },
-      });
+      const user = await prisma.user.findFirst({where: { email: email,user_role: 2,status: "active" } });
   
       if (user) {
         if(!await bcrypt.compare(password, user.password)){

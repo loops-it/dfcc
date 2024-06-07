@@ -5,8 +5,9 @@ import multer from 'multer';
 import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
 import "dotenv/config";
-import File from '../../models/File';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 interface UserDecodedToken extends JwtPayload {
   id: string;
@@ -46,11 +47,13 @@ export const uploadDocuments = async (req: Request, res: Response, next: Functio
           "metadata": {"Title": title, "Text": text}
         }
       ]);
-
-      await File.create({
-      user_id: decode.id,
-      file_id: uniqueId,
-    })
+    let decode_id: number | undefined = parseInt(decode.id as string, 10);
+    await prisma.file.create({
+      data: {
+        user_id: decode_id,
+        file_id: uniqueId,
+      },
+    });
     res.send('PDF upload successful.');
       }
       // const parsedData = await pdfParse(req.file.path);
@@ -78,10 +81,13 @@ export const uploadDocuments = async (req: Request, res: Response, next: Functio
         }
       ]);
 
-      await File.create({
-      user_id: decode.id,
-      file_id: uniqueId,
-    })
+      let decode_id: number | undefined = parseInt(decode.id as string, 10);
+    await prisma.file.create({
+      data: {
+        user_id: decode_id,
+        file_id: uniqueId,
+      },
+    });
     res.send('PDF upload successful.');
     }
     } catch (error) {

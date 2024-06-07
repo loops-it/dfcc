@@ -5,7 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.ts"
+    "start": "nodemon src/server.ts",
+    "vercel-build": "prisma generate && prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "@google-cloud/translate": "^8.2.0",
+    "@prisma/client": "^5.15.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
     "@types/ejs": "^3.1.5",
@@ -33,7 +35,6 @@
     "@types/mysql": "^2.15.26",
     "@types/nodemailer": "^6.4.14",
     "@types/pdf-parse": "^1.1.4",
-    "@types/sequelize": "^4.28.20",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -51,6 +52,6 @@
     "mysql2": "^3.9.3",
     "nodemailer": "^6.9.13",
     "pdf-parse": "^1.1.1",
-    "sequelize": "^6.37.1"
+    "prisma": "^5.15.0"
   }
 }

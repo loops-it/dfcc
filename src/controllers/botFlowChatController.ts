@@ -1,12 +1,10 @@
 import OpenAI from "openai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import "dotenv/config";
-import { Request as ExpressRequest, Response } from "express";
-import File from "../../models/File";
-import BotChats from "../../models/BotChats";
+import { Request as ExpressRequest, Response } from "express";;
 import { Translate } from "@google-cloud/translate/build/src/v2";
-import Node from "../../models/Node";
-import Question from "../../models/Question";
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (
@@ -47,18 +45,22 @@ export const chatFlowResponse = async (
     let language = req.body.language;
     let cachedIntentsList: string[] = [];
 
-    const questionArray = await Question.findAll({
+
+    const questionArray = await prisma.question.findMany({
         where: {
-            language: language,
+          language: language,
         },
-        attributes: ["question", "id"],
-        group: ["question"],
-    });
+        distinct: ['question'],
+        select: {
+          id: true,
+          question: true,
+        },
+      });
     // const questionList = questionArray.map(item => item.dataValues.question);
 
     const questionList = questionArray.map(item => ({
-        question: item.dataValues.question,
-        id: item.dataValues.id
+        question: item.question,
+        id: item.id
     }));
 
     console.log(questionList);
@@ -125,15 +127,15 @@ export const chatFlowResponse = async (
     // ]
 
     // Fetch intents from the database
-    const intentsList = await Node.findAll({
-        attributes: ["intent"],
-        group: ["intent"],
-    });
+    // const intentsList = await Node.findAll({
+    //     attributes: ["intent"],
+    //     group: ["intent"],
+    // });
 
     // Filter out null values and get remaining intent values
-    cachedIntentsList = intentsList
-        .filter((intent) => intent.intent !== null)
-        .map((intent) => intent.intent);
+    // cachedIntentsList = intentsList
+    //     .filter((intent) => intent.intent !== null)
+    //     .map((intent) => intent.intent);
 
     // console.log("Cached Intents List:", cachedIntentsList);
     // console.log(req.body.language)
@@ -204,14 +206,16 @@ export const chatFlowResponse = async (
             chatHistory[lastUserIndex].content = translatedQuestion;
             // console.log(chatHistory);
         }
-        await BotChats.create({
-            message_id: userChatId,
-            language: language,
-            message: userQuestion,
-            message_sent_by: "customer",
-            viewed_by_admin: "no",
-        });
 
+        await prisma.botChats.create({
+            data: {
+                message_id: userChatId,
+                language: language,
+                message: userQuestion,
+                message_sent_by: "customer",
+                viewed_by_admin: "no",
+            },
+          });
         let kValue = 2;
 
         // If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes State only its name. If it is not in the intent list, just say this word "not product".
@@ -417,14 +421,15 @@ Standalone question:`;
             // console.log(" send chat id : ", userChatId)
             // }
             // await processRequest(translatedQuestion, userChatId);
-
-            await BotChats.create({
-                message_id: userChatId,
-                language: language,
-                message: translatedResponse,
-                message_sent_by: "bot",
-                viewed_by_admin: "no",
-            });
+            await prisma.botChats.create({
+                data: {
+                    message_id: userChatId,
+                    language: language,
+                    message: translatedResponse,
+                    message_sent_by: "bot",
+                    viewed_by_admin: "no",
+                },
+              });
             console.log("botResponse ---- > ", botResponse);
             // console.log("translatedResponse",translatedResponse);
             res.json({

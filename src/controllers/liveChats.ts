@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import User from '../../models/User';
+
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import ChatHeader from '../../models/ChatHeader';
-import LiveChat from '../../models/LiveChat';
-import AgentLanguages from '../../models/AgentLanguages';
-import ChatTimer from '../../models/ChatTimer';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 interface UserDecodedToken extends JwtPayload {
   id: string;
   
@@ -15,39 +13,20 @@ export const liveChatsOnload = async (req: Request, res: Response, next: NextFun
 
     var chat = ''
     let agent_id = req.body.agent_id;
-    const chats  = await ChatHeader.findAll({
-        where: {
-            "agent" : "unassigned",
-            "status" : "live",
-        },
-      });
-    const languages  = await AgentLanguages.findAll({
-        where: {
-            "user_id" : agent_id,
-        },
-    });
+    const chats  = await prisma.chatHeader.findMany({where: { agent: "unassigned", status: "live" }  });  
+    const languages  = await prisma.agentLanguages.findMany({where: { user_id: agent_id }  }); 
 
     for (var i = 0; i < chats.length; i++) {
-        const newMessageCount = await LiveChat.count({
-            where: {
-              viewed_by_agent: 'no',
-              message_id: chats[i].message_id,
-            },
-
-          });
-          const lastMessage = await LiveChat.findAll({
-            where: {
-              message_id: chats[i].message_id,
-            },
-            order: [['id', 'DESC']],
-          });
+        const newMessageCount = await prisma.liveChat.count({where: { viewed_by_agent: 'no',message_id: chats[i].message_id }  }); 
           
+          const lastMessage =  await prisma.liveChat.findFirst({where: { message_id: chats[i].message_id }, orderBy: { id: 'desc' }  });
+         
           let time = "";
           let message = "";
-          if(lastMessage[0]){
-            const timestamp = new Date(`${lastMessage[0].createdAt}`);
+          if(lastMessage){
+            const timestamp = new Date(`${lastMessage.created_at}`);
             time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });
-            message = lastMessage[0].message.slice(0, 30);
+            message = lastMessage.message.slice(0, 30);
           }
         for (var c = 0; c < languages.length; c++){
             if(languages[c].language == chats[i].language){
@@ -77,38 +56,20 @@ export const refreshLiveChats = async (req: Request, res: Response, next: NextFu
 
   var chat = ''
   let agent_id = req.body.agent_id;
-  const chats  = await ChatHeader.findAll({
-      where: {
-          "agent" : "unassigned",
-          "status" : "live",
-      },
-    });
-  const languages  = await AgentLanguages.findAll({
-      where: {
-          "user_id" : agent_id,
-      },
-  });
+  const chats  =  await prisma.chatHeader.findMany({where: { agent: "unassigned", status: "live" }  });  
+    
+  const languages  = await prisma.agentLanguages.findMany({where: { user_id: agent_id }  }); 
 
   for (var i = 0; i < chats.length; i++) {
-      const newMessageCount = await LiveChat.count({
-          where: {
-            viewed_by_agent: 'no',
-            message_id: chats[i].message_id,
-          },
+    const newMessageCount = await prisma.liveChat.count({where: { viewed_by_agent: 'no',message_id: chats[i].message_id }  });
+    const lastMessage =  await prisma.liveChat.findFirst({where: { message_id: chats[i].message_id }, orderBy: { id: 'desc' }  });
 
-        });
-        const lastMessage = await LiveChat.findAll({
-          where: {
-            message_id: chats[i].message_id,
-          },
-          order: [['id', 'DESC']],
-        });
         let time = "";
         let message = "";
-        if(lastMessage[0]){
-          const timestamp = new Date(`${lastMessage[0].createdAt}`);
+        if(lastMessage){
+          const timestamp = new Date(`${lastMessage.created_at}`);
           time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });
-          message = lastMessage[0].message.slice(0, 30);
+          message = lastMessage.message.slice(0, 30);
         }
       for (var c = 0; c < languages.length; c++){
           if(languages[c].language == chats[i].language){
@@ -138,24 +99,19 @@ export const replyLiveChats = async (req: Request, res: Response, next: NextFunc
   let agent_id = req.body.agent_id;
   let message_id = req.body.message_id;
 
-  await LiveChat.update(
-    { viewed_by_agent: 'yes' },
-    { where: { message_id: message_id } }
-  );
+  await prisma.liveChat.updateMany({
+    where: { message_id: message_id},
+    data: { viewed_by_agent: 'yes'},
+  });
 
   var message_history = ''
 
-  await ChatHeader.update(
-    { agent: agent_id },
-    { where: { message_id: message_id } }
-  );
-
-  const chats  = await LiveChat.findAll({
-    where: {
-        "message_id" : message_id,
-    },
-    order: [['id', 'ASC']],
+  await prisma.chatHeader.updateMany({
+    where: { message_id: message_id},
+    data: { agent: agent_id},
   });
+
+  const chats  =  await prisma.liveChat.findMany({where: { message_id: message_id }, orderBy: { id: 'asc' }  });
 
   message_history += `<div class="chatbox" id="main-chat-`+message_id+`">
   <div class="chatbox-top">
@@ -169,7 +125,7 @@ export const replyLiveChats = async (req: Request, res: Response, next: NextFunc
   <div class="chat-messages  inner-live-chats" id="live-chat-inner-`+message_id+`" data-id="`+message_id+`">`
 
   for (var i = 0; i < chats.length; i++) {
-    const timestamp = new Date("'"+chats[i].createdAt+"'");
+    const timestamp = new Date("'"+chats[i].created_at+"'");
     const formattedDateTime = timestamp.toLocaleString(); 
     if(chats[i].sent_by == "customer"){
         message_history += `<div class="chat-msg user">
@@ -234,14 +190,14 @@ export const sendReplyLiveChats = async (req: Request, res: Response, next: Next
   let reply_message = req.body.reply_message;
   let message_id = req.body.message_id;
 
-  await LiveChat.create(
-    { 
+  await prisma.liveChat.create({
+    data: {
       message_id: message_id,
       sent_by: "agent",
       message: reply_message,
       sent_to_user: "no",
     },
-  );
+  });
   return res.json({status:"success"})
 };
 
@@ -249,10 +205,10 @@ export const closeLiveChats = async (req: Request, res: Response, next: NextFunc
 
   let message_id = req.body.message_id;
 
-  await ChatHeader.update(
-    { status: "closed" },
-    { where: { message_id: message_id } }
-  );
+  await prisma.chatHeader.updateMany({
+    where: { message_id: message_id},
+    data: { status: "closed" },
+  });
   return res.json({status:"success"})
 };
 export const refreshLiveChatInner = async (req: Request, res: Response, next: NextFunction) => {
@@ -260,35 +216,28 @@ export const refreshLiveChatInner = async (req: Request, res: Response, next: Ne
   let message_id = req.body.message_id;
   let agent_id = req.body.agent_id;
   
-  const timer  = await ChatTimer.findAll({
-    where: {
-        "message_id" : message_id,
-    }
-  });
+  const timer  = await prisma.chatTimer.findMany({where: { message_id: message_id } });
+  
   if(!timer[0]){
-    await ChatTimer.create(
-      { 
+    await prisma.chatTimer.create({
+      data: {
         message_id: message_id,
         agent: agent_id,
         time:1,
       },
-    );
+    });
   }
   else{
-    await ChatTimer.update(
-      { time: timer[0].time+1 },
-      { where: { message_id: message_id } }
-    );
+    await prisma.chatTimer.updateMany({
+      where: { message_id: message_id},
+      data: { time: timer[0].time+1 },
+    });
   }
   var message_history = ''
-  const chats  = await LiveChat.findAll({
-    where: {
-        "message_id" : message_id,
-    },
-    order: [['id', 'ASC']],
-  });
+  const chats  = await prisma.liveChat.findMany({where: { message_id: message_id }, orderBy: { id: 'asc' }  });
+  
   for (var i = 0; i < chats.length; i++) {
-    const timestamp = new Date("'"+chats[i].createdAt+"'");
+    const timestamp = new Date("'"+chats[i].created_at+"'");
     const formattedDateTime = timestamp.toLocaleString(); 
     if(chats[i].sent_by == "customer"){
         message_history += `<div class="chat-msg user">

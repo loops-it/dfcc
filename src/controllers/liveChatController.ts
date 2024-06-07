@@ -1,16 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import User from '../../models/User';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import ChatHeader from '../../models/ChatHeader';
-import LiveChat from '../../models/LiveChat';
-import AgentLanguages from '../../models/AgentLanguages';
-import ChatTimer from '../../models/ChatTimer';
-import Agent from '../../models/Agent';
-import BotChats from '../../models/BotChats';
-import OfflineFormSubmissions from '../../models/OfflineFormSubmissions';
-import Sector from '../../models/Sector';
 import * as nodemailer from 'nodemailer';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 interface UserDecodedToken extends JwtPayload {
   id: string;
@@ -29,53 +22,47 @@ var transport = nodemailer.createTransport({
 export const switchToAgent = async (req: Request, res: Response, next: NextFunction) => {
     const {chatId} = req.body
     try {
-        const onlineUser = await User.findOne({ where: { online_status: 'online',status: 'active',user_role: 2 } });
+        const onlineUser = await prisma.user.findFirst({where: { online_status: 'online',status: 'active',user_role: 2 } });
+        
         if(onlineUser){
-            const chat_header_exist = await ChatHeader.findOne({ where: { message_id: chatId } });
-            const queued_chats  = await ChatHeader.count({
-                where: {
-                    "agent" : "unassigned",
-                    "status" : "live",
-                },
-            });
+            const chat_header_exist = await prisma.chatHeader.findFirst({where: { message_id: chatId }  });
+            
+            const queued_chats  = await prisma.chatHeader.count({where: { agent: "unassigned",status: "live" }  });
+            
             if(chat_header_exist){
                 res.json({ status: "success",queued_chats }) 
             }else{
-                const chat_main = await BotChats.findOne({
+                const chat_main =  await prisma.botChats.findFirst({where: { message_id: chatId }  });
+               
+                const chats = await prisma.botChats.findMany({
                     where: {
-                      message_id: chatId
-                    }
-                });
-                const chats = await BotChats.findAll({
-                    where: {
-                      message_id: chatId
+                        message_id: chatId
                     },
-                    order: [['id', 'ASC']]
-                });
+                    orderBy: { id: 'asc' }, 
+                  });
+
                 if(chat_main){
-                    await ChatHeader.create({
-                    message_id: chatId,
-                    language: chat_main.language,
-                    status: "live",
-                    agent: "unassigned",
-                });
+                await prisma.chatHeader.create({
+                    data: {
+                        message_id: chatId,
+                        language: chat_main.language,
+                        status: "live",
+                        agent: "unassigned",
+                    },
+                  });
                 }
     
                 for (var c = 0; c < chats.length; c++) {
-        
-                    await LiveChat.create({
-                      message_id: chatId,
-                      sent_by: chats[c].message_sent_by,
-                      message: chats[c].message,
-              
-                    })
+                    await prisma.liveChat.create({
+                        data: {
+                            message_id: chatId,
+                            sent_by: chats[c].message_sent_by,
+                            message: chats[c].message,
+                        },
+                      });
                 }
-    
-                await BotChats.destroy({
-                    where: {
-                      message_id: chatId
-                    }
-                })
+                await prisma.botChats.deleteMany({where: { message_id: chatId }  });
+
                 res.json({ status: "success",queued_chats:queued_chats }) 
             }   
         }
@@ -93,28 +80,25 @@ export const liveChat = async (req: Request, res: Response, next: NextFunction) 
 const {chatId} = req.body
 try {
     
-    const chat_header_result  = await ChatHeader.findOne({
-        where: {
-            "message_id" : chatId
-        },
-      });
-    const chat_body_result = await LiveChat.findOne({
-        where: {
+    const chat_header_result  = await prisma.chatHeader.findFirst({where: { message_id: chatId }  });
+      
+    const chat_body_result = await prisma.liveChat.findFirst({
+        where: { 
             message_id: chatId,
             sent_by: 'agent',
             sent_to_user: 'no',
         },
-        order: [['id', 'DESC']],
+        orderBy: { id: 'asc' },  
     });
+    
     if(chat_header_result){
         let agent_name;
         let profile_picture;
         let agent_message;
-        const agent_details = await Agent.findOne({
-            where: {
-                user_id: chat_header_result.agent,
-            }
-        });
+        let agent: number | undefined = parseInt(chat_header_result.agent as string, 10);
+
+        const agent_details = await prisma.agent.findFirst({where: { user_id: agent }  });
+        
         if (agent_details) {
             agent_name = agent_details.name;
             profile_picture = agent_details.profile_picture;
@@ -126,10 +110,10 @@ try {
           
         if (chat_body_result) {
             agent_message = chat_body_result.message;
-            await LiveChat.update(
-                { sent_to_user:"yes"},
-                { where: { id: chat_body_result.id } }
-            );
+            await prisma.liveChat.updateMany({
+                where: {  id: chat_body_result.id },
+                data: {  sent_to_user:"yes" },
+            });
         }
         else {
             agent_message = null;
@@ -161,28 +145,36 @@ export const liveChatUser = async (req: Request, res: Response, next: NextFuncti
     const {chatId,user_message, language} = req.body
     try {
         
-        const chat_header_exist = await ChatHeader.findOne({ where: { message_id: chatId } });
+        const chat_header_exist = await prisma.chatHeader.findFirst({where: { message_id: chatId }  });
+        
         if(chat_header_exist){
-            await LiveChat.create({
-                message_id: chatId,
-                sent_by: 'customer',
-                message: user_message,
-                viewed_by_agent : 'no'
-              })
+
+            await prisma.liveChat.create({
+                data: {
+                    message_id: chatId,
+                    sent_by: 'customer',
+                    message: user_message,
+                    viewed_by_agent : 'no'
+                },
+            });
         }
         else{
-            await ChatHeader.create({
-                message_id: chatId,
-                language: language,
-                status: "live",
-                agent: "unassigned",
+            await prisma.chatHeader.create({
+                data: {
+                    message_id: chatId,
+                    language: language,
+                    status: "live",
+                    agent: "unassigned",
+                },
             });
-            await LiveChat.create({
-                message_id: chatId,
-                sent_by: 'customer',
-                message: user_message,
-                viewed_by_agent : 'no'
-              })
+            await prisma.liveChat.create({
+                data: {
+                    message_id: chatId,
+                    sent_by: 'customer',
+                    message: user_message,
+                    viewed_by_agent : 'no'
+                },
+            });
         }
         res.json({ status : "success" });
     }
@@ -195,10 +187,10 @@ export const liveChatUser = async (req: Request, res: Response, next: NextFuncti
 export const saveRating = async (req: Request, res: Response, next: NextFunction) => {
     const {ratingValue,feedbackMessage,chatId} = req.body
     try {
-        await ChatHeader.update(
-            { rating:ratingValue,feedback:feedbackMessage,},
-            { where: { message_id: chatId } }
-        );
+        await prisma.chatHeader.updateMany({
+            where: { message_id: chatId },
+            data: { rating:ratingValue,feedback:feedbackMessage },
+        });
         res.json({ status: "success" })
     }
     catch (error) {
@@ -210,10 +202,10 @@ export const saveRating = async (req: Request, res: Response, next: NextFunction
 export const chatUserClose = async (req: Request, res: Response, next: NextFunction) => {
     const {chatId} = req.body
     try {
-        await ChatHeader.update(
-            { status:"closed"},
-            { where: { message_id: chatId } }
-        );
+        await prisma.chatHeader.updateMany({
+            where: { message_id: chatId },
+            data: { status:"closed" },
+        });
         res.json({ status: "success" })
     }
     catch (error) {
@@ -224,10 +216,10 @@ export const chatUserClose = async (req: Request, res: Response, next: NextFunct
 export const chatTimeOut = async (req: Request, res: Response, next: NextFunction) => {
     const {chatId} = req.body
     try {
-        await ChatHeader.update(
-            { status:"closed",is_time_out:"yes"},
-            { where: { message_id: chatId } }
-        );
+        await prisma.chatHeader.updateMany({
+            where: { message_id: chatId },
+            data: { status:"closed",is_time_out:"yes" },
+        });
         res.json({ status: "success" })
     }
     catch (error) {
@@ -239,20 +231,24 @@ export const chatTimeOut = async (req: Request, res: Response, next: NextFunctio
 export const offlineFormSubmissions = async (req: Request, res: Response, next: NextFunction) => {
     const {chatId, name, email, subject, message} = req.body
     try {
-        const is_form_exist = await OfflineFormSubmissions.findOne({ where: { chatId: 1 } });
+        const is_form_exist = await prisma.offlineFormSubmissions.findFirst({where: { chat_id: chatId }  });
+        
         if(is_form_exist){
             res.json({ status: "fail",message: "You have already submitted this form." })
         }
         else{
-            await OfflineFormSubmissions.create({
-                chatId: 1,
-                name: "test",
-                email: "test",
-                subject: "test",
-                message: "test",
-            })
-            const sector = await Sector.findOne({ where: { sector_name: "Finance" } });
 
+            await prisma.offlineFormSubmissions.create({
+                data: {
+                    chat_id: chatId,
+                    name: "test",
+                    email: "test",
+                    subject: "test",
+                    message: "test",
+                },
+            });
+            const sector = await prisma.sector.findFirst({where: { sector_name: "Finance" }  });
+            
             if(sector){
             const mailOptions = {
                 from: 'mail@dfcc.lk',
@@ -298,12 +294,15 @@ export const directConnectAgent = async (req: Request, res: Response, next: Next
             const prefix = 'chat';
             chatId = `${prefix}_${year}${month}${day}_${hours}${minutes}${seconds}`;
         
-        await ChatHeader.create({
-            message_id: chatId,
-            language: language,
-            status: "live",
-            agent: "unassigned",
+        await prisma.chatHeader.create({
+            data: {
+                message_id: chatId,
+                language: language,
+                status: "live",
+                agent: "unassigned",
+            },
         });
+
         res.json({ status: "success",chatId: chatId })
     }
     catch (error) {

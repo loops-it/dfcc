@@ -2,10 +2,9 @@ import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
 import "dotenv/config";
 import { Request as ExpressRequest, Response } from 'express';
-import File from '../../models/File';
-import BotChats from '../../models/BotChats';
 import {Translate} from '@google-cloud/translate/build/src/v2';
-import Node from '../../models/Node';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
@@ -27,11 +26,14 @@ const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIAL
 
 export const chatResponse = async (req: RequestWithChatId, res: Response) => {
 
-    const intentsList = await Node.findAll({
-        attributes: ['intent'], 
-        group: ['intent'],
-    });
 
+
+    const intentsList = await prisma.node.findMany({
+        distinct: ['intent'],
+        select: {
+        intent: true,
+        },
+      })
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
     const namespace = index.namespace('dfcc-vector-db')
@@ -103,15 +105,15 @@ export const chatResponse = async (req: RequestWithChatId, res: Response) => {
             chatHistory[lastUserIndex].content = translatedQuestion;
             // console.log(chatHistory);
         }
-        await BotChats.create(
-            { 
-            message_id: userChatId,
-            language: language,
-            message: userQuestion,
-            message_sent_by: 'customer',
-            viewed_by_admin: 'no',
+        await prisma.botChats.create({
+            data: {
+                message_id: userChatId,
+                language: language,
+                message: userQuestion,
+                message_sent_by: "customer",
+                viewed_by_admin: "no",
             },
-        );
+          });
 
         let kValue = 2
 
@@ -255,15 +257,15 @@ Standalone question:`
             // }
             // await processRequest(translatedQuestion, userChatId);
 
-            await BotChats.create(
-                { 
-                message_id: userChatId,
-                language: language,
-                message: translatedResponse,
-                message_sent_by: 'bot',
-                viewed_by_admin: 'no',
+            await prisma.botChats.create({
+                data: {
+                    message_id: userChatId,
+                    language: language,
+                    message: translatedResponse,
+                    message_sent_by: "bot",
+                    viewed_by_admin: "no",
                 },
-            );
+              });
             console.log("botResponse",botResponse);
             // console.log("translatedResponse",translatedResponse);
             res.json({ answer: translatedResponse, chatHistory: chatHistory, chatId: userChatId });
