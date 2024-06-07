@@ -23,7 +23,8 @@ export const sectorAdd = async (req: Request, res: Response) => {
 
 
 export const sectorEdit = async (req: Request, res: Response) => {
-  const {sector_name, email, id} = req.body;
+  const {sector_name, email} = req.body;
+  let id: number | undefined = parseInt(req.body.id as string, 10);
   //console.log(req.body);
   try {
       await prisma.sector.updateMany({
