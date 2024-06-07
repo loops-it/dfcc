@@ -49,8 +49,8 @@ export const agentCreateAccount = async (req: Request, res: Response) => {
 };
 
 export const agentUpdateAccount = async (req: Request, res: Response, next: Function) => {
-  const {agent_name, phone, email, user_id,language} = req.body
-
+  const {agent_name, phone, email,language} = req.body
+  let user_id: number | undefined = parseInt(req.body.user_id as string, 10);
   try {
     const email_exist = await prisma.user.findFirst({
       where: { email: email },
@@ -112,7 +112,8 @@ export const agentUpdateAccount = async (req: Request, res: Response, next: Func
 };
 
 export const agentUpdateWithPassword = async (req: Request, res: Response, next: Function) => {
-  const {agent_name, phone, email, user_id, password,language} = req.body
+  const {agent_name, phone, email, password,language} = req.body
+  let user_id: number | undefined = parseInt(req.body.user_id as string, 10);
   const crypt_password = await (bcrypt.hash(password, 10));
   try {
     const email_exist = await prisma.user.findFirst({

@@ -10,10 +10,6 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-interface UserDecodedToken extends JwtPayload {
-  id: string;
-  // Add other properties if needed
-}
 export const adminAccountCreate = async (req: Request, res: Response, next: Function) => {
     let name = req.body.name;
     let phone = req.body.phone;
@@ -54,8 +50,8 @@ export const adminAccountCreate = async (req: Request, res: Response, next: Func
   };
   
   export const adminUpdate = async (req: Request, res: Response, next: Function) => {
-    const {admin_name, phone, email, user_id} = req.body
-
+    const {admin_name, phone, email} = req.body
+    let user_id: number | undefined = parseInt(req.body.user_id as string, 10);
     try {
       const email_exist = await prisma.user.findFirst({
         where: { email: email },
@@ -98,8 +94,8 @@ export const adminAccountCreate = async (req: Request, res: Response, next: Func
   };
 
   export const matchPassword = async (req: Request, res: Response, next: Function) => {
-    const {current_password, user_id} = req.body
-
+    const {current_password} = req.body
+    let user_id: number | undefined = parseInt(req.body.user_id as string, 10);
     try {
 
       const user = await prisma.user.findFirst({
