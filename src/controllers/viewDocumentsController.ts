@@ -35,7 +35,7 @@ export const viewDocuments = async (req: Request, res: Response) => {
             console.log(ids);
             if(ids.length === 0){
               
-                res.render('viewVectors', { title: 'All Documents', vectors :null });
+                res.render('viewVectors', { title: 'All Documents', vectors: [] });
             }
             else{
                 const fetchResult = await index.namespace('dfcc-vector-db').fetch(ids);
