@@ -283,6 +283,7 @@ export const offlineFormSubmissions = async (req: Request, res: Response, next: 
                     : translationsToEng;
                 return finalMessage;
             }
+            console.log("translatedMessage",translatedMessage);
 
             const prompt = `Compare the given user message: "${translatedMessage}" with the sector list: ${JSON.stringify(sectorList)} and if the user message matches a sector in the sector list, then give only the id in that sector list. Do not state anything else. if you cannot find a match then just say "not a sector".`;
 
@@ -293,6 +294,9 @@ export const offlineFormSubmissions = async (req: Request, res: Response, next: 
                 temperature: 0,
             });
             let isSectorAnswer: string | null = isSector.choices[0].text;
+
+            console.log("isSectorAnswer",isSectorAnswer);
+            
             if (isSectorAnswer && (await isSectorAnswer).toLowerCase().includes("not a sector")) {
                 res.json({ status: "fail",message: "Sector not found." })
             }
