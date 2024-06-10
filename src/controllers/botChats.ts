@@ -32,7 +32,7 @@ export const botChatsOnload = async (req: Request, res: Response, next: NextFunc
         if(lastMessage){
           const timestamp = new Date("'"+lastMessage.created_at+"'");
           time = timestamp.toLocaleTimeString([], { timeStyle: 'short' }); 
-          message = lastMessage[0].message.slice(0, 30);
+          message = lastMessage.message.slice(0, 30);
         }
          
         chat += `<div class="p-20 bb-1 d-flex align-items-center justify-content-between pull-up" onclick="GetAllChats('`+chats[i].message_id+`')">
@@ -161,7 +161,7 @@ export const botChatsRefresh = async (req: Request, res: Response, next: NextFun
         if(lastMessage){
           const timestamp = new Date("'"+lastMessage.created_at+"'");
           time = timestamp.toLocaleTimeString([], { timeStyle: 'short' }); 
-          message = lastMessage[0].message.slice(0, 30);
+          message = lastMessage.message.slice(0, 30);
         }
         chat += `<div class="p-20 bb-1 d-flex align-items-center justify-content-between pull-up" onclick="GetAllChats('`+chats[i].message_id+`')">
         <div class="d-flex align-items-center">

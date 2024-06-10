@@ -23,7 +23,7 @@ export const LiveChatHistoryOnload = async (req: Request, res: Response, next: N
         if(lastMessage){
           const timestamp = new Date("'"+lastMessage.created_at+"'");
           time = timestamp.toLocaleTimeString([], { timeStyle: 'short' }); 
-          message = lastMessage[0].message.slice(0, 30);
+          message = lastMessage.message.slice(0, 30);
         }
 
         chat += `<div class="p-20 bb-1 d-flex align-items-center justify-content-between pull-up" onclick="GetLiveAllChats('`+chats[i].message_id+`')">
@@ -124,7 +124,7 @@ export const LiveChatHistoryRefresh = async (req: Request, res: Response, next: 
       if(lastMessage){
         const timestamp = new Date("'"+lastMessage.created_at+"'");
         time = timestamp.toLocaleTimeString([], { timeStyle: 'short' }); 
-        message = lastMessage[0].message.slice(0, 30);
+        message = lastMessage.message.slice(0, 30);
       }
       chat += `<div class="p-20 bb-1 d-flex align-items-center justify-content-between pull-up" onclick="GetLiveAllChats('`+chats[i].message_id+`')">
         <div class="d-flex align-items-center">
