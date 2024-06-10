@@ -404,10 +404,10 @@ function startCheckingForAgent(data) {
             if (response.ok) {
                 const responseData = await response.json();
                 console.log("responseData agent: ",responseData.body)
-                if (response.status  === 'success'){
-                    console.log("response.status - ", response.status)
-                } else if(response.status === 'failed'){
-                    console.log("response.status failed - ", response.status)
+                if (responseData.status  === 'success'){
+                    console.log("response.status - ", responseData.status)
+                } else if(responseData.status === 'failed'){
+                    console.log("response.status failed - ", responseData.status)
                 }
                 //status
                 if (responseData.agent_id !== "unassigned") {
