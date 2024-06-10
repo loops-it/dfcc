@@ -67,6 +67,15 @@ app.use(session({
 app.use(flash());
 // Routes
 app.use('/', indexRouter);
+app.get('/flow-english',adminLogged, async (req: Request, res: Response) => {
+  res.render('flow-english');
+});
+app.get('/flow-sinhala',adminLogged, async (req: Request, res: Response) => {
+  res.render('flow-sinhala');
+});
+app.get('/flow-tamil',adminLogged, async (req: Request, res: Response) => {
+  res.render('flow-tamil');
+});
 
 app.use('/bot-flow-test', getBotFlowPage);
 app.post('/api/chat-response-flow', chatFlowResponse);
