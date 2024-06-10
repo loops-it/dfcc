@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import OpenAI from "openai";
 import bcrypt from 'bcrypt';
+import { Translate } from "@google-cloud/translate/build/src/v2";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import * as nodemailer from 'nodemailer';
 import { PrismaClient } from '@prisma/client';
@@ -18,6 +20,10 @@ var transport = nodemailer.createTransport({
       pass: "4ad3976e23311c"
     }
   });
+  const translate = new Translate({
+    key: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export const switchToAgent = async (req: Request, res: Response, next: NextFunction) => {
     const {chatId} = req.body
@@ -229,7 +235,7 @@ export const chatTimeOut = async (req: Request, res: Response, next: NextFunctio
 };
 
 export const offlineFormSubmissions = async (req: Request, res: Response, next: NextFunction) => {
-    const {chatId, name, email, subject, message} = req.body
+    const {chatId, name, email, subject, message, language} = req.body
     try {
         const is_form_exist = await prisma.offlineFormSubmissions.findFirst({where: { chat_id: chatId }  });
         
@@ -241,20 +247,77 @@ export const offlineFormSubmissions = async (req: Request, res: Response, next: 
             await prisma.offlineFormSubmissions.create({
                 data: {
                     chat_id: chatId,
-                    name: "test",
-                    email: "test",
-                    subject: "test",
-                    message: "test",
+                    name: name,
+                    email: email,
+                    subject: subject,
+                    message: message,
                 },
             });
-            const sector = await prisma.sector.findFirst({where: { sector_name: "Finance" }  });
+
+            const sectorsArray = await prisma.sector.findMany({
+                distinct: ['sector_name'],
+                select: {
+                  id: true,
+                  sector_name: true,
+                },
+              });
+
+            const sectorList = sectorsArray.map(item => ({
+                sector: item.sector_name,
+                id: item.id
+            }));
+
+            let translatedMessage = "";
+            
+            if (language == "Sinhala") {
+                translatedMessage = await translateToEnglish(message);
+            } else if (language === "Tamil") {
+                translatedMessage = await translateToEnglish(message);
+            } else {
+                translatedMessage = message;
+            }
+            async function translateToEnglish(message: string) {
+                const [translationsToEng] = await translate.translate(message, "en");
+                const finalMessage = Array.isArray(translationsToEng)
+                    ? translationsToEng.join(", ")
+                    : translationsToEng;
+                return finalMessage;
+            }
+
+            const prompt = `Compare the given user message: "${translatedMessage}" with the sector list: ${JSON.stringify(sectorList)} and if the user message matches a sector in the sector list, then give only the id in that sector list. Do not state anything else. if you cannot find a match then just say "not a sector".`;
+
+            const isSector = await openai.completions.create({
+                model: "gpt-3.5-turbo-instruct",
+                prompt: prompt,
+                max_tokens: 20,
+                temperature: 0,
+            });
+            let isSectorAnswer: string | null = isSector.choices[0].text;
+            if (isSectorAnswer && (await isSectorAnswer).toLowerCase().includes("not a sector")) {
+                res.json({ status: "fail",message: "Sector not found." })
+            }
+            else{ 
+            const sector_id = (isSectorAnswer).trim().toLowerCase();
+            let id: number | undefined = parseInt(sector_id as string, 10);
+
+            const sector = await prisma.sector.findFirst({where: { id: id }  });
             
             if(sector){
+                const emailText = `
+                    New offline form submission:
+
+                    Chat ID: ${chatId}
+                    Name: ${name}
+                    Email: ${email}
+                    Subject: ${subject}
+                    Message: ${message}
+                `;
+
             const mailOptions = {
                 from: 'mail@dfcc.lk',
                 to: sector.email,
                 subject: 'Offline Form Submission',
-                text: 'Test user message.'
+                text: emailText
             };
 
             transport.sendMail(mailOptions, (error, info) => {
@@ -269,8 +332,9 @@ export const offlineFormSubmissions = async (req: Request, res: Response, next: 
             }
             else{
             res.json({ status: "fail",message: "Sector not found." })
-            }
-            
+            }   
+        }
+
         }     
     }
     catch (error) {
