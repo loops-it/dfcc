@@ -401,6 +401,8 @@ function startCheckingForAgent(data) {
                 body: JSON.stringify({ chatId: data.chatId }),
             });
 
+            console.log("response Data agent --: ",response.body)
+
             if (response.ok) {
                 const responseData = await response.json();
                 console.log("responseData agent: ",responseData.body)
