@@ -365,8 +365,8 @@ app.get('/manage-agents',adminLogged, async (req: Request, res: Response) => {
   res.render('manage-agents', {agents: agents});
 });
   app.get('/deactivate-agent/:id', adminLogged, async (req: Request, res: Response) => {
-    let user_id: number | undefined = parseInt(req.query.id as string, 10);
-
+    //let user_id: number | undefined = parseInt(req.query.id as string, 10);
+    let user_id =  parseInt(req.params.id, 10);;
     await prisma.agent.updateMany({
         where: { user_id: user_id },
         data: { status: "inactive" },
@@ -379,8 +379,8 @@ app.get('/manage-agents',adminLogged, async (req: Request, res: Response) => {
     res.redirect("/manage-agents");
 });
 app.get('/activate-agent/:id', adminLogged, async (req: Request, res: Response) => {
-  let user_id: number | undefined = parseInt(req.query.id as string, 10);
-
+  //let user_id: number | undefined = parseInt(req.query.id as string, 10);
+  let user_id =  parseInt(req.params.id, 10);;
   await prisma.agent.updateMany({
       where: { user_id: user_id },
       data: { status: "active" },
