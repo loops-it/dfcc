@@ -15,36 +15,6 @@ function setFormattedOpenedTime() {
 setFormattedOpenedTime();
 
 
-// const singlishToSinhala = {
-//     'yaa': 'යා', 'ko': 'කො', 'ho': 'හො', 'a': 'අ', 'aa': 'ආ', 'ae': 'ඇ', 'aee': 'ඈ', 'i': 'ඉ', 'ii': 'ඊ', 'u': 'උ', 'uu': 'ඌ', 
-//     'e': 'එ', 'ee': 'ඒ', 'ai': 'ඓ', 'o': 'ඔ', 'oo': 'ඕ', 'au': 'ඖ', 'k': 'ක', 'kh': 'ඛ', 
-//     'g': 'ග', 'gh': 'ඝ', 'ng': 'ඞ', 'ch': 'ච', 'chh': 'ඡ', 'j': 'ජ', 'jh': 'ඣ', 'ny': 'ඤ', 
-//     't': 'ට', 'tha': 'ඨ', 'da': 'ඩ', 'dha': 'ඪ', 'n': 'ණ', 'th': 'ත', 'd': 'ද', 'dha': 'ධ', 
-//     'na': 'න', 'p': 'ප', 'ph': 'ඵ', 'b': 'බ', 'bh': 'භ', 'm': 'ම', 'y': 'ය', 'r': 'ර', 
-//     'l': 'ල', 'v': 'ව', 'sh': 'ශ', 'ss': 'ෂ', 's': 'ස', 'h': 'හ', 'la': 'ළ', 'f': 'ෆ', 
-
-// };
-
-//         function transliterate() {
-//             let singlishText = document.getElementById('question').value;
-//             let words = singlishText.split(' ');
-//             let transliteratedWords = words.map(word => {
-//                 let sinhalaWord = word;
-//                 const keys = Object.keys(singlishToSinhala).sort((a, b) => b.length - a.length);
-//                 for (const singlish of keys) {
-//                     const sinhala = singlishToSinhala[singlish];
-//                     let regex = new RegExp(singlish, 'g');
-//                     sinhalaWord = sinhalaWord.replace(regex, sinhala);
-//                 }
-//                 return sinhalaWord;
-//             });
-//             document.getElementById('question').value = transliteratedWords.join(' ');
-//         }
-
-//         document.getElementById('question').addEventListener('input', transliterate);
-
-
-
 
 // Define global variables
 let chatHistory = [];
@@ -177,7 +147,7 @@ function appendMessageToResponse(role, content, data, isRatingForm = false) {
     }
 
     if (isRatingForm) {
-        appendRatingForm(messageDiv, content);
+        appendRatingForm(messageDiv);
     }
 
     resetChatTimeout();
@@ -213,6 +183,7 @@ function createMessageDiv(role, content) {
 
     return messageDiv;
 }
+
 
 function createMessageImage(role) {
     const image = document.createElement("img");
@@ -400,122 +371,122 @@ function startCheckingForAgent(data) {
     }, 120000);
 }
 
-// function appendProductContent(messageDiv, content, data) {
-//     messageDiv.innerHTML = `
-//       <button id="ProductButton" class="viewProductsBtn">View product & services</button>
-//       <div>${content}</div>`;
-//     const productButton = messageDiv.querySelector("#ProductButton");
-//     productButton.addEventListener("click", handleProductButtonClick(data));
-// }
+function appendProductContent(messageDiv, content, data) {
+    messageDiv.innerHTML = `
+      <button id="ProductButton" class="viewProductsBtn">View product & services</button>
+      <div>${content}</div>`;
+    const productButton = messageDiv.querySelector("#ProductButton");
+    productButton.addEventListener("click", handleProductButtonClick(data));
+}
 
-// function handleProductButtonClick(data) {
-//     return async function () {
-//         try {
-//             const response = await fetch("/chat-bot-get-intent-data", {
-//                 method: "POST",
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 body: JSON.stringify({ intent: "saving accounts" }),
-//             });
-//             const responseData = await response.json();
-//             console.log("product data : ", responseData.products);
+function handleProductButtonClick(data) {
+    return async function () {
+        try {
+            const response = await fetch("/chat-bot-get-intent-data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ intent: "saving accounts" }),
+            });
+            const responseData = await response.json();
+            console.log("product data : ", responseData.products);
 
-//             // Iterate over responseData.products and log the type of each item
-//             // responseData.products.forEach(item => {
-//             //     if (item.type == "textOnly") {
-//             //         console.log("text only :", item.node_data);
-//             //     }
-//             //     else if (item.type == "textinput") {
-//             //         console.log("text input:", item.node_data);
-//             //     }
-//             //     else if (item.type == "cardStyleOne") {
-//             //         console.log("text input:", item.node_data);
-//             //     }
-//             //     else if (item.type == "cardGroup") {
-//             //         console.log("text input:", item.node_data);
-//             //     }
-//             //     else{
-//             //         console.log("no data found");
-//             //     }
-//             // });
-
-
-//             const currentTime = new Date();
-//             let hours = currentTime.getHours();
-//             const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-//             const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-//             const ampm = hours >= 12 ? 'PM' : 'AM';
-//             hours = hours % 12;
-//             hours = hours ? hours : 12; // the hour '0' should be '12'
-//             const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
-
-//             const textOnlyItems = [];
-//             const textInputItems = [];
-//             const cardStyleOneItems = [];
-//             const cardGroupItems = [];
-//             responseData.products.forEach(item => {
-//                 switch (item.type) {
-//                     case "textOnly":
-//                         textOnlyItems.push(item.node_data);
-//                         console.log("textOnly : ", item.node_data)
-//                         break;
-//                     case "textinput":
-//                         textInputItems.push(item.node_data);
-//                         console.log("textinput : ", item.node_data)
-//                         break;
-//                     case "cardStyleOne":
-//                         cardStyleOneItems.push(item.node_data);
-//                         console.log("cardStyleOne : ", item.node_data)
-//                         break;
-//                     case "cardGroup":
-//                         cardGroupItems.push(item.node_data);
-//                         console.log("cardGroup : ", item.node_data)
-//                         break;
-//                     default:
-//                         console.log("no data found");
-//                 }
-//             });
-
-//             // Generate HTML for each type of item
-//             const textOnlyHTML = textOnlyItems.map(item => `
-//             <p>text: ${item.text}<br>id: ${item.node_id}</p>
-//             `).join("");
-
-//             const textInputHTML = textInputItems.map(item => `<p>title: ${item.title || 'N/A'}<br>description: ${item.description || 'N/A'}<br>id: ${item.node_id}</p>`).join("");
-//             const cardStyleOneHTML = cardStyleOneItems.map(item => `
-//             <p>title: ${item.title || 'N/A'}<br>
-//             description: ${item.description || 'N/A'}<br>
-//             id: ${item.node_id} <br>
-//             image: ${item.image || 'N/A'} </p>
-
-//             <div class="product-card">
-//             <img src="" alt="" />
-//             </div>
-
-//             `).join("");
-
-//             // Add HTML generation for cardStyleOne and cardGroup if needed
-
-//             // Append HTML for each type of item to the messageDiv
-//             if (textOnlyHTML) {
-//                 appendMessageToResponse("bot", `<p>Text Only Items:</p>${textOnlyHTML}`);
-//             }
-//             if (textInputHTML) {
-//                 appendMessageToResponse("bot", `<p>Text Input Items:</p>${textInputHTML}`);
-//             }
-//             if (cardStyleOneHTML) {
-//                 appendMessageToResponse("bot", `<p>Card Style One Items:</p>${cardStyleOneHTML}`);
-//             }
+            // Iterate over responseData.products and log the type of each item
+            // responseData.products.forEach(item => {
+            //     if (item.type == "textOnly") {
+            //         console.log("text only :", item.node_data);
+            //     }
+            //     else if (item.type == "textinput") {
+            //         console.log("text input:", item.node_data);
+            //     }
+            //     else if (item.type == "cardStyleOne") {
+            //         console.log("text input:", item.node_data);
+            //     }
+            //     else if (item.type == "cardGroup") {
+            //         console.log("text input:", item.node_data);
+            //     }
+            //     else{
+            //         console.log("no data found");
+            //     }
+            // });
 
 
+            const currentTime = new Date();
+            let hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+            const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+            const textOnlyItems = [];
+            const textInputItems = [];
+            const cardStyleOneItems = [];
+            const cardGroupItems = [];
+            responseData.products.forEach(item => {
+                switch (item.type) {
+                    case "textOnly":
+                        textOnlyItems.push(item.node_data);
+                        console.log("textOnly : ", item.node_data)
+                        break;
+                    case "textinput":
+                        textInputItems.push(item.node_data);
+                        console.log("textinput : ", item.node_data)
+                        break;
+                    case "cardStyleOne":
+                        cardStyleOneItems.push(item.node_data);
+                        console.log("cardStyleOne : ", item.node_data)
+                        break;
+                    case "cardGroup":
+                        cardGroupItems.push(item.node_data);
+                        console.log("cardGroup : ", item.node_data)
+                        break;
+                    default:
+                        console.log("no data found");
+                }
+            });
+
+            // Generate HTML for each type of item
+            const textOnlyHTML = textOnlyItems.map(item => `
+            <p>text: ${item.text}<br>id: ${item.node_id}</p>
+            `).join("");
+
+            const textInputHTML = textInputItems.map(item => `<p>title: ${item.title || 'N/A'}<br>description: ${item.description || 'N/A'}<br>id: ${item.node_id}</p>`).join("");
+            const cardStyleOneHTML = cardStyleOneItems.map(item => `
+            <p>title: ${item.title || 'N/A'}<br>
+            description: ${item.description || 'N/A'}<br>
+            id: ${item.node_id} <br>
+            image: ${item.image || 'N/A'} </p>
+
+            <div class="product-card">
+            <img src="" alt="" />
+            </div>
+
+            `).join("");
+
+            // Add HTML generation for cardStyleOne and cardGroup if needed
+
+            // Append HTML for each type of item to the messageDiv
+            if (textOnlyHTML) {
+                appendMessageToResponse("bot", `<p>Text Only Items:</p>${textOnlyHTML}`);
+            }
+            if (textInputHTML) {
+                appendMessageToResponse("bot", `<p>Text Input Items:</p>${textInputHTML}`);
+            }
+            if (cardStyleOneHTML) {
+                appendMessageToResponse("bot", `<p>Card Style One Items:</p>${cardStyleOneHTML}`);
+            }
 
 
-//         } catch (error) {
-//             console.error("Error fetching products data:", error);
-//         }
-//     };
-// }
+
+
+        } catch (error) {
+            console.error("Error fetching products data:", error);
+        }
+    };
+}
 
 function appendPlainTextContent(messageDiv, content) {
     const currentTime = new Date();
@@ -529,27 +500,17 @@ function appendPlainTextContent(messageDiv, content) {
 
     messageDiv.innerHTML = `<div class="messageWrapper">
         <span class="botname-message">${formattedTime}</span>
-        <div class="contentWrapperProduct">
+        <div>
           <p class="mb-0">${content}</p>
         </div>
       </div>`;
 }
 
 function appendRatingForm(messageDiv) {
-
-    const currentTime = new Date();
-    let hours = currentTime.getHours();
-    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
-
     const ratingFormHTML = `
       <div class="star-rating-form d-flex flex-column px-2 py-3 mt-3" style="margin-bottom: 10px;">
         <label for="rating">Rate your experience:</label>
-        <div class="rating-icons d-flex flex-row" style="border: none !important;">
+        <div class="rating-icons" style="border: none !important;">
           <i class="bi bi-star rating-icon"></i>
           <i class="bi bi-star rating-icon"></i>
           <i class="bi bi-star rating-icon"></i>
@@ -558,7 +519,7 @@ function appendRatingForm(messageDiv) {
         </div>
         <input type="hidden" id="rating" name="rating" value="0">
         <textarea type="text" id="feedbackMessage" name="feedbackMessage" class="feedbackMessage mb-2"></textarea>
-        <button id="submitRatingButton" class="btnRatingView" onclick="handleRatingSubmission()">Submit</button>
+        <button id="submitRatingButton" class="btnNotoClose" onclick="handleRatingSubmission()">Submit</button>
       </div>
     `;
 
@@ -566,13 +527,12 @@ function appendRatingForm(messageDiv) {
 
     messageDiv.innerHTML = `<div class="messageWrapper">
     <span class="botname-message">${formattedTime}</span>
-    <div class="ratingFormTest">
-      <p class="mb-0">Please rate your chat experience:</p>
+    <div>
+      <p class="mb-0">${content}</p>
     </div>
-    ${ratingFormHTML}
   </div>`;
 
-    // messageDiv.innerHTML += ratingFormHTML;
+    messageDiv.innerHTML += ratingFormHTML;
 
     addRatingIconEventListeners(messageDiv);
 }
@@ -646,25 +606,12 @@ document
     .getElementById("questionForm")
     .addEventListener("submit", async function (event) {
         event.preventDefault();
-        const selectedLanguageLocal = localStorage.getItem("selectedLanguage");
-        
         const questionInput = document.getElementById("question");
+        const question = questionInput.value;
 
-        let question;
-        let selectedLanguage
-        if (selectedLanguageLocal === "Singlish") {
-            question = questionInput.value;
-            selectedLanguage = "Sinhala"
-        }else if (selectedLanguageLocal === "Tanglish") {
-            question = questionInput.value;
-            selectedLanguage = "Tamil"
-        } else {
-            question = questionInput.value;
-            selectedLanguage = selectedLanguageLocal
-        }
-        console.log("Question:", question);
-        console.log("selected Language:", selectedLanguage);
-        
+        document.getElementById("question").value = "";
+
+        const selectedLanguage = localStorage.getItem("selectedLanguage");
         // Add the user's question to the chat history
         chatHistory.push({ role: "user", content: question });
 
@@ -737,9 +684,9 @@ document
                             case 'buttonGroup':
                                 const buttonsHTML = item.node_data.map(buttonItem => {
                                     if (buttonItem.button.link) {
-                                        return `
+                                        return `<div class="linkWrapper">
                                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                        `;
+                                        </div>`;
                                     } else {
                                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                                     }
@@ -753,16 +700,42 @@ document
                                 return `
                                     <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
                                         <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <p class="px-2" style="min-width: 250px">${item.node_data.title}</p>
-                                            <p class="px-2" style="min-width: 250px">${item.node_data.description}</p>
+                                            <p class="px-2">${item.node_data.title}</p>
+                                            <p class="px-2">${item.node_data.description}</p>
                                         </div>
                                     </div>`;
+
+                            // case 'cardGroup':
+                            //     const buttonsMainCardHTML = item.node_data.map(buttonItem =>
+                            //         {
+                            //             if (buttonItem.button.link) {
+                            //                 return `<div class="linkWrapper">
+                            //                 <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                            //             </div>`;
+                            //             } else {
+                            //                 return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                            //             }
+                            //         }).join('');
+                            //     return `
+                            //         <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                            //             <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                            //                 <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                            //                 <div class="cardGroup px-2" style="box-shadow: none !important">
+                            //                     <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
+                            //                     <p class="px-2">${item.node_data[0].card.description}</p>
+                            //                     <div class="buttonGroup p-0" style="box-shadow: none !important">
+                            //                     ${buttonsMainCardHTML}
+                            //                     </div>
+                            //                 </div>
+                            //             </div>
+                            //         </div>`;
+
                             case 'cardGroup':
                                 const buttonsMainCardHTML = item.node_data.map(buttonItem => {
                                     if (buttonItem.button && buttonItem.button.link) {
-                                        return `
+                                        return `<div class="linkWrapper">
                                                     <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                `;
+                                                </div>`;
                                     } else if (buttonItem.button) {
                                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                                     }
@@ -784,7 +757,7 @@ document
                             case 'textOnly':
                                 if (item.node_data.text.includes('●')) {
                                     const bulletPoints = item.node_data.text.split('●').filter(point => point.trim() !== '');
-                                    const bulletPointsHTML = bulletPoints.map(point => `<li class="mb-2" style="min-width: 250px">${point.trim()}</li>`).join('');
+                                    const bulletPointsHTML = bulletPoints.map(point => `<li class="mb-2">${point.trim()}</li>`).join('');
                                     return `
                                         <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
                                             <ul class="px-3 py-2">${bulletPointsHTML}</ul>
@@ -792,9 +765,10 @@ document
                                 } else {
                                     return `
                                         <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
+                                            <p class="px-2">${item.node_data.text}</p>
                                         </div>`;
                                 };
+
                             case 'cardStyleOne':
                                 return `
                                 <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
@@ -808,8 +782,12 @@ document
                                 </div>`;
                             default:
                                 return '';
+
                         }
                     }
+
+
+
 
 
                     async function sendNodeId(nodeId) {
@@ -824,110 +802,221 @@ document
                         const data = await response.json();
                         console.log("node data === ", data)
 
+                        // const generateHTMLForData = (items) => {
+                        //     return items.map((item, index) => {
+                        //         switch (item.type) {
+                        //             case 'cardGroup':
+                        //                 console.log("type : ", item.source_data)
+                        //                 const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
+                        //                     if (buttonItem.button.link) {
+                        //                         return `
+                        //                         <div class="linkWrapper p-0">
+                        //                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        //                         </div>`;
+                        //                     } else {
+                        //                         return `<div class="linkWrapper">
+                        //                         <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
+                        //                         </div>`;
+                        //                     }
+                        //                 }).join('');
+
+                        //                 // ${item.source_data.slice(1).map(buttonItem => `<button id="${buttonItem.button.node_id}" class="mb-2">${buttonItem.button.text}</button>`).join('')}
+                        //                 return `
+                        //                 <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                         <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        //                         <div class="cardGroup px-2" style="box-shadow: none !important">
+                        //                             <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                        //                             <p class="px-2">${item.source_data[0].card.description}</p>
+                        //                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+                        //                             ${buttonsCardHTML}
+                        //                             </div>
+                        //                         </div>
+                        //                     </div>
+                        //                 </div>`;
+                        //             case 'buttonGroup':
+                        //                 const buttonsGroupHTML = item.source_data.slice(0).map(buttonItem => {
+                        //                     if (buttonItem.button.link) {
+                        //                         return `
+                        //                         <div class="linkWrapper">
+                        //                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        //                         </div>`;
+                        //                     } else {
+                        //                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                        //                     }
+                        //                 }).join('');
+
+                        //                 return `
+                        //                     <div class="buttonGroup p-0" style="box-shadow: none !important">
+                        //                         ${buttonsGroupHTML}
+                        //                     </div>`;
+                        //             case 'textOnly':
+                        //                 console.log("text only : ", item)
+                        //                 return `
+                        //                 <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                         <p class="px-2 mb-0">${item.source_data.text}</p>
+                        //                     </div>
+                        //                 </div>`;
+
+                        //             case 'textinput':
+                        //                 console.log("text input : ", item.source_data)
+                        //                 return `
+                        //                 <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                     <p class="px-2 ">${item.source_data.title}</p>
+                        //                     <p class="px-2 mb-0">${item.source_data.description}</p>
+                        //                 </div>
+                        //             </div>`;
+                        //             case 'cardStyleOne':
+                        //                 return `
+                        //                             <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                                     <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        //                                     <div class="cardGroup px-2" style="box-shadow: none !important">
+                        //                                         <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                        //                                         <p class="px-2">${item.source_data[0].card.description}</p>
+                        //                                     </div>
+                        //                                 </div>
+                        //                             </div>`;
+                        //             default:
+                        //                 return '';
+                        //         }
+                        //     }).join("");
+                        // }
+
+                        // const carouselDataHTML = generateHTMLForData(data.sourceData);
+
+                        // if (data.sourceData.length > 1) {
+                        //     console.log("length : ", data.sourceData.length)
+                        //     const uniqueCarouselId = `carousel-${Date.now()}`;
+                        //     appendMessageToResponse("product", `
+                        //         <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                        //             <div class="carousel-inner p-0">
+                        //             ${carouselDataHTML}
+                        //             </div>
+                        //             <button class="carousel-control-prev" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="prev">
+                        //                 <i class="bi bi-caret-left-fill text-danger"></i>
+                        //                 <span class="visually-hidden">Previous</span>
+                        //             </button>
+                        //             <button class="carousel-control-next" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="next">
+                        //                 <i class="bi bi-caret-right-fill text-danger"></i>
+                        //                 <span class="visually-hidden">Next</span>
+                        //             </button>
+                        //         </div>
+                        //     `);
+                        // } else if (data.sourceData.length === 1) {
+                        //     appendMessageToResponse("product", `
+                        //         <div>
+                        //             ${carouselDataHTML}
+                        //         </div>
+                        //     `);
+                        // }
+
                         const generateHTMLForData = (items) => {
-                            return items.map((item, index) => {
-                                switch (item.type) {
-                                    case 'cardGroup':
-                                        const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
-                                            if (buttonItem.button.link) {
-                                                return `
-                                                    
-                                                        <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                    `;
-                                            } else {
-                                                return `
-                                                            <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
-                                                        `;
-                                            }
-                                        }).join('');
+    return items.map((item, index) => {
+        switch (item.type) {
+            case 'cardGroup':
+                const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
+                    if (buttonItem.button.link) {
+                        return `
+                        <div class="linkWrapper p-0">
+                            <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        </div>`;
+                    } else {
+                        return `<div class="linkWrapper">
+                        <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
+                        </div>`;
+                    }
+                }).join('');
 
-                                        return `
-                                                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                        <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                                        <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                            <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
-                                                            <p class="px-2">${item.source_data[0].card.description}</p>
-                                                            <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                                            ${buttonsCardHTML}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>`;
-                                    case 'buttonGroup':
-                                        const buttonsGroupHTML = item.source_data.slice(0).map(buttonItem => {
-                                            if (buttonItem.button.link) {
-                                                return `
-                                                        
-                                                            <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                        `;
-                                            } else {
-                                                return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
-                                            }
-                                        }).join('');
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                            <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                            <p class="px-2">${item.source_data[0].card.description}</p>
+                            <div class="buttonGroup p-0" style="box-shadow: none !important">
+                            ${buttonsCardHTML}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            case 'buttonGroup':
+                const buttonsGroupHTML = item.source_data.slice(0).map(buttonItem => {
+                    if (buttonItem.button.link) {
+                        return `
+                        <div class="linkWrapper">
+                            <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        </div>`;
+                    } else {
+                        return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                    }
+                }).join('');
 
-                                        return `
+                return `
                     <div class="buttonGroup p-0" style="box-shadow: none !important">
                         ${buttonsGroupHTML}
                     </div>`;
-                                    case 'textOnly':
-                                        return `
-                                            <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                                <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                    <p class="px-2 mb-0">${item.source_data.text}</p>
-                                                </div>
-                                            </div>`;
-                                    case 'textinput':
-                                        return `
-                                                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                                <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                    <p class="px-2 ">${item.source_data.title}</p>
-                                                    <p class="px-2 mb-0">${item.source_data.description}</p>
-                                                </div>
-                                            </div>`;
-                                    case 'cardStyleOne':
-                                        return `
-                                            <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                                <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                    <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                                    <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                        <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
-                                                        <p class="px-2">${item.source_data[0].card.description}</p>
-                                                    </div>
-                                                </div>
-                                            </div>`;
-                                    default:
-                                        return '';
-                                }
-                            }).join("");
-                        }
+            case 'textOnly':
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <p class="px-2 mb-0">${item.source_data.text}</p>
+                    </div>
+                </div>`;
+            case 'textinput':
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                    <p class="px-2 ">${item.source_data.title}</p>
+                    <p class="px-2 mb-0">${item.source_data.description}</p>
+                </div>
+            </div>`;
+            case 'cardStyleOne':
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                            <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                            <p class="px-2">${item.source_data[0].card.description}</p>
+                        </div>
+                    </div>
+                </div>`;
+            default:
+                return '';
+        }
+    }).join("");
+}
 
-                        const carouselDataHTML = generateHTMLForData(data.sourceData);
+const carouselDataHTML = generateHTMLForData(data.sourceData);
 
-                        if (data.sourceData.length > 1) {
-                            const uniqueCarouselId = `carousel-${Date.now()}`;
-                            appendMessageToResponse("product", `
-                                        <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
-                                            <div class="carousel-inner p-0">
-                                            ${carouselDataHTML}
-                                            </div>
-                                            <button class="carousel-control-prev" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="prev">
-                                                <i class="bi bi-caret-left-fill"></i>
-                                                <span class="visually-hidden">Previous</span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="next">
-                                                <i class="bi bi-caret-right-fill"></i>
-                                                <span class="visually-hidden">Next</span>
-                                            </button>
-                                        </div>
-                                    `);
-                        } else if (data.sourceData.length === 1) {
-                            appendMessageToResponse("product", `
-                                                                <div>
-                                                                    ${carouselDataHTML}
-                                                                </div>
-                                                            `);
-                        }
+if (data.sourceData.length > 1) {
+    const uniqueCarouselId = `carousel-${Date.now()}`;
+    appendMessageToResponse("product", `
+        <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+            <div class="carousel-inner p-0" style="display: block !important;">
+            ${carouselDataHTML}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="prev">
+                <i class="bi bi-caret-left-fill text-danger"></i>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="next">
+                <i class="bi bi-caret-right-fill text-danger"></i>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    `);
+} else if (data.sourceData.length === 1) {
+    appendMessageToResponse("product", `
+        <div>
+            ${carouselDataHTML}
+        </div>
+    `);
+}
                     }
 
 
@@ -979,7 +1068,6 @@ document
                 hideTypingAnimation();
                 // Clear the question input
                 questionInput.value = "";
-                // box2Input.value = "";
                 submitButton.innerHTML = '<i class="bi bi-send"></i>';
                 submitButton.disabled = false;
             } catch (error) {
@@ -1020,24 +1108,6 @@ document
     });
 
 
-    // window.addEventListener('load', function() {
-    //     const selectedLanguageLocal = localStorage.getItem("selectedLanguage");
-
-    //     const questionInput = document.getElementById("question");
-    //     const box2Input = document.getElementById("box2");
-
-    //     if (selectedLanguageLocal === "Singlish") {
-    //         questionInput.style.display = "none";
-    //         box2Input.style.display = "block";
-    //         box2Input.required = true;
-    //         questionInput.required = false;
-    //     } else {
-    //         questionInput.style.display = "block";
-    //         box2Input.style.display = "none";
-    //         questionInput.required = true;
-    //         box2Input.required = false;
-    //     }
-    // });
 
 
 
@@ -1048,8 +1118,6 @@ document
 document
     .getElementById("changeToEnglishButton")
     .addEventListener("click", function () {
-        document.getElementById("box1").style.display = "none";
-        document.getElementById("box2").style.display = "none";
         localStorage.setItem("selectedLanguage", "English");
         appendLanguageMessage("Please ask your question in English.");
     });
@@ -1058,8 +1126,6 @@ document
 document
     .getElementById("changeToSinhalaButton")
     .addEventListener("click", function () {
-        document.getElementById("box1").style.display = "none";
-        document.getElementById("box2").style.display = "none";
         localStorage.setItem("selectedLanguage", "Sinhala");
         appendLanguageMessage("කරුණාකර ඔබේ ප්‍රශ්නය සිංහලෙන් අසන්න.");
     });
@@ -1068,30 +1134,7 @@ document
 document
     .getElementById("changeToTamilButton")
     .addEventListener("click", function () {
-        document.getElementById("box1").style.display = "none";
-        document.getElementById("box2").style.display = "none";
         localStorage.setItem("selectedLanguage", "Tamil");
-        appendLanguageMessage("உங்கள் கேள்வியை தமிழில் கேளுங்கள்.");
-    });
-
-
-document
-    .getElementById("changeToSinglish")
-    .addEventListener("click", function () {
-        document.getElementById("box1").style.display = "block";
-        document.getElementById("box2").style.display = "none";
-        document.getElementById("question").style.display = "block";
-        localStorage.setItem("selectedLanguage", "Singlish");
-        appendLanguageMessage("කරුණාකර ඔබේ ප්‍රශ්නය සිංහලෙන් අසන්න.");
-    });
-
-    document
-    .getElementById("changeToTanglish")
-    .addEventListener("click", function () {
-        document.getElementById("box1").style.display = "none";
-        document.getElementById("box2").style.display = "block";
-        document.getElementById("question").style.display = "block";
-        localStorage.setItem("selectedLanguage", "Tanglish");
         appendLanguageMessage("உங்கள் கேள்வியை தமிழில் கேளுங்கள்.");
     });
 
