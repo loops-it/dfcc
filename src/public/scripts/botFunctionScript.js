@@ -304,9 +304,9 @@ function handleLiveAgentButtonClick(data) {
                 },
                 body: JSON.stringify({ chatId: data.chatId }),
             });
-            console.log("switch res : ", switchResponse)
-            console.log("switch : ", switchResponse.body)
-            if (switchResponse.ok) {
+            const dataSwitchAgent = await switchResponse.json();
+            console.log("switch res : ", dataSwitchAgent)
+            if (dataSwitchAgent.status === "success") {
                 showAlert("One of our agents will join you soon. Please stay tuned.");
                 startCheckingForAgent(data);
                 // showOfflineForm();
@@ -754,6 +754,8 @@ document
                 });
 
                 const data = await response.json();
+                console.log("test chat response flow : ", data.body);
+
 
                 // Update the chat history for future interactions
                 chatHistory = data.chatHistory || [];
