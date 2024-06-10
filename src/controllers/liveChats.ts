@@ -110,7 +110,7 @@ export const replyLiveChats = async (req: Request, res: Response, next: NextFunc
 
   await prisma.chatHeader.updateMany({
     where: { message_id: message_id},
-    data: { agent: agent_id_text},
+    data: { agent: "'"+{agent_id_text}+"'"},
   });
 
   const chats  =  await prisma.liveChat.findMany({where: { message_id: message_id }, orderBy: { id: 'asc' }  });
