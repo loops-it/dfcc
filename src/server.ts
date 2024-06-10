@@ -512,7 +512,7 @@ app.get('/go-offline',agentLogged, async (req: Request, res: Response) => {
 
   await prisma.user.updateMany({
     where: { id: id },
-    data: { status: "offline" },
+    data: { online_status: "offline" },
   });  
 
   res.redirect('agent-dashboard');
@@ -523,7 +523,7 @@ app.get('/go-online',agentLogged, async (req: Request, res: Response) => {
 
   await prisma.user.updateMany({
     where: { id: id },
-    data: { status: "online" },
+    data: { online_status: "online" },
   });  
   res.redirect('agent-dashboard');
 });
