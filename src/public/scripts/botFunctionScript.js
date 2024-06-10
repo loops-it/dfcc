@@ -304,9 +304,9 @@ function handleLiveAgentButtonClick(data) {
                 },
                 body: JSON.stringify({ chatId: data.chatId }),
             });
-            console.log("switch res : ", switchResponse)
-            console.log("switch : ", switchResponse.body)
-            if (switchResponse.ok) {
+            const dataSwitchAgent = await switchResponse.json();
+            console.log("switch res : ", dataSwitchAgent)
+            if (dataSwitchAgent.status === "success") {
                 showAlert("One of our agents will join you soon. Please stay tuned.");
                 startCheckingForAgent(data);
                 // showOfflineForm();
@@ -321,11 +321,25 @@ function handleLiveAgentButtonClick(data) {
 }
 
 function showOfflineForm() {
+    const currentTime = new Date();
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
     const responseDiv = document.getElementById("response");
     const offlineForm = document.createElement("div");
-    offlineForm.innerHTML = `
-        <div class="p-2">
-            <div>Our agents are offline. Please submit your message:</div>
+    offlineForm.classList.add("bot-message");
+
+    const image = document.createElement("img");
+    image.classList.add("message-image");
+    image.src = "/agent.png";
+
+
+    const offlineFormHTML =  `
+        <div class="p-2 mt-2">
             <form id="offlineForm">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
@@ -343,10 +357,21 @@ function showOfflineForm() {
                     <label for="message" class="form-label">Message</label>
                     <textarea class="form-control" id="message" rows="3" required></textarea>
                 </div>
-                <button type="submit" class="btnNotoClose">Submit</button>
+                <button type="submit" class="btnRatingView">Submit</button>
             </form>
         </div>
     `;
+
+    offlineForm.innerHTML = `<div class="messageWrapper">
+    <span class="botname-message">${formattedTime}</span>
+    <div class="ratingFormTest">
+      <p class="mb-0">Our agents are offline. Please submit your message:</p>
+    </div>
+    ${offlineFormHTML}
+  </div>`;
+  offlineForm.prepend(image);
+
+    
     responseDiv.appendChild(offlineForm);
 
     // Scroll to the form
@@ -366,6 +391,16 @@ async function handleOfflineFormSubmission(event) {
     const email = document.getElementById("email").value;
     const subject = document.getElementById("subject").value;
     const message = document.getElementById("message").value;
+    let selectedLanguage = ''
+
+    const selectedLanguageLocal = localStorage.getItem("selectedLanguage");
+    if (selectedLanguageLocal === "Singlish") {
+        selectedLanguage = "Sinhala"
+    }else if (selectedLanguageLocal === "Tanglish") {
+        selectedLanguage = "Tamil"
+    } else {
+        selectedLanguage = selectedLanguageLocal
+    }
 
     try {
         const response = await fetch("/live-chat-offline-form", {
@@ -373,10 +408,11 @@ async function handleOfflineFormSubmission(event) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ chatId, name, email, subject, message }),
+            body: JSON.stringify({ chatId, name, email, subject, message, language: selectedLanguage }),
         });
 
-        if (response.ok) {
+        const responseOfflineForm = await response.json();
+        if (responseOfflineForm.status === "success") {
             showAlert("Your message has been submitted successfully. Our team will get back to you soon.");
         } else {
             showAlert("Failed to submit your message. Please try again later.");
@@ -402,18 +438,18 @@ function startCheckingForAgent(data) {
                 body: JSON.stringify({ chatId: data.chatId }),
             });
 
-            console.log("response Data agent --: ",response)
+            const dataLiveAgent = await response.json();
+            console.log("response Data agent --: ",dataLiveAgent)
 
             if (response.ok) {
-                const responseData = await response.json();
-                console.log("responseData agent: ",responseData)
-                if (responseData.status  === 'success'){
-                    console.log("response.status - ", responseData.status)
-                } else if(responseData.status === 'failed'){
-                    console.log("response.status failed - ", responseData.status)
+                console.log("responseData agent: ",dataLiveAgent)
+                if (dataLiveAgent.status  === 'success'){
+                    console.log("response.status - ", dataLiveAgent.status)
+                } else if(dataLiveAgent.status === 'failed'){
+                    console.log("response.status failed - ", dataLiveAgent.status)
                 }
                 //status
-                if (responseData.agent_id !== "unassigned") {
+                if (dataLiveAgent.agent_id !== "unassigned") {
                     if (!agentJoined) {
                         showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
                         agentJoined = true;
@@ -436,122 +472,6 @@ function startCheckingForAgent(data) {
     }, 120000);
 }
 
-// function appendProductContent(messageDiv, content, data) {
-//     messageDiv.innerHTML = `
-//       <button id="ProductButton" class="viewProductsBtn">View product & services</button>
-//       <div>${content}</div>`;
-//     const productButton = messageDiv.querySelector("#ProductButton");
-//     productButton.addEventListener("click", handleProductButtonClick(data));
-// }
-
-// function handleProductButtonClick(data) {
-//     return async function () {
-//         try {
-//             const response = await fetch("/chat-bot-get-intent-data", {
-//                 method: "POST",
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 body: JSON.stringify({ intent: "saving accounts" }),
-//             });
-//             const responseData = await response.json();
-//             console.log("product data : ", responseData.products);
-
-//             // Iterate over responseData.products and log the type of each item
-//             // responseData.products.forEach(item => {
-//             //     if (item.type == "textOnly") {
-//             //         console.log("text only :", item.node_data);
-//             //     }
-//             //     else if (item.type == "textinput") {
-//             //         console.log("text input:", item.node_data);
-//             //     }
-//             //     else if (item.type == "cardStyleOne") {
-//             //         console.log("text input:", item.node_data);
-//             //     }
-//             //     else if (item.type == "cardGroup") {
-//             //         console.log("text input:", item.node_data);
-//             //     }
-//             //     else{
-//             //         console.log("no data found");
-//             //     }
-//             // });
-
-
-//             const currentTime = new Date();
-//             let hours = currentTime.getHours();
-//             const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-//             const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-//             const ampm = hours >= 12 ? 'PM' : 'AM';
-//             hours = hours % 12;
-//             hours = hours ? hours : 12; // the hour '0' should be '12'
-//             const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
-
-//             const textOnlyItems = [];
-//             const textInputItems = [];
-//             const cardStyleOneItems = [];
-//             const cardGroupItems = [];
-//             responseData.products.forEach(item => {
-//                 switch (item.type) {
-//                     case "textOnly":
-//                         textOnlyItems.push(item.node_data);
-//                         console.log("textOnly : ", item.node_data)
-//                         break;
-//                     case "textinput":
-//                         textInputItems.push(item.node_data);
-//                         console.log("textinput : ", item.node_data)
-//                         break;
-//                     case "cardStyleOne":
-//                         cardStyleOneItems.push(item.node_data);
-//                         console.log("cardStyleOne : ", item.node_data)
-//                         break;
-//                     case "cardGroup":
-//                         cardGroupItems.push(item.node_data);
-//                         console.log("cardGroup : ", item.node_data)
-//                         break;
-//                     default:
-//                         console.log("no data found");
-//                 }
-//             });
-
-//             // Generate HTML for each type of item
-//             const textOnlyHTML = textOnlyItems.map(item => `
-//             <p>text: ${item.text}<br>id: ${item.node_id}</p>
-//             `).join("");
-
-//             const textInputHTML = textInputItems.map(item => `<p>title: ${item.title || 'N/A'}<br>description: ${item.description || 'N/A'}<br>id: ${item.node_id}</p>`).join("");
-//             const cardStyleOneHTML = cardStyleOneItems.map(item => `
-//             <p>title: ${item.title || 'N/A'}<br>
-//             description: ${item.description || 'N/A'}<br>
-//             id: ${item.node_id} <br>
-//             image: ${item.image || 'N/A'} </p>
-
-//             <div class="product-card">
-//             <img src="" alt="" />
-//             </div>
-
-//             `).join("");
-
-//             // Add HTML generation for cardStyleOne and cardGroup if needed
-
-//             // Append HTML for each type of item to the messageDiv
-//             if (textOnlyHTML) {
-//                 appendMessageToResponse("bot", `<p>Text Only Items:</p>${textOnlyHTML}`);
-//             }
-//             if (textInputHTML) {
-//                 appendMessageToResponse("bot", `<p>Text Input Items:</p>${textInputHTML}`);
-//             }
-//             if (cardStyleOneHTML) {
-//                 appendMessageToResponse("bot", `<p>Card Style One Items:</p>${cardStyleOneHTML}`);
-//             }
-
-
-
-
-//         } catch (error) {
-//             console.error("Error fetching products data:", error);
-//         }
-//     };
-// }
 
 function appendPlainTextContent(messageDiv, content) {
     const currentTime = new Date();
@@ -579,7 +499,7 @@ function appendRatingForm(messageDiv) {
     const seconds = currentTime.getSeconds().toString().padStart(2, '0');
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours ? hours : 12; 
     const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     const ratingFormHTML = `
@@ -635,6 +555,19 @@ function showAlert(message) {
     const responseDiv = document.getElementById("response");
     const alertDiv = document.createElement("div");
     alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show", "me-2");
+    alertDiv.setAttribute("role", "alert");
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    responseDiv.appendChild(alertDiv);
+    alertDiv.scrollIntoView({ behavior: "smooth" });
+}
+
+function showAlertSuccess(message) {
+    const responseDiv = document.getElementById("response");
+    const alertDiv = document.createElement("div");
+    alertDiv.classList.add("alert", "alert-success", "alert-dismissible", "fade", "show", "me-2");
     alertDiv.setAttribute("role", "alert");
     alertDiv.innerHTML = `
       ${message}
@@ -754,6 +687,8 @@ document
                 });
 
                 const data = await response.json();
+                console.log("test chat response flow : ", data.body);
+
 
                 // Update the chat history for future interactions
                 chatHistory = data.chatHistory || [];
@@ -1054,27 +989,6 @@ document
             // submitButton.disabled = false;
         }
     });
-
-
-    // window.addEventListener('load', function() {
-    //     const selectedLanguageLocal = localStorage.getItem("selectedLanguage");
-
-    //     const questionInput = document.getElementById("question");
-    //     const box2Input = document.getElementById("box2");
-
-    //     if (selectedLanguageLocal === "Singlish") {
-    //         questionInput.style.display = "none";
-    //         box2Input.style.display = "block";
-    //         box2Input.required = true;
-    //         questionInput.required = false;
-    //     } else {
-    //         questionInput.style.display = "block";
-    //         box2Input.style.display = "none";
-    //         questionInput.required = true;
-    //         box2Input.required = false;
-    //     }
-    // });
-
 
 
 
