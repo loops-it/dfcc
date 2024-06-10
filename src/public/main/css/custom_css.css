@@ -9,6 +9,9 @@
     border-bottom: none;
     border-right:none;
 }
-.main-header div.logo-box .light-logo img{
-    width: 100%;
+.logo-lg .light-logo img{
+    width: 100% !important; 
+}
+.content-wrapper{
+    background-color: #E9F1FF !important;
 }
