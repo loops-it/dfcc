@@ -27,7 +27,7 @@ export const botChatsOnload = async (req: Request, res: Response, next: NextFunc
           orderBy: { id: 'desc' }, 
         });
         let time = "";
-        let message = "";
+        let message = ""; 
 
         if(lastMessage){
           const timestamp = new Date("'"+lastMessage.created_at+"'");
