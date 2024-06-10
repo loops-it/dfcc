@@ -296,16 +296,17 @@ export const offlineFormSubmissions = async (req: Request, res: Response, next: 
             let isSectorAnswer: string | null = isSector.choices[0].text;
 
             console.log("isSectorAnswer",isSectorAnswer);
-            
+
             if (isSectorAnswer && (await isSectorAnswer).toLowerCase().includes("not a sector")) {
                 res.json({ status: "fail",message: "Sector not found." })
+                console.log("sector","not found");
             }
             else{ 
             const sector_id = (isSectorAnswer).trim().toLowerCase();
             let id: number | undefined = parseInt(sector_id as string, 10);
 
             const sector = await prisma.sector.findFirst({where: { id: id }  });
-            
+            console.log("sector",sector);
             if(sector){
                 const emailText = `
                     New offline form submission:
