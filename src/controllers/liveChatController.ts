@@ -96,7 +96,7 @@ try {
         let profile_picture;
         let agent_message;
         let agent: number | undefined = parseInt(chat_header_result.agent as string, 10);
-
+        console.log("agent",agent);
         const agent_details = await prisma.agent.findFirst({where: { user_id: agent }  });
         
         if (agent_details) {
