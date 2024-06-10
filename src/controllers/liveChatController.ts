@@ -22,53 +22,54 @@ var transport = nodemailer.createTransport({
 export const switchToAgent = async (req: Request, res: Response, next: NextFunction) => {
     const {chatId} = req.body
     try {
-        const onlineUser = await prisma.user.findFirst({where: { online_status: 'online',status: 'active',user_role: 2 } });
-        console.log("onlineUser", onlineUser);
-        if(onlineUser){
-            const chat_header_exist = await prisma.chatHeader.findFirst({where: { message_id: chatId }  });
+    //     const onlineUser = await prisma.user.findFirst({where: { online_status: 'online',status: 'active',user_role: 2 } });
+    //     console.log("onlineUser", onlineUser);
+    //     if(onlineUser){
+    //         const chat_header_exist = await prisma.chatHeader.findFirst({where: { message_id: chatId }  });
             
-            const queued_chats  = await prisma.chatHeader.count({where: { agent: "unassigned",status: "live" }  });
+    //         const queued_chats  = await prisma.chatHeader.count({where: { agent: "unassigned",status: "live" }  });
             
-            if(chat_header_exist){
-                res.json({ status: "success",queued_chats }) 
-            }else{
-                const chat_main =  await prisma.botChats.findFirst({where: { message_id: chatId }  });
+    //         if(chat_header_exist){
+    //             res.json({ status: "success",queued_chats:queued_chats }) 
+    //         }else{
+    //             const chat_main =  await prisma.botChats.findFirst({where: { message_id: chatId }  });
                
-                const chats = await prisma.botChats.findMany({
-                    where: {
-                        message_id: chatId
-                    },
-                    orderBy: { id: 'asc' }, 
-                  });
+    //             const chats = await prisma.botChats.findMany({
+    //                 where: {
+    //                     message_id: chatId
+    //                 },
+    //                 orderBy: { id: 'asc' }, 
+    //               });
 
-                if(chat_main){
-                await prisma.chatHeader.create({
-                    data: {
-                        message_id: chatId,
-                        language: chat_main.language,
-                        status: "live",
-                        agent: "unassigned",
-                    },
-                  });
-                }
+    //             if(chat_main){
+    //             await prisma.chatHeader.create({
+    //                 data: {
+    //                     message_id: chatId,
+    //                     language: chat_main.language,
+    //                     status: "live",
+    //                     agent: "unassigned",
+    //                 },
+    //               });
+    //             }
     
-                for (var c = 0; c < chats.length; c++) {
-                    await prisma.liveChat.create({
-                        data: {
-                            message_id: chatId,
-                            sent_by: chats[c].message_sent_by,
-                            message: chats[c].message,
-                        },
-                      });
-                }
-                await prisma.botChats.deleteMany({where: { message_id: chatId }  });
+    //             for (var c = 0; c < chats.length; c++) {
+    //                 await prisma.liveChat.create({
+    //                     data: {
+    //                         message_id: chatId,
+    //                         sent_by: chats[c].message_sent_by,
+    //                         message: chats[c].message,
+    //                     },
+    //                   });
+    //             }
+    //             await prisma.botChats.deleteMany({where: { message_id: chatId }  });
 
-                res.json({ status: "success",queued_chats:queued_chats }) 
-            }   
-        }
-       else{
-        res.json({ status: "fail"}) 
-       }
+    //             res.json({ status: "success",queued_chats:queued_chats }) 
+    //         }   
+    //     }
+    //    else{
+    //     res.json({ status: "fail"}) 
+    //    }
+    res.json({ status: "fail"}) 
     }
     catch (error) {
         console.error("Error processing question:", error);
