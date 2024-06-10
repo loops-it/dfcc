@@ -304,7 +304,8 @@ function handleLiveAgentButtonClick(data) {
                 },
                 body: JSON.stringify({ chatId: data.chatId }),
             });
-            console.log("switch : ", switchResponse)
+            console.log("switch res : ", switchResponse)
+            console.log("switch : ", switchResponse.body)
             if (switchResponse.ok) {
                 showAlert("One of our agents will join you soon. Please stay tuned.");
                 startCheckingForAgent(data);
@@ -401,11 +402,11 @@ function startCheckingForAgent(data) {
                 body: JSON.stringify({ chatId: data.chatId }),
             });
 
-            console.log("response Data agent --: ",response.body)
+            console.log("response Data agent --: ",response)
 
             if (response.ok) {
                 const responseData = await response.json();
-                console.log("responseData agent: ",responseData.body)
+                console.log("responseData agent: ",responseData)
                 if (responseData.status  === 'success'){
                     console.log("response.status - ", responseData.status)
                 } else if(responseData.status === 'failed'){
