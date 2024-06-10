@@ -128,6 +128,32 @@ function showEndChatAlert() {
         alertDiv.innerHTML = `
             It seems you haven't sent a message for a while. Do you want to end the chat?
             <div class="d-flex flex-row">
+              <button type="button" class="btnNotoClose ms-2" data-bs-dismiss="alert">Cancel</button>
+            </div>
+        `;
+        responseDiv.appendChild(alertDiv);
+        alertDiv.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+function showEndChatAlertAgent() {
+    if (!endChatAlertShown) {
+        // Check if the alert has not been shown
+        endChatAlertShown = true; // Set the flag to true to indicate the alert has been shown
+
+        const responseDiv = document.getElementById("response");
+        const alertDiv = document.createElement("div");
+        alertDiv.classList.add(
+            "alert",
+            "alert-warning",
+            "alert-dismissible",
+            "fade",
+            "show"
+        );
+        alertDiv.setAttribute("role", "alert");
+        alertDiv.innerHTML = `
+            It seems you haven't sent a message for a while. Do you want to end the chat?
+            <div class="d-flex flex-row">
               <button type="button" class="btnYesToClose btn-end-chat">Yes</button>
               <button type="button" class="btnNotoClose ms-2" data-bs-dismiss="alert">Cancel</button>
             </div>
@@ -135,7 +161,7 @@ function showEndChatAlert() {
         responseDiv.appendChild(alertDiv);
         alertDiv.scrollIntoView({ behavior: "smooth" });
 
-        // Add event listener for the "Yes" button
+        // Add event listener for the "Yes" buttons
         const endChatButton = alertDiv.querySelector(".btn-end-chat");
         endChatButton.addEventListener("click", handleEndChat);
     }
@@ -375,8 +401,17 @@ function startCheckingForAgent(data) {
                 body: JSON.stringify({ chatId: data.chatId }),
             });
 
+            console.log("response Data agent --: ",response.body)
+
             if (response.ok) {
                 const responseData = await response.json();
+                console.log("responseData agent: ",responseData.body)
+                if (responseData.status  === 'success'){
+                    console.log("response.status - ", responseData.status)
+                } else if(responseData.status === 'failed'){
+                    console.log("response.status failed - ", responseData.status)
+                }
+                //status
                 if (responseData.agent_id !== "unassigned") {
                     if (!agentJoined) {
                         showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
