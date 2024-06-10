@@ -3,4 +3,12 @@
     padding: 10px;
     border-radius: 25px;
     background: #E9F1FF;
+    height: 100%;
+}
+.main-header div.logo-box{
+    border-bottom: none;
+    border-right:none;
+}
+.main-header div.logo-box .light-logo img{
+    width: 100%;
 }
