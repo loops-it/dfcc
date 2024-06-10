@@ -564,6 +564,19 @@ function showAlert(message) {
     alertDiv.scrollIntoView({ behavior: "smooth" });
 }
 
+function showAlertSuccess(message) {
+    const responseDiv = document.getElementById("response");
+    const alertDiv = document.createElement("div");
+    alertDiv.classList.add("alert", "alert-success", "alert-dismissible", "fade", "show", "me-2");
+    alertDiv.setAttribute("role", "alert");
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    responseDiv.appendChild(alertDiv);
+    alertDiv.scrollIntoView({ behavior: "smooth" });
+}
+
 function appendLanguageMessage(content) {
     const responseDiv = document.getElementById("response");
     const messageDiv = document.createElement("div");
