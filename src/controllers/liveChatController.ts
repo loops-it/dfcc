@@ -23,7 +23,7 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
     const {chatId} = req.body
     try {
         const onlineUser = await prisma.user.findFirst({where: { online_status: 'online',status: 'active',user_role: 2 } });
-        
+        console.log("onlineUser", onlineUser);
         if(onlineUser){
             const chat_header_exist = await prisma.chatHeader.findFirst({where: { message_id: chatId }  });
             
