@@ -409,7 +409,7 @@ app.get('/live-chats', agentLogged, async (req, res) => {
     //console.log(res.locals.agent_login_details.dataValues);
 
     const chats = await prisma.chatHeader.findMany({where: {agent : "unassigned", status : "live"}});
-    const languages = await prisma.agentLanguages.findMany({where: {user_id : res.locals.agent_login_details.dataValues.id}});
+    const languages = await prisma.agentLanguages.findMany({where: {user_id : res.locals.agent_login_details.id}});
    
     res.render('live-chats', {chats: chats,languages: languages});
 });
