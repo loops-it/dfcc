@@ -413,7 +413,7 @@ async function handleOfflineFormSubmission(event) {
 
         const responseOfflineForm = await response.json();
         if (responseOfflineForm.status === "success") {
-            showAlert("Your message has been submitted successfully. Our team will get back to you soon.");
+            showAlertSuccess("Your message has been submitted successfully. Our team will get back to you soon.");
         } else {
             showAlert("Failed to submit your message. Please try again later.");
         }
