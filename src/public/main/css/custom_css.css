@@ -129,18 +129,19 @@ table.dataTable {
 .chats-container{
     background: #fff;
     border-radius: 25px;
-    border: 2px solid #D0E2FF;
+    border: 3px solid #D0E2FF;
 }
 .chats-container .dash-chat{
     border:unset;
     border-radius: 0px;
-    background-color: #E9F1FF !important;
+    background-color: #fff !important;
     margin-top: 0px!important;
+    box-shadow: unset;
 }
 .chats-container .slimScrollDiv{
     background: #fff;
 }
-.chats-container .slimScrollDiv .main_chats .hover-primary a{
+.chats-container .slimScrollDiv .main_chats a strong{
     color: #000!important;
 }
 @media only screen and (max-width: 600px) {
