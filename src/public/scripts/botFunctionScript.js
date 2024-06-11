@@ -424,6 +424,7 @@ async function handleOfflineFormSubmission(event) {
 }
 
 
+
 function startCheckingForAgent(data) {
     let intervalId;
     let agentJoined = false;

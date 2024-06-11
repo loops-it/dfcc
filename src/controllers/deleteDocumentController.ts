@@ -12,7 +12,7 @@ const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 
 export const deleteDocument = async (req: Request, res: Response) => {
     let id: string = req.query.id as string;
-    const index = pc.index("dfccchatbot")
+    const index = pc.index("botdb")
     const ns = index.namespace('dfcc-vector-db')
     await ns.deleteOne(`${id}`);
 

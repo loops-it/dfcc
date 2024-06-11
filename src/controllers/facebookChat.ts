@@ -19,7 +19,7 @@ interface ChatEntry {
     content: string;
 }
 
-const index = pc.index("dfccchatbot");
+const index = pc.index("botdb");
 const namespace = index.namespace('dfcc-vector-db')
 let kValue = 2
 
