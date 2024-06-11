@@ -443,19 +443,19 @@ function startCheckingForAgent(data) {
 
             if (response.ok) {
                 console.log("responseData agent: ",dataLiveAgent)
-                if (dataLiveAgent.status  === 'success'){
-                    console.log("response.status - ", dataLiveAgent.status)
-                } else if(dataLiveAgent.status === 'failed'){
-                    console.log("response.status failed - ", dataLiveAgent.status)
-                }
+                // if (dataLiveAgent.status  === 'success'){
+                //     console.log("response.status - ", dataLiveAgent.status)
+                // } else if(dataLiveAgent.status === 'failed'){
+                //     console.log("response.status failed - ", dataLiveAgent.status)
+                // }
                 //status
                 if (dataLiveAgent.agent_id !== "unassigned") {
                     if (!agentJoined) {
-                        showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
+                        showAlert("Now you are chatting with agent ID: " + dataLiveAgent.agent_name);
                         agentJoined = true;
                         chatWithAgent = true;
                     }
-                    appendMessageToResponse("liveagent", responseData.agent_message, data);
+                    appendMessageToResponse("liveagent", dataLiveAgent.agent_message, data);
                 }
             }
         } catch (error) {
