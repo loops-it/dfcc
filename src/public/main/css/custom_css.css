@@ -135,9 +135,9 @@ table.dataTable {
     border:unset;
     border-radius: 25px;
     background-color: #fff !important;
-    margin-top: 0px!important;
+    margin-top: 5px!important;
     box-shadow: unset;
-    border-right: #E5EAFF;
+    border-right:1px solid #E5EAFF;
 }
 .chats-container .slimScrollDiv{
     background: #fff;
@@ -148,6 +148,8 @@ table.dataTable {
 .chats-container .dash-chat .customtab li a.nav-link.active{
     border: unset !important;
     border-bottom: 2px solid #6993ff!important;
+    text-align: left;
+    font-size: 1.5rem;
 }
 @media only screen and (max-width: 600px) {
     .main-header .r-side .app-menu, .main-header .r-side .btn-group a {
