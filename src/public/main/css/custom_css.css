@@ -126,6 +126,23 @@ table.dataTable {
 .table > thead {
     background-color: #fff;
 }
+.chats-container{
+    background: #fff;
+    border-radius: 25px;
+    border: 2px solid #D0E2FF;
+}
+.chats-container .dash-chat{
+    border:unset;
+    border-radius: 0px;
+    background-color: #E9F1FF !important;
+    margin-top: 0px!important;
+}
+.chats-container .slimScrollDiv{
+    background: #fff;
+}
+.chats-container .slimScrollDiv .main_chats .hover-primary a{
+    color: #000!important;
+}
 @media only screen and (max-width: 600px) {
     .main-header .r-side .app-menu, .main-header .r-side .btn-group a {
         margin: 0px 5px;
