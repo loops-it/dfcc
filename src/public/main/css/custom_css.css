@@ -133,10 +133,11 @@ table.dataTable {
 }
 .chats-container .dash-chat{
     border:unset;
-    border-radius: 0px;
+    border-radius: 25px;
     background-color: #fff !important;
     margin-top: 0px!important;
     box-shadow: unset;
+    border-right: #E5EAFF;
 }
 .chats-container .slimScrollDiv{
     background: #fff;
@@ -144,9 +145,8 @@ table.dataTable {
 .chats-container .slimScrollDiv .main_chats a strong{
     color: #000!important;
 }
-.chats-container .nav-tabs .nav-item .nav-link{
+.chats-container .dash-chat .customtab li a.nav-link.active{
     border: unset !important;
-    border-radius: 25px;
     border-bottom: 2px solid #6993ff!important;
 }
 @media only screen and (max-width: 600px) {
