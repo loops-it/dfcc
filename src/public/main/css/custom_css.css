@@ -162,9 +162,11 @@ table.dataTable {
 }
 .chats-container .chat-box-six .rt-bx .chat-comment{
     background-color: #3871CD !important;
+    color: #fff!important;
 }
 .chats-container .chat-box-six .lt-bx .chat-comment{
     background-color: #E9F1FF !important;
+    color: #000!important;
 }
 @media only screen and (max-width: 600px) {
     .main-header .r-side .app-menu, .main-header .r-side .btn-group a {
