@@ -48,7 +48,7 @@ export const LiveChatHistoryMessages = async (req: Request, res: Response, next:
     const {agent_id,profile_picture,message_id} = req.body;
     var chat = ''
       const chats = await prisma.liveChat.findMany({where: { message_id: message_id }, orderBy: { id: 'asc' }  });
-      chat += ` <div class="box">
+      chat += ` <div class="box dash-single-chat">
       <div class="box-body px-20 py-10 bb-1 bbsr-0 bber-0">
         <div class="d-md-flex d-block justify-content-between align-items-center w-p100">
             <div class="d-flex align-items-center">
@@ -150,7 +150,7 @@ export const LiveChatHistoryRefreshMessages = async (req: Request, res: Response
   const {profile_picture,message_id} = req.body
   var chat = ''
   const chats = await prisma.liveChat.findMany({where: { message_id: message_id }, orderBy: { id: 'asc' }  });
-  chat += ` <div class="box">
+  chat += ` <div class="box dash-single-chat">
   <div class="box-body px-20 py-10 bb-1 bbsr-0 bber-0">
     <div class="d-md-flex d-block justify-content-between align-items-center w-p100">
         <div class="d-flex align-items-center">
