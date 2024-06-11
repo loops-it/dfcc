@@ -1,8 +1,12 @@
 /* MaterialDesignIcons.com */
 @font-face {
   font-family: "Material Design Icons";
-  src: url("https://chat-bot-admin-template.multipurposethemes.com/bs5/assets/icons/material-design-iconic-font/fonts/materialdesignicons-webfont.eot?v=2.0.46");
-  src: url("https://chat-bot-admin-template.multipurposethemes.com/bs5/assets/icons/material-design-iconic-font/fonts/materialdesignicons-webfont.eot?#iefix&v=2.0.46") format("embedded-opentype"), url("https://chat-bot-admin-template.multipurposethemes.com/bs5/assets/icons/material-design-iconic-font/fonts/materialdesignicons-webfont.woff2?v=2.0.46") format("woff2"), url("https://chat-bot-admin-template.multipurposethemes.com/bs5/assets/icons/material-design-iconic-font/fonts/materialdesignicons-webfont.woff?v=2.0.46") format("woff"), url("https://chat-bot-admin-template.multipurposethemes.com/bs5/assets/icons/material-design-iconic-font/fonts/materialdesignicons-webfont.ttf?v=2.0.46") format("truetype"), url("https://chat-bot-admin-template.multipurposethemes.com/bs5/assets/icons/material-design-iconic-font/fonts/materialdesignicons-webfont.svg?v=2.0.46#materialdesigniconsregular") format("svg");
+  src: url(materialdesignicons-webfont.eot);
+  src: url(/materialdesignicons-webfont.eot) 
+  format("embedded-opentype"), url(/materialdesignicons-webfont.woff2) 
+  format("woff2"), url(materialdesignicons-webfont.woff) 
+  format("woff"), url(materialdesignicons-webfont.ttf) 
+  format("truetype"), url(materialdesignicons-webfont.svg) format("svg");
   font-weight: normal;
   font-style: normal;
 }

@@ -64,12 +64,12 @@ await prisma.botChats.updateMany({
 
 const chats = await prisma.botChats.findMany({
     where: {  message_id: message_id},
-    orderBy: { id: 'desc' }, 
+    orderBy: { id: 'asc' }, 
 });
 
 var message_history = ''
 
-message_history += ` <div class="box">
+message_history += ` <div class="box dash-single-chat">
 <div class="box-body px-20 py-10 bb-1 bbsr-0 bber-0">
   <div class="d-md-flex d-block justify-content-between align-items-center w-p100">
       <div class="d-flex align-items-center">
@@ -194,10 +194,10 @@ export const botChatsRefreshMessage = async (req: Request, res: Response, next: 
 
     const chats = await prisma.botChats.findMany({
         where: {  message_id: message_id},
-        orderBy: { id: 'desc' }, 
+        orderBy: { id: 'asc' }, 
     });
     
-    message_history += ` <div class="box">
+    message_history += ` <div class="box dash-single-chat">
     <div class="box-body px-20 py-10 bb-1 bbsr-0 bber-0">
       <div class="d-md-flex d-block justify-content-between align-items-center w-p100">
           <div class="d-flex align-items-center">

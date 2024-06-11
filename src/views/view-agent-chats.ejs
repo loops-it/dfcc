@@ -12,12 +12,12 @@
         <div class="content-header">
             <div class="d-flex align-items-center">
                 <div class="me-auto">
-                    <h4 class="page-title">Live Chats</h4>
+                    <h4 class="page-title">Live Chats History</h4>
                     <div class="d-inline-block align-items-center">
                         <nav>
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-                                <li class="breadcrumb-item" aria-current="page">Live Chats</li>
+                                <li class="breadcrumb-item"><a href="#"><i class="fa  fa-angle-right"></i></a></li>
+                                <li class="breadcrumb-item" aria-current="page">View Agent Chats</li>
                             </ol>
                         </nav>
                     </div>
@@ -28,7 +28,7 @@
       <!-- Main content -->
       <section class="content">
         <div class="row">
-            <div class="box box-widget widget-user">
+            <div class="box box-widget widget-user" style="border: unset;background-color: #ffffff !important;">
                 <!-- Add the bg color to the header using any of the bg-* classes -->
                 <div class="widget-user-header bg-img bbsr-0 bber-0" style="background: url('../images/gallery/full/10.jpg') center center;" data-overlay="5">
                   <h3 class="widget-user-username text-white"><%= agent[0].name %></h3>
@@ -75,9 +75,11 @@
                 </div>
               </div>
         </div>
+
+        <div class="container chats-container">
         <div class="row">
             <div class="col-xl-4 col-12">
-                <div class="box dash-chat" id="chat-bx">
+                <div class="box dash-chat " id="chat-bx">
                     <div class="box-body p-0">
                         <ul class="nav nav-tabs customtab nav-justified" role="tablist">
                             <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#messages" role="tab">Chats <span class="badge badge-pill mx-5" id="chat-count">0</span> </a> </li>
@@ -106,6 +108,8 @@
                 </div>
             </div>
         </div>
+
+    </div>
       </section>
 
     

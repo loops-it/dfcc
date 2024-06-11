@@ -11,8 +11,9 @@ interface UserDecodedToken extends JwtPayload {
 
 export const LiveChatHistoryOnload = async (req: Request, res: Response, next: NextFunction) => {
     const {agent_id,profile_picture} = req.body
+    let agent_id_text = String(agent_id);
     var chat = ''
-    const chats  = await prisma.chatHeader.findMany({where: { agent: agent_id }  });
+    const chats  = await prisma.chatHeader.findMany({where: { agent: agent_id_text }  });
       
     for (var i = 0; i < chats.length; i++) {
         const lastMessage = await prisma.liveChat.findFirst({where: { message_id: chats[i].message_id }, orderBy: { id: 'desc' }  });
@@ -47,7 +48,7 @@ export const LiveChatHistoryMessages = async (req: Request, res: Response, next:
     const {agent_id,profile_picture,message_id} = req.body;
     var chat = ''
       const chats = await prisma.liveChat.findMany({where: { message_id: message_id }, orderBy: { id: 'asc' }  });
-      chat += ` <div class="box">
+      chat += ` <div class="box dash-single-chat">
       <div class="box-body px-20 py-10 bb-1 bbsr-0 bber-0">
         <div class="d-md-flex d-block justify-content-between align-items-center w-p100">
             <div class="d-flex align-items-center">
@@ -112,8 +113,9 @@ export const LiveChatHistoryMessages = async (req: Request, res: Response, next:
 export const LiveChatHistoryRefresh = async (req: Request, res: Response, next: NextFunction) => {
 
     const {agent_id,profile_picture} = req.body
+    let agent_id_text = String(agent_id);
     var chat = ''
-    const chats = await prisma.chatHeader.findMany({where: { agent: agent_id }  });
+    const chats = await prisma.chatHeader.findMany({where: { agent: agent_id_text }  });
     
     for (var i = 0; i < chats.length; i++) {
       const lastMessage = await prisma.liveChat.findFirst({where: { message_id: chats[i].message_id }, orderBy: { id: 'desc' }  });
@@ -148,7 +150,7 @@ export const LiveChatHistoryRefreshMessages = async (req: Request, res: Response
   const {profile_picture,message_id} = req.body
   var chat = ''
   const chats = await prisma.liveChat.findMany({where: { message_id: message_id }, orderBy: { id: 'asc' }  });
-  chat += ` <div class="box">
+  chat += ` <div class="box dash-single-chat">
   <div class="box-body px-20 py-10 bb-1 bbsr-0 bber-0">
     <div class="d-md-flex d-block justify-content-between align-items-center w-p100">
         <div class="d-flex align-items-center">

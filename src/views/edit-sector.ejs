@@ -7,12 +7,12 @@
       <div class="content-header">
           <div class="d-flex align-items-center">
               <div class="me-auto">
-                  <h4 class="page-title">Edit Sector</h4>
+                  <h4 class="page-title">Sectors</h4>
                   <div class="d-inline-block align-items-center">
                       <nav>
                           <ol class="breadcrumb">
-                              <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-                              <li class="breadcrumb-item" aria-current="page">Edit Sector</li>
+                            <li class="breadcrumb-item"><a href="#"><i class="fa  fa-angle-right"></i></a></li>
+                            <li class="breadcrumb-item" aria-current="page">Edit Sector</li>
                           </ol>
                       </nav>
                   </div>
@@ -53,16 +53,22 @@
                                     <input type="text" class="form-control" placeholder="Email" id="email" name="email" value="<%= sector_details.email %>" required>
                                   </div>
                               </div>
+                              <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary mt-4">
+                                  Save
+                                </button>
+                              </div>
                           </div>
                           <input type="hidden" class="md-input label-fixed" id="id" value="<%= sector_details.id %>"/>
+                         
                       </div>
                       <!-- /.box-body -->
-                      <div class="box-footer">
+                      <!-- <div class="box-footer">
                          
                           <button type="submit" class="btn btn-primary">
-                            <i class="ti-save-alt"></i> Save
+                             Save
                           </button>
-                      </div>  
+                      </div>   -->
                   </form>
                 </div>
                 <!-- /.box -->			
