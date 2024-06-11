@@ -157,6 +157,15 @@ table.dataTable {
     margin-top: 5px!important;
     box-shadow: unset;
 }
+.chats-container .dash-single-chat a{
+    color: #000!important;
+}
+.chats-container .chat-box-six .rt-bx .chat-comment{
+    background-color: #3871CD !important;
+}
+.chats-container .chat-box-six .lt-bx .chat-comment{
+    background-color: #E9F1FF !important;
+}
 @media only screen and (max-width: 600px) {
     .main-header .r-side .app-menu, .main-header .r-side .btn-group a {
         margin: 0px 5px;
