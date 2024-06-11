@@ -31,12 +31,41 @@
             
           <div class="navbar-custom-menu r-side">
             <ul class="nav navbar-nav">				
-                <li class="btn-group nav-item d-md-none d-block d-lg-inline-block">
-                    <a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link full-screen" title="Full Screen">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/fullscreen.svg" class="img-fluid svg-icon" alt="">
+                <!-- <li class="btn-group nav-item d-md-none d-block d-lg-inline-block">
+                    <a href="#"  class="waves-effect waves-light nav-link notification-svg">
+                        <img src="/images/Group 3.svg" class="img-fluid svg-icon" alt="">
                     </a>
-                </li>	  
-                
+                </li>	   -->
+                <li class="dropdown notifications-menu">
+                  <a href="#" class="waves-effect waves-light dropdown-toggle notification-svg" data-bs-toggle="dropdown" title="Notifications" aria-expanded="true">
+                    <img src="/images/Group 3.svg" class="img-fluid svg-icon" alt="">
+                  </a>
+                  <ul class="dropdown-menu animated bounceIn " data-bs-popper="none">
+            
+                    <li class="header">
+                    <div class="p-20">
+                      <div class="flexbox">
+                        <div>
+                          <h4 class="mb-0 mt-0">Notifications</h4>
+                        </div>
+                       
+                      </div>
+                    </div>
+                    </li>
+            
+                    <li>
+                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 250px;"><ul class="menu sm-scrol" style="overflow: hidden; width: auto; height: 250px;">
+                      <li>
+                      <a href="#">
+                        <i class="fa fa-users text-info"></i> Curabitur id eros quis nunc suscipit blandit.
+                      </a>
+                      </li>
+                     
+                    </ul>
+                    </li>
+                   
+                  </ul>
+                  </li>
               
               <!-- User Account-->
               <li class="dropdown user user-menu">
@@ -82,7 +111,7 @@
                   <ul class="sidebar-menu" data-widget="tree">
                     <li class="">
                       <a href="/admin-dashboard">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/dashboard.svg" class="svg-icon" alt="">
+                        <img src="/images/Dashboard Layout.svg" class="svg-icon" alt="">
                         <span>Dashboard</span>
                       
                       </a>					
@@ -90,30 +119,7 @@
                     </li>
                     <li class="treeview">
                       <a href="#">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/forms1.svg" class="svg-icon" alt="">
-                        <span>Documents</span>
-                        <span class="pull-right-container">
-                          <i class="fa fa-angle-right pull-right"></i>
-                        </span>
-                      </a>
-                      <ul class="treeview-menu">					
-                        <li class="">
-                            <a href="/upload-documents">
-                                <i class="ti-more"></i>Upload Document
-                            </a>
-                           
-                        </li>
-                        <li class="">
-                            <a href="/view-documents">
-                                <i class="ti-more"></i>All Documents
-                            </a>
-                           
-                        </li>
-                      </ul>
-                    </li>
-                    <li class="treeview">
-                      <a href="#">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/apps.svg" class="svg-icon" alt="">
+                        <img src="/images/Admin Settings Male.svg" class="svg-icon" alt="">
                         <span>Admins</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-right pull-right"></i>
@@ -136,7 +142,7 @@
                     </li>
                     <li class="treeview">
                       <a href="#">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/cards.svg" class="svg-icon" alt="">
+                        <img src="/images/Group.svg" class="svg-icon" alt="">
                         <span>Agents</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-right pull-right"></i>
@@ -159,9 +165,49 @@
                        
                       </ul>
                     </li>	 
+                    <li class="">
+                      <a href="/conversation-history">
+                        <img src="/images/Message Bot.svg" class="svg-icon" alt="">
+                        <span>Bot Chats History</span>
+                       
+                      </a>
+                    </li>
+                    <li class="">
+                      <a href="/live-chat-history">
+                        <img src="/images/Chatbot.svg" class="svg-icon" alt="">
+                        <span>Live Chats History</span>
+                       
+                      </a>
+                    
+                    </li>
                     <li class="treeview">
                       <a href="#">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/apps.svg" class="svg-icon" alt="">
+                        <img src="/images/Documents.svg" class="svg-icon" alt="">
+                        <span>Documents</span>
+                        <span class="pull-right-container">
+                          <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                      </a>
+                      <ul class="treeview-menu">					
+                        <li class="">
+                            <a href="/upload-documents">
+                                <i class="ti-more"></i>Upload Document
+                            </a>
+                           
+                        </li>
+                        <li class="">
+                            <a href="/view-documents">
+                                <i class="ti-more"></i>All Documents
+                            </a>
+                           
+                        </li>
+                      </ul>
+                    </li>
+                    
+                    
+                    <li class="treeview">
+                      <a href="#">
+                        <img src="/images/Group 1000003477.svg" class="svg-icon" alt="">
                         <span>Sectors</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-right pull-right"></i>
@@ -185,7 +231,7 @@
 
                     <li class="treeview">
                       <a href="#">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/apps.svg" class="svg-icon" alt="">
+                        <img src="/images/Questions.svg" class="svg-icon" alt="">
                         <span>Questions</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-right pull-right"></i>
@@ -212,24 +258,11 @@
                       </li>
                       </ul>
                     </li>
-                    <li class="">
-                      <a href="/conversation-history">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/authentication.svg" class="svg-icon" alt="">
-                        <span>Bot Chats History</span>
-                       
-                      </a>
-                    </li>
-                    <li class="">
-                      <a href="/live-chat-history">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/miscellaneous.svg" class="svg-icon" alt="">
-                        <span>Live Chats History</span>
-                       
-                      </a>
-                    
-                    </li>
+                   
+                   
                     <li class="treeview">
                       <a href="#">
-                        <img src="https://chat-bot-admin-template.multipurposethemes.com/bs5/images/svg-icon/sidebar-menu/apps.svg" class="svg-icon" alt="">
+                        <img src="/images/Workflow.svg" class="svg-icon" alt="">
                         <span>Chat Flow</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-right pull-right"></i>

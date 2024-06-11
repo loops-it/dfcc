@@ -11,8 +11,9 @@ interface UserDecodedToken extends JwtPayload {
 
 export const LiveChatHistoryOnload = async (req: Request, res: Response, next: NextFunction) => {
     const {agent_id,profile_picture} = req.body
+    let agent_id_text = String(agent_id);
     var chat = ''
-    const chats  = await prisma.chatHeader.findMany({where: { agent: agent_id }  });
+    const chats  = await prisma.chatHeader.findMany({where: { agent: agent_id_text }  });
       
     for (var i = 0; i < chats.length; i++) {
         const lastMessage = await prisma.liveChat.findFirst({where: { message_id: chats[i].message_id }, orderBy: { id: 'desc' }  });
@@ -112,8 +113,9 @@ export const LiveChatHistoryMessages = async (req: Request, res: Response, next:
 export const LiveChatHistoryRefresh = async (req: Request, res: Response, next: NextFunction) => {
 
     const {agent_id,profile_picture} = req.body
+    let agent_id_text = String(agent_id);
     var chat = ''
-    const chats = await prisma.chatHeader.findMany({where: { agent: agent_id }  });
+    const chats = await prisma.chatHeader.findMany({where: { agent: agent_id_text }  });
     
     for (var i = 0; i < chats.length; i++) {
       const lastMessage = await prisma.liveChat.findFirst({where: { message_id: chats[i].message_id }, orderBy: { id: 'desc' }  });
