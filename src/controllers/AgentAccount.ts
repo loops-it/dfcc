@@ -73,7 +73,7 @@ export const agentCreateAccount = async (req: Request, res: Response, next: Func
 };
 
 export const agentUpdateAccount = async (req: Request, res: Response, next: Function) => {
-  const {agent_name, phone, email,language} = req.body
+  const {name, phone, email,language} = req.body
   const languagesArray = language.split(',');
   let user_id: number | undefined = parseInt(req.body.user_id as string, 10);
   try {
@@ -82,11 +82,21 @@ export const agentUpdateAccount = async (req: Request, res: Response, next: Func
     });
   if(email_exist){
       if(email_exist.id == user_id){
-            await prisma.agent.updateMany({
-              where: { user_id: user_id },
-              data: { name: agent_name,phone: phone, profile_picture : "http://localhost:3001/uploads/agent.png"},
-            });
-
+        if (req.file) {
+          const file = req.file;
+          const blob = await put(file.originalname, file.buffer, { access: 'public',token:process.env.BLOB_READ_WRITE_TOKEN });
+          const profile_picture = blob.url
+          await prisma.agent.updateMany({
+            where: { user_id: user_id },
+            data: { name: name,phone: phone, profile_picture : profile_picture},
+          });
+        }
+        else{
+          await prisma.agent.updateMany({
+            where: { user_id: user_id },
+            data: { name: name,phone: phone},
+          });
+        }
             await prisma.user.updateMany({
               where: { id: user_id },
               data: { email: email},
@@ -110,10 +120,21 @@ export const agentUpdateAccount = async (req: Request, res: Response, next: Func
       }    
   }
   else{
-      await prisma.agent.updateMany({
-              where: { user_id: user_id },
-              data: { name: agent_name,phone: phone, profile_picture : "http://localhost:3001/uploads/agent.png"},
-            });
+            if (req.file) {
+              const file = req.file;
+              const blob = await put(file.originalname, file.buffer, { access: 'public',token:process.env.BLOB_READ_WRITE_TOKEN });
+              const profile_picture = blob.url
+              await prisma.agent.updateMany({
+                where: { user_id: user_id },
+                data: { name: name,phone: phone, profile_picture : profile_picture},
+              });
+            }
+            else{
+              await prisma.agent.updateMany({
+                where: { user_id: user_id },
+                data: { name: name,phone: phone},
+              });
+            }
 
             await prisma.user.updateMany({
               where: { id: user_id },
