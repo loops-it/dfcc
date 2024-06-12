@@ -24,7 +24,7 @@ import flash from "express-flash";
 import cookieParser from 'cookie-parser';
 import { sectorAdd, sectorEdit } from './controllers/sectors';
 import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } from './controllers/adminAccount';
-import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
+import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword,handleFileUploadAgent } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
 import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData,ButtonGroup
@@ -359,7 +359,8 @@ app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
     const errorMessage = req.flash('error')[0];
     res.render('add-agent', {successMessage: successMessage,errorMessage: errorMessage});
 });
-app.post('/agent-add', agentCreateAccount);
+//app.post('/agent-add', agentCreateAccount);
+app.post('/agent-add', handleFileUploadAgent, agentCreateAccount);
 app.get('/manage-agents',adminLogged, async (req: Request, res: Response) => {
   const agents = await prisma.agent.findMany({});
   res.render('manage-agents', {agents: agents});

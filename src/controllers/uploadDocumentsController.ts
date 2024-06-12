@@ -28,6 +28,7 @@ export const uploadDocuments = async (req: Request, res: Response, next: Functio
   const decode = jwt.verify(req.cookies.adminLoggedIn, "lkasdh23123h2ljqwher31414l312423") as UserDecodedToken;
   //console.log(req.session.user.id)
     try {
+      console.log(req.body)
       let title = req.body.title;
       let text = req.body.text;
       const timestamp = new Date().getTime();

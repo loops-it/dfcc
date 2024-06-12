@@ -51,7 +51,7 @@
                             <div class="col-md-12">
                               <div class="form-group">
                                 <label class="form-label">Select Document (pdf)</label>
-                                <input type="file" class="form-control"  id="file" name="file" required>
+                                <input type="file" class="form-control"  id="file" name="file" >
                               </div>
                             </div>
                             <div class="col-md-12">
@@ -95,7 +95,7 @@
       if (fileInput.files.length > 0) {
         // Get the first file
         const file = fileInput.files[0];
-    
+     
         // Create a FormData object
         const formData = new FormData();
         formData.append('file', file);
@@ -117,7 +117,7 @@
     function sendToBackend(formData) {
       // Create a new XMLHttpRequest object
       const xhr = new XMLHttpRequest();
-    
+      console.log(formData);
       // Configure the request
       xhr.open('POST', '/upload-documents', true);
     

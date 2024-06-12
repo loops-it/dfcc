@@ -98,6 +98,17 @@ try {
     });
     
     if(chat_header_result){
+        if(chat_header_result.agent == "unassigned"){
+            let agent_id = null;
+            let chat_status = null;
+            let agent_message = null;
+            let agent_name = null;
+            let profile_picture = null;
+            let is_time_out = null;
+    
+              res.json({ agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out });
+        }
+        else{
         let agent_name;
         let profile_picture;
         let agent_message;
@@ -128,6 +139,7 @@ try {
           let chat_status = chat_header_result.status;
           let is_time_out = chat_header_result.is_time_out;
           res.json({ agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out });
+        }
     }
     else{
         let agent_id = null;
