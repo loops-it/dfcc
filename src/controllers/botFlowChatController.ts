@@ -351,7 +351,7 @@ Standalone question:`;
                 // =============================================================================
                 // get vector documents into one string
                 const results: string[] = [];
-                // console.log("CONTEXT : ", queryResponse.matches[0].metadata);
+                console.log("CONTEXT : ", queryResponse.matches[0].metadata);
                 queryResponse.matches.forEach((match) => {
                     if (match.metadata && typeof match.metadata.Title === "string") {
                         const result = `Title: ${match.metadata.Title}, \n Content: ${match.metadata.Text} \n \n `;
