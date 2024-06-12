@@ -90,7 +90,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         chatHistory.push({ role: 'user', content: message_body.postback.payload });
     }
     // console.log("req : ", req.body.chatId) 
-    const index = pc.index("dfccchatbot");
+    const index = pc.index("botdb");
     const namespace = index.namespace('dfcc-vector-db');
  
     let language = "English";

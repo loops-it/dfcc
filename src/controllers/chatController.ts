@@ -35,7 +35,7 @@ export const chatResponse = async (req: RequestWithChatId, res: Response) => {
         },
       })
     // console.log("req : ", req.body.chatId) 
-    const index = pc.index("dfccchatbot");
+    const index = pc.index("botdb");
     const namespace = index.namespace('dfcc-vector-db')
     //dfcc-vector-db
 
