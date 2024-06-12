@@ -409,7 +409,7 @@ app.get('/edit-agent', adminLogged, async (req: Request, res: Response) => {
 
 
 app.post('/agent-update',handleFileUploadAgent, agentUpdateAccount);
-app.post('/agent-update-with-password', agentUpdateWithPassword);
+app.post('/agent-update-with-password',handleFileUploadAgent, agentUpdateWithPassword);
 app.post('/agent', agent);
 app.get('/agent-dashboard', agentLogged, (req: Request, res: Response) => {
     res.render('agent-dashboard');

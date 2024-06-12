@@ -159,7 +159,8 @@ export const agentUpdateAccount = async (req: Request, res: Response, next: Func
 };
 
 export const agentUpdateWithPassword = async (req: Request, res: Response, next: Function) => {
-  const {agent_name, phone, email, password,language} = req.body
+  const {name, phone, email, password,language} = req.body
+  const languagesArray = language.split(',');
   let user_id: number | undefined = parseInt(req.body.user_id as string, 10);
   const crypt_password = await (bcrypt.hash(password, 10));
   try {
@@ -168,10 +169,21 @@ export const agentUpdateWithPassword = async (req: Request, res: Response, next:
     });
   if(email_exist){
       if(email_exist.id == user_id){
-            await prisma.agent.updateMany({
-              where: { user_id: user_id },
-              data: { name: agent_name,phone: phone},
-            });
+        if (req.file) {
+          const file = req.file;
+          const blob = await put(file.originalname, file.buffer, { access: 'public',token:process.env.BLOB_READ_WRITE_TOKEN });
+          const profile_picture = blob.url
+          await prisma.agent.updateMany({
+            where: { user_id: user_id },
+            data: { name: name,phone: phone, profile_picture : profile_picture},
+          });
+        }
+        else{
+          await prisma.agent.updateMany({
+            where: { user_id: user_id },
+            data: { name: name,phone: phone},
+          });
+        }
             await prisma.user.updateMany({
               where: { id: user_id },
               data: { email: email,password: crypt_password},
@@ -194,10 +206,21 @@ export const agentUpdateWithPassword = async (req: Request, res: Response, next:
       }    
   }
   else{
-    await prisma.agent.updateMany({
-      where: { user_id: user_id },
-      data: { name: agent_name,phone: phone},
-    });
+    if (req.file) {
+      const file = req.file;
+      const blob = await put(file.originalname, file.buffer, { access: 'public',token:process.env.BLOB_READ_WRITE_TOKEN });
+      const profile_picture = blob.url
+      await prisma.agent.updateMany({
+        where: { user_id: user_id },
+        data: { name: name,phone: phone, profile_picture : profile_picture},
+      });
+    }
+    else{
+      await prisma.agent.updateMany({
+        where: { user_id: user_id },
+        data: { name: name,phone: phone},
+      });
+    }
     await prisma.user.updateMany({
       where: { id: user_id },
       data: { email: email,password: crypt_password},
