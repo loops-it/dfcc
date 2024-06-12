@@ -17,33 +17,6 @@ function setFormattedOpenedTime() {
 // Call the function to set the time
 setFormattedOpenedTime();
 
-// const singlishToSinhala = {
-//     'yaa': 'යා', 'ko': 'කො', 'ho': 'හො', 'a': 'අ', 'aa': 'ආ', 'ae': 'ඇ', 'aee': 'ඈ', 'i': 'ඉ', 'ii': 'ඊ', 'u': 'උ', 'uu': 'ඌ',
-//     'e': 'එ', 'ee': 'ඒ', 'ai': 'ඓ', 'o': 'ඔ', 'oo': 'ඕ', 'au': 'ඖ', 'k': 'ක', 'kh': 'ඛ',
-//     'g': 'ග', 'gh': 'ඝ', 'ng': 'ඞ', 'ch': 'ච', 'chh': 'ඡ', 'j': 'ජ', 'jh': 'ඣ', 'ny': 'ඤ',
-//     't': 'ට', 'tha': 'ඨ', 'da': 'ඩ', 'dha': 'ඪ', 'n': 'ණ', 'th': 'ත', 'd': 'ද', 'dha': 'ධ',
-//     'na': 'න', 'p': 'ප', 'ph': 'ඵ', 'b': 'බ', 'bh': 'භ', 'm': 'ම', 'y': 'ය', 'r': 'ර',
-//     'l': 'ල', 'v': 'ව', 'sh': 'ශ', 'ss': 'ෂ', 's': 'ස', 'h': 'හ', 'la': 'ළ', 'f': 'ෆ',
-
-// };
-
-//         function transliterate() {
-//             let singlishText = document.getElementById('question').value;
-//             let words = singlishText.split(' ');
-//             let transliteratedWords = words.map(word => {
-//                 let sinhalaWord = word;
-//                 const keys = Object.keys(singlishToSinhala).sort((a, b) => b.length - a.length);
-//                 for (const singlish of keys) {
-//                     const sinhala = singlishToSinhala[singlish];
-//                     let regex = new RegExp(singlish, 'g');
-//                     sinhalaWord = sinhalaWord.replace(regex, sinhala);
-//                 }
-//                 return sinhalaWord;
-//             });
-//             document.getElementById('question').value = transliteratedWords.join(' ');
-//         }
-
-//         document.getElementById('question').addEventListener('input', transliterate);
 
 // Define global variables
 let chatHistory = [];
@@ -348,26 +321,29 @@ function appendLiveAgentContent(messageDiv, content, data) {
   liveAgentButton.addEventListener("click", handleLiveAgentButtonClick(data));
 }
 
+let chatStatus = 'bot';
+
 function handleLiveAgentButtonClick(data) {
   return async function () {
     try {
-      const switchResponse = await fetch("/switch-to-live-agent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ chatId: data.chatId }),
-      });
-      const dataSwitchAgent = await switchResponse.json();
-      console.log("switch res : ", dataSwitchAgent);
-      if (dataSwitchAgent.status === "success") {
-        showAlert("One of our agents will join you soon. Please stay tuned.");
-        startCheckingForAgent(data);
-        // showOfflineForm();
-      } else {
-        // Show offline form
-        showOfflineForm();
-      }
+        const switchResponse = await fetch("/switch-to-live-agent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ chatId: data.chatId }),
+        });
+        const dataSwitchAgent = await switchResponse.json();
+        console.log("switch res : ", dataSwitchAgent);
+        if (dataSwitchAgent.status === "success") {
+          showAlert("One of our agents will join you soon. Please stay tuned.");
+          chatWithAgent = true;
+          startCheckingForAgent(data);
+        } else {
+          // Show offline form
+          showOfflineForm();
+        }
+      
     } catch (error) {
       console.error("Error switching to live agent:", error);
     }
@@ -490,45 +466,50 @@ async function handleOfflineFormSubmission(event) {
 
 let intervalId;
 let agentJoined = false;
+
 function startCheckingForAgent(data) {
   intervalId = setInterval(async () => {
     try {
-      const response = await fetch("/live-chat-agent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ chatId: data.chatId }),
-      });
-
-      const dataLiveAgent = await response.json();
-      console.log("response Data agent --: ", dataLiveAgent);
-
-      if (response.ok) {
-        console.log("responseData agent: ", dataLiveAgent);
-        if (dataLiveAgent.chat_status === "live") {
-          console.log("response.status - ", dataLiveAgent.chat_status);
-          if (dataLiveAgent.agent_id !== "unassigned") {
-            if (!agentJoined) {
-              showAlert(
-                "Now you are chatting with agent ID: " +
-                  dataLiveAgent.agent_name
+      // if (chatStatus === "null"){
+        const response = await fetch("/live-chat-agent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ chatId: data.chatId }),
+        });
+  
+        const dataLiveAgent = await response.json();
+        console.log("response Data agent --: ", dataLiveAgent);
+  
+        if (response.ok) {
+          console.log("responseData agent: ", dataLiveAgent);
+          chatStatus = dataLiveAgent.chat_status;
+          if (dataLiveAgent.chat_status === "live") {
+            console.log("response.status - ", dataLiveAgent.chat_status);
+            if (dataLiveAgent.agent_id !== "unassigned") {
+              if (!agentJoined) {
+                showAlert(
+                  "Now you are chatting with agent ID: " +
+                    dataLiveAgent.agent_name
+                );
+                agentJoined = true;
+                chatWithAgent = true;
+              }
+              appendMessageToResponse(
+                "liveagent",
+                dataLiveAgent.agent_message,
+                data
               );
-              agentJoined = true;
-              chatWithAgent = true;
             }
-            appendMessageToResponse(
-              "liveagent",
-              dataLiveAgent.agent_message,
-              data
-            );
+          } else if (dataLiveAgent.chat_status === "closed") {
+            console.log("response.status failed - ", dataLiveAgent.chat_status);
+            handleEndChat();
+            clearInterval(intervalId); // Stop sending requests if the chat is closed
           }
-        } else if (dataLiveAgent.chat_status === "closed") {
-          console.log("response.status failed - ", dataLiveAgent.chat_status);
-          handleEndChat();
-          clearInterval(intervalId); // Stop sending requests if the chat is closed
         }
-      }
+      // }
+      
     } catch (error) {
       console.error("Error fetching products data:", error);
     }
