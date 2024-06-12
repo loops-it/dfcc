@@ -30,15 +30,15 @@
 //         })
 //     }
 //     else{
-//         if(password.value != confirm_password.value){
-//             document.getElementById('password-error').style.display = 'block';
-//             document.getElementById('password-error').textContent = 'Passwords dose not match';
-//         }
-//         else{
-//         const password_data = {
-//             current_password: current_password.value,
-//             user_id: user_id.value,
-//         }
+        // if(password.value != confirm_password.value){
+        //     document.getElementById('password-error').style.display = 'block';
+        //     document.getElementById('password-error').textContent = 'Passwords dose not match';
+        // }
+        // else{
+        // const password_data = {
+        //     current_password: current_password.value,
+        //     user_id: user_id.value,
+        // }
         
 //         fetch("user-check-current-password", {
 //             method: "post",
@@ -148,7 +148,57 @@ if(password == "" && confirm_password== "" && current_password== ""){
     }
 }
 else{
+    if(password != confirm_password){
+        document.getElementById('password-error').style.display = 'block';
+        document.getElementById('password-error').textContent = 'Passwords dose not match';
+    }
+    else{
+    const password_data = {
+        current_password: current_password,
+        user_id: user_id,
+    }
+    
+    fetch("user-check-current-password", {
+        method: "post",
+        body: JSON.stringify(password_data),
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    }).then(res => res.json())
+    .then(data => {
+       if(data.status == "failed"){
+        success.style.display = "none"
+        failed.style.display = "block"
+        failed.innerText = data.message
+       }
+       else{
+        if (fileInput.files.length > 0) {
 
+            const file = fileInput.files[0];
+        
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', agent_name);
+            formData.append('phone', phone);
+            formData.append('language', selectedLanguages);
+            formData.append('email', email);
+            formData.append('user_id', user_id);
+            formData.append('password', password);
+            agentUpdateWithPassword(formData);
+        } else {
+            const formData = new FormData();
+            formData.append('file', "");
+            formData.append('name', agent_name);
+            formData.append('phone', phone);
+            formData.append('language', selectedLanguages);
+            formData.append('email', email);
+            formData.append('user_id', user_id);
+            formData.append('password', password);
+            agentUpdateWithPassword(formData);
+        }
+       }
+    })
+}
 }
   });
   
@@ -157,6 +207,31 @@ else{
     const xhr = new XMLHttpRequest();
 
     xhr.open('POST', '/agent-update', true);
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        const response = JSON.parse(xhr.responseText);
+        console.log(response);
+        if(response.status == "failed"){
+            success.style.display = "none"
+            failed.style.display = "block"
+            failed.innerText  = response.message
+           }
+           else{
+            success.style.display = "block"
+            failed.style.display = "none"
+            success.innerText  = response.message
+        }
+      }
+    };
+  
+    xhr.send(formData);
+  }
+  function agentUpdateWithPassword(formData) {
+    console.log(formData);
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('POST', '/agent-update-with-password', true);
 
     xhr.onreadystatechange = function() {
       if (xhr.readyState === XMLHttpRequest.DONE) {
