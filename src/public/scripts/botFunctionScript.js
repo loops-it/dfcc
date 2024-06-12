@@ -83,6 +83,7 @@ function hideTypingAnimation() {
 // Function to handle error messages
 function handleErrorMessage(error) {
   const responseDiv = document.getElementById("response");
+  console.log("error response : ", responseDiv)
   let errorMessage =
     "<p class='error-message'>The allocated number of tokens are over, please ask the administrator to add more tokens to the system.</p>"; // Default error message
 
@@ -94,6 +95,14 @@ function handleErrorMessage(error) {
     errorMessage =
       "<p>The allocated number of tokens are over, please ask the administrator to add more tokens to the system.</p>";
   }
+
+  // else{
+  //   errorMessage =
+  //     `<div class="d-flex flex-column justify-content-center align-items-center bg-danger">
+  //         <p>We are currently busy. Please try again..</p>
+  //         <a href="https://dfcc.vercel.app/">Go back to chat</a>
+  //     </div>`;
+  // }
   responseDiv.innerHTML = errorMessage;
 }
 
