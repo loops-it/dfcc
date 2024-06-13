@@ -98,5 +98,5 @@ export const uploadDocuments = async (req: Request, res: Response, next: Functio
   };
   
   // Apply multer middleware to the uploadDocuments middleware
-  export const handleFileUpload = upload.single('file');
+
   

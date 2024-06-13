@@ -11,9 +11,9 @@ import { chatControllerFacebook } from './controllers/chatControllerFacebook';
 import "dotenv/config";
 import bodyParser from 'body-parser';
 import { viewDocuments } from './controllers/viewDocumentsController';
-import { uploadDocuments, handleFileUpload } from './controllers/uploadDocumentsController';
+import { uploadDocuments } from './controllers/uploadDocumentsController';
 import { editDocument } from './controllers/editDocumentController';
-import { updateDocuments, handleFileUploadUpdate } from './controllers/updateDocumentController';
+import { updateDocuments } from './controllers/updateDocumentController';
 import { deleteDocument } from './controllers/deleteDocumentController';
 import { login, agent } from './controllers/loginController';
 import { adminLogged } from './controllers/adminLogged';
@@ -24,7 +24,7 @@ import flash from "express-flash";
 import cookieParser from 'cookie-parser';
 import { sectorAdd, sectorEdit } from './controllers/sectors';
 import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } from './controllers/adminAccount';
-import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword,handleFileUploadAgent } from './controllers/AgentAccount';
+import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
 import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData,ButtonGroup
@@ -36,6 +36,7 @@ import { getBotFlowPage } from './controllers/botFlowChatView';
 import { chatFlowResponse } from './controllers/botFlowChatController';
 import { chatFlowData } from './controllers/botFlowData';
 import { PrismaClient } from '@prisma/client';
+import { handleFileUpload } from './controllers/handleFileUpload';
 const prisma = new PrismaClient();
 
 const app = express();
@@ -97,7 +98,7 @@ app.get('/upload-documents', adminLogged, (req: Request, res: Response) => {
 app.get('/edit-document', adminLogged, editDocument);
 app.post('/upload-documents', handleFileUpload, uploadDocuments);
 
-app.post('/update-document', handleFileUploadUpdate, updateDocuments);
+app.post('/update-document', handleFileUpload, updateDocuments);
 
 app.get('/delete-document',adminLogged, deleteDocument);
 
@@ -360,7 +361,7 @@ app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
     res.render('add-agent', {successMessage: successMessage,errorMessage: errorMessage});
 });
 //app.post('/agent-add', agentCreateAccount);
-app.post('/agent-add', handleFileUploadAgent, agentCreateAccount);
+app.post('/agent-add', handleFileUpload, agentCreateAccount);
 app.get('/manage-agents',adminLogged, async (req: Request, res: Response) => {
   const agents = await prisma.agent.findMany({});
   res.render('manage-agents', {agents: agents});
@@ -408,8 +409,8 @@ app.get('/edit-agent', adminLogged, async (req: Request, res: Response) => {
 });
 
 
-app.post('/agent-update',handleFileUploadAgent, agentUpdateAccount);
-app.post('/agent-update-with-password',handleFileUploadAgent, agentUpdateWithPassword);
+app.post('/agent-update',handleFileUpload, agentUpdateAccount);
+app.post('/agent-update-with-password',handleFileUpload, agentUpdateWithPassword);
 app.post('/agent', agent);
 app.get('/agent-dashboard', agentLogged, (req: Request, res: Response) => {
     res.render('agent-dashboard');

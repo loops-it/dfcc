@@ -244,4 +244,3 @@ export const agentUpdateWithPassword = async (req: Request, res: Response, next:
 };
 
 
-export const handleFileUploadAgent = upload.single('file');
