@@ -544,7 +544,7 @@ app.post("/data-flow-text-box", textBoxData);
 app.post("/data-flow-button-data", ButtonData);
 app.post("/data-flow-button-group", ButtonGroup);
 
-app.post("/data-flow-card-data", CardData);
+app.post("/data-flow-card-data",handleFileUpload, CardData);
 
 app.post("/chat-bot-get-intent-data", getIntentData);
 app.post("/chat-bot-get-target-data", getTargetData);
