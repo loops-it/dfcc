@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const upload = multer({ storage: multer.memoryStorage() });
 
 export const agentCreateAccount = async (req: Request, res: Response, next: Function) => {
-    
+     
     try {
       const {name, phone, email, password, language} = req.body;
 
@@ -244,4 +244,3 @@ export const agentUpdateWithPassword = async (req: Request, res: Response, next:
 };
 
 
-export const handleFileUploadAgent = upload.single('file');

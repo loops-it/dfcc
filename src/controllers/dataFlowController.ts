@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const bodyParser = require('body-parser');
 const pdfParse = require('pdf-parse');
 import "dotenv/config";
-
+import { put } from '@vercel/blob';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
@@ -308,25 +308,45 @@ export const ButtonGroup = async (req: Request, res: Response, next: Function) =
     }
 };
 
-export const CardData = async (req: Request, res: Response, next: Function) => {
+export const CardData = async (req: Request, res: Response, next: Function) => { 
     console.log("CARD REQ DATA",req.body);
     try {
+        let image_path = req.protocol + '://' + req.get('host')+ '/chat-logo.webp';
           const data_exist = await prisma.flowCardData.findFirst({
             where: {  node_id: req.body.id},
           });
+          
         if (data_exist) {
+            if (req.file) {
+                const file = req.file;
+                const blob = await put(file.originalname, file.buffer, { access: 'public',token:process.env.BLOB_READ_WRITE_TOKEN });
+                console.log(blob); 
+                image_path = blob.url
+                await prisma.flowCardData.updateMany({
+                    where: { node_id: req.body.id},
+                    data: {    title: req.body.title,description: req.body.description,image: image_path},
+                });
+            }
+           else{
             await prisma.flowCardData.updateMany({
                 where: { node_id: req.body.id},
-                data: {    title: req.body.title,description: req.body.description,image: "card-test-image.png",},
+                data: {    title: req.body.title,description: req.body.description},
             });
+           }
         }
         else{
+            if (req.file) {
+                const file = req.file;
+                const blob = await put(file.originalname, file.buffer, { access: 'public',token:process.env.BLOB_READ_WRITE_TOKEN });
+                console.log(blob); 
+                image_path = blob.url
+            }
             await prisma.flowCardData.create({
                 data: {
                     node_id: req.body.id,
                     title: req.body.title,
                     description: req.body.description,
-                    image: "card-test-image.png",
+                    image: image_path,
                 },
             });
         }
