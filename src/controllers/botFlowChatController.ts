@@ -306,8 +306,11 @@ export const chatFlowResponse = async (
 
 
 
-let chatHistorySummery = ""
-        // ---------------------------------
+// let chatHistorySummery = ""
+// const lastMessage = chatHistory.slice(-1);
+// let chatHistorySummery = JSON.stringify(lastMessage);
+// console.log("last message : ", chatHistorySummery)
+//         // ---------------------------------
 //         const chathistorySummeryPrompt = `Summerize given CHAT HISTORY into maximum 100 words.
 // ----------
 // CHAT HISTORY: {${chatHistoryString}}
