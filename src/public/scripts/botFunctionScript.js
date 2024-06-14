@@ -513,7 +513,7 @@ function startCheckingForAgent(data) {
               } else if (dataLiveAgent.chat_status === "closed") {
                   console.log("response.status failed - ", dataLiveAgent.chat_status);
                   handleEndChat();
-                  chatWithAgent = false;
+                  // chatWithAgent = false;
                   clearInterval(intervalId); // Stop sending requests if the chat is closed
               }
           }
