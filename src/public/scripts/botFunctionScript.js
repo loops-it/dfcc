@@ -24,6 +24,7 @@ let messageDiv;
 let chatWithAgent = false;
 let chatTimeoutId;
 let endChatAlertShown = false;
+let ratingVisible = false;
 
 // Event listener to clear localStorage items on browser refresh
 window.addEventListener("beforeunload", function (event) {
@@ -143,8 +144,10 @@ function showEndChatAlertAgent() {
     alertDiv.scrollIntoView({ behavior: "smooth" });
 
     // Add event listener for the "Yes" buttons
-    const endChatButton = alertDiv.querySelector(".btn-end-chat");
-    endChatButton.addEventListener("click", handleEndChat);
+    if (ratingVisible === false) {
+      const endChatButton = alertDiv.querySelector(".btn-end-chat");
+      endChatButton.addEventListener("click", handleEndChat);
+    }
   }
 }
 
@@ -196,6 +199,8 @@ function handleEndChat() {
     null,
     true
   );
+
+  ratingVisible === true;
 }
 
 // Function to append message to response div
@@ -519,7 +524,10 @@ function startCheckingForAgent(data) {
           }
         } else if (dataLiveAgent.chat_status === "closed") {
           console.log("response.status failed - ", dataLiveAgent.chat_status);
-          handleEndChat();
+          if(ratingVisible === false){
+            handleEndChat();
+          }
+         
           chatWithAgent = false;
           clearInterval(intervalId); // Stop sending requests if the chat is closed
         }
