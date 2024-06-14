@@ -133,13 +133,23 @@ function showEndChatAlertAgent() {
       "show"
     );
     alertDiv.setAttribute("role", "alert");
-    alertDiv.innerHTML = `
-            Are you sure yo want to colse this chat. Do you want to end the chat?
-            <div class="d-flex flex-row">
-              <button type="button" class="btnYesToClose btn-end-chat">Yes</button>
-              <button type="button" class="btnNotoClose ms-2" data-bs-dismiss="alert">Cancel</button>
-            </div>
-        `;
+    if(ratingVisible === true){
+      alertDiv.innerHTML = `
+      Are you sure yo want to colse this chat. Do you want to end the chat?
+      <div class="d-flex flex-row">
+        <button type="button" class="btnNotoClose ms-2" data-bs-dismiss="alert">Cancel</button>
+      </div>
+  `;
+    }else{
+      alertDiv.innerHTML = `
+      Are you sure yo want to colse this chat. Do you want to end the chat?
+      <div class="d-flex flex-row">
+        <button type="button" class="btnYesToClose btn-end-chat">Yes</button>
+        <button type="button" class="btnNotoClose ms-2" data-bs-dismiss="alert">Cancel</button>
+      </div>
+  `;
+    }
+        
     responseDiv.appendChild(alertDiv);
     alertDiv.scrollIntoView({ behavior: "smooth" });
 
