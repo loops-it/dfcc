@@ -147,6 +147,7 @@ function showEndChatAlertAgent() {
     if (ratingVisible === false) {
       const endChatButton = alertDiv.querySelector(".btn-end-chat");
       endChatButton.addEventListener("click", handleEndChat);
+      ratingVisible === true;
     }
   }
 }
@@ -199,8 +200,6 @@ function handleEndChat() {
     null,
     true
   );
-
-  ratingVisible === true;
 }
 
 // Function to append message to response div
@@ -526,6 +525,7 @@ function startCheckingForAgent(data) {
           console.log("response.status failed - ", dataLiveAgent.chat_status);
           if(ratingVisible === false){
             handleEndChat();
+            ratingVisible === true;
           }
          
           chatWithAgent = false;
