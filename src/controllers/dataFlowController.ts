@@ -611,30 +611,36 @@ export const getTargetData = async (req: Request, res: Response, next: NextFunct
 export const formData = async (req: Request, res: Response, next: Function) => {
     //console.log("insertEdge",req.body);
     try {
-          const data_exist = await prisma.flowTextOnly.findFirst({
-            where: {  node_id: req.body.id},
-          });
-
-        if (data_exist) {
-
-            await prisma.flowTextOnly.updateMany({
-                where: { node_id: req.body.id},
-                data: {  text: req.body.text},
-              });
-        }
-        else{
-            await prisma.flowTextOnly.create({
-                data: {
-                    node_id: req.body.id,
-                    text: req.body.text,
-                },
-              });
-        }
         await prisma.node.updateMany({
             where: { node_id: req.body.id},
             data: {  intent: req.body.intent},
         });
+        await Promise.all(req.body.inputs.map(async (input) => {
+            const data_exist = await prisma.node.findFirst({
+                where: {  node_id: input.id},
+              });
 
+            if (data_exist) {
+
+                await prisma.node.updateMany({
+                    where: { node_id: input.id},
+                    data: {  value: input.value,placeholder: input.placeholder,label: input.label,},
+                  });
+            }
+            else{
+                await prisma.node.create({
+                    data: {
+                        node_id: input.id,
+                        value: input.value,
+                        placeholder: input.placeholder,
+                        label: input.label,
+                        type: input.type,
+                    },
+                  });
+            }
+
+        }));
+        
         res.json({ status: "success"}) 
     } catch (error) {
     console.error('Error inserting data:', error);
