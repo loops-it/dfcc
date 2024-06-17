@@ -626,7 +626,7 @@ export const formData = async (req: Request, res: Response, next: Function) => {
 
                 await prisma.node.updateMany({
                     where: { node_id: input.id},
-                    data: {  value: input.value,placeholder: input.placeholder,label: input.label,},
+                    data: {  value: input.value,placeholder: input.placeholder,label: input.label},
                   });
             }
             else{
@@ -637,6 +637,7 @@ export const formData = async (req: Request, res: Response, next: Function) => {
                         placeholder: input.placeholder,
                         label: input.label,
                         type: input.type,
+                        parent_id: req.body.id
                     },
                   });
             }
