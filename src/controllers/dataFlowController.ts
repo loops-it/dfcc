@@ -652,7 +652,8 @@ export const formData = async (req: Request, res: Response, next: Function) => {
                         label: input.label,
                         type: input.type,
                         language: input.language,
-                        parent_id: req.body.id
+                        parent_id: req.body.id,
+                        position: input.position
                     },
                   });
             }
