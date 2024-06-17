@@ -190,20 +190,23 @@ model LiveChat {
 
 model Node {
   id                 Int       @id @default(autoincrement())
-  node_id            String?   // Change to String if node_id is not nullable
-  dragging           String?   // Change to String if dragging is not nullable
-  height             String?   // Change to String if height is not nullable
-  position           Json?     // Use Json type for position
-  position_absolute   Json?     // Use Json type for positionAbsolute
-  selected           String?   // Change to String if selected is not nullable
-  type               String?   // Change to String if type is not nullable
-  width              String?   // Change to String if width is not nullable
-  extent             String?   // Change to String if extent is not nullable
-  parent_id           String?   // Change to String if parentId is not nullable
-  intent             String?   // Change to String if intent is not nullable
-  language           String?   // Change to String if language is not nullable
-  created_at          DateTime? @default(now())  // Use DateTime type for createdAt
-  updated_at          DateTime? @updatedAt       // Use DateTime type for updatedAt
+  node_id            String?  
+  dragging           String?  
+  height             String?   
+  position           Json?     
+  position_absolute   Json?    
+  selected           String?   
+  type               String?   
+  width              String?   
+  extent             String?   
+  parent_id           String?   
+  intent             String?   
+  language           String?   
+  value           String?
+  placeholder           String?
+  label           String?
+  created_at          DateTime? @default(now())  
+  updated_at          DateTime? @updatedAt      
 
   @@map("flow_nodes")
 }

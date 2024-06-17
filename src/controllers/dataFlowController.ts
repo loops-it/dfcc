@@ -314,7 +314,7 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
         let image_path = req.protocol + '://' + req.get('host')+ '/chat-logo.webp';
           const data_exist = await prisma.flowCardData.findFirst({
             where: {  node_id: req.body.id},
-          });
+        });
           
         if (data_exist) {
             if (req.file) {
