@@ -169,6 +169,15 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
         await prisma.edge.deleteMany({where: {source: req.body.id }});
         await prisma.edge.deleteMany({where: {target: req.body.id }});
     }
+    if(req.body.type == "text"){
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+    }
+    if(req.body.type == "date"){
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+    }
+    if(req.body.type == "message"){
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+    }
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
