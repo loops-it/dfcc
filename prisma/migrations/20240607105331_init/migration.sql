@@ -1,28 +1,3 @@
--- prisma.up({
---   sql: `
---     -- Set custom starting value for sequences
-    -- ALTER SEQUENCE users_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE other_admin_details_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE other_agent_details_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE agent_languages_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE chat_bot_chats_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE live_agent_chat_header_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE live_chat_timer_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE flow_edges_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE facebook_chats_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE files_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE flow_button_data_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE flow_card_data_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE flow_text_box_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE flow_text_only_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE live_agent_chat_chats_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE flow_nodes_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE offline_form_submissions_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE questions_id_seq RESTART WITH 600;
-    -- ALTER SEQUENCE sectors_id_seq RESTART WITH 600;
---   `,
--- });
-
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
@@ -232,9 +207,6 @@ CREATE TABLE "flow_nodes" (
     "parent_id" TEXT,
     "intent" TEXT,
     "language" TEXT,
-    "value" TEXT,
-    "placeholder" TEXT,
-    "label" TEXT,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
