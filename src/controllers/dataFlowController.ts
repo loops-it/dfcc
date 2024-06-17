@@ -615,6 +615,8 @@ export const formData = async (req: Request, res: Response, next: Function) => {
             where: { node_id: req.body.id},
             data: {  intent: req.body.intent},
         });
+        console.log("FORM DATA",req.body)
+        console.log("FORM DATA Inputs",req.body.inputs)
         await Promise.all(req.body.inputs.map(async (input) => {
             const data_exist = await prisma.node.findFirst({
                 where: {  node_id: input.id},
