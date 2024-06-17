@@ -607,3 +607,36 @@ export const getTargetData = async (req: Request, res: Response, next: NextFunct
         res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };
+
+export const formData = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+          const data_exist = await prisma.flowTextOnly.findFirst({
+            where: {  node_id: req.body.id},
+          });
+
+        if (data_exist) {
+
+            await prisma.flowTextOnly.updateMany({
+                where: { node_id: req.body.id},
+                data: {  text: req.body.text},
+              });
+        }
+        else{
+            await prisma.flowTextOnly.create({
+                data: {
+                    node_id: req.body.id,
+                    text: req.body.text,
+                },
+              });
+        }
+        await prisma.node.updateMany({
+            where: { node_id: req.body.id},
+            data: {  intent: req.body.intent},
+        });
+
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};

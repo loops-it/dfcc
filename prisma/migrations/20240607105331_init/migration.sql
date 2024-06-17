@@ -232,6 +232,9 @@ CREATE TABLE "flow_nodes" (
     "parent_id" TEXT,
     "intent" TEXT,
     "language" TEXT,
+    "value" TEXT,
+    "placeholder" TEXT,
+    "label" TEXT,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
