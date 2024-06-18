@@ -1037,29 +1037,58 @@ document
 
 
 
-            function generateForm(node_data) {
-              let formHtml = '<form>';
+          //   function generateForm(node_data) {
+          //     let formHtml = '<form>';
           
-              node_data.forEach(item => {
-                  const field = item.field;
-                  formHtml += '<div style="margin-bottom: 15px;">';
+          //     node_data.forEach(item => {
+          //         const field = item.field;
+          //         formHtml += '<div style="margin-bottom: 15px;">';
           
-                  if (field.label) {
-                      formHtml += `<label for="${field.node_id}">${field.label}</label>`;
-                  }
+          //         if (field.label) {
+          //             formHtml += `<label for="${field.node_id}">${field.label}</label>`;
+          //         }
           
-                  if (field.type === 'text') {
-                      formHtml += `<input type="text" id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}" />`;
-                  } else if (field.type === 'message') {
-                      formHtml += `<textarea id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}"></textarea>`;
-                  }
+          //         if (field.type === 'text') {
+          //             formHtml += `<input type="text" id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}" />`;
+          //         } else if (field.type === 'message') {
+          //             formHtml += `<textarea id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}"></textarea>`;
+          //         }
           
-                  formHtml += '</div>';
-              });
+          //         formHtml += '</div>';
+          //     });
           
-              formHtml += '</form>';
-              return formHtml;
-          }
+          //     formHtml += '</form>';
+          //     return formHtml;
+          // }
+
+          function generateForm(node_data) {
+            let formHtml = '<form class="leadForm">';
+        
+            node_data.forEach(item => {
+                const field = item.field;
+                // Replace spaces with underscores for the name attribute
+                const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
+                formHtml += '<div style="margin-bottom: 15px;">';
+        
+                if (field.label) {
+                    formHtml += `<label for="${field.node_id}">${field.label}</label>`;
+                }
+        
+                if (field.type === 'text') {
+                    formHtml += `<input type="text" id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}" />`;
+                } else if (field.type === 'message') {
+                    formHtml += `<textarea id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}"></textarea>`;
+                }
+        
+                formHtml += '</div>';
+            });
+        
+            // Add submit button
+            formHtml += '<button type="submit">Submit</button>';
+            formHtml += '</form>';
+            return formHtml;
+        }
+        
             async function sendNodeId(nodeId) {
               const response = await fetch(
                 "https://dfcc.vercel.app/chat-bot-get-target-data",
