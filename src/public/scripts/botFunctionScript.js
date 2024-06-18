@@ -451,10 +451,10 @@ async function handleOfflineFormSubmission(event) {
   let selectedLanguage = "";
 
   const selectedLanguageLocal = localStorage.getItem("selectedLanguage");
-  if (selectedLanguageLocal === "Singlish") {
-    selectedLanguage = "Sinhala";
-  } else if (selectedLanguageLocal === "Tanglish") {
-    selectedLanguage = "Tamil";
+  if (selectedLanguageLocal === "singlish") {
+    selectedLanguage = "sinhala";
+  } else if (selectedLanguageLocal === "tanglish") {
+    selectedLanguage = "tamil";
   } else {
     selectedLanguage = selectedLanguageLocal;
   }
@@ -745,12 +745,12 @@ document
 
     let question;
     let selectedLanguage;
-    if (selectedLanguageLocal === "Singlish") {
+    if (selectedLanguageLocal === "singlish") {
       question = questionInput.value;
-      selectedLanguage = "Sinhala";
-    } else if (selectedLanguageLocal === "Tanglish") {
+      selectedLanguage = "sinhala";
+    } else if (selectedLanguageLocal === "tanglish") {
       question = questionInput.value;
-      selectedLanguage = "Tamil";
+      selectedLanguage = "tamil";
     } else {
       question = questionInput.value;
       selectedLanguage = selectedLanguageLocal;
@@ -768,12 +768,12 @@ document
     const requestBody = {
       chatId: chatId,
       messages: chatHistory,
-      language: selectedLanguage || "English",
+      language: selectedLanguage || "english",
     };
     const requestBodyAgent = {
       chatId: chatId,
       user_message: question,
-      language: selectedLanguage || "English",
+      language: selectedLanguage || "english",
     };
 
     console.log("requestBody : ", requestBody);
@@ -1177,33 +1177,33 @@ document
     }
   });
 
-// Event listener for language change to English
+// Event listener for language change to english
 document
   .getElementById("changeToEnglishButton")
   .addEventListener("click", function () {
     document.getElementById("box1").style.display = "none";
     document.getElementById("box2").style.display = "none";
-    localStorage.setItem("selectedLanguage", "English");
-    appendLanguageMessage("Please ask your question in English.");
+    localStorage.setItem("selectedLanguage", "english");
+    appendLanguageMessage("Please ask your question in english.");
   });
 
-// Event listener for language change to Sinhala
+// Event listener for language change to sinhala
 document
   .getElementById("changeToSinhalaButton")
   .addEventListener("click", function () {
     document.getElementById("box1").style.display = "none";
     document.getElementById("box2").style.display = "none";
-    localStorage.setItem("selectedLanguage", "Sinhala");
+    localStorage.setItem("selectedLanguage", "sinhala");
     appendLanguageMessage("කරුණාකර ඔබේ ප්‍රශ්නය සිංහලෙන් අසන්න.");
   });
 
-// Event listener for language change to Tamil
+// Event listener for language change to tamil
 document
   .getElementById("changeToTamilButton")
   .addEventListener("click", function () {
     document.getElementById("box1").style.display = "none";
     document.getElementById("box2").style.display = "none";
-    localStorage.setItem("selectedLanguage", "Tamil");
+    localStorage.setItem("selectedLanguage", "tamil");
     appendLanguageMessage("உங்கள் கேள்வியை தமிழில் கேளுங்கள்.");
   });
 
@@ -1213,7 +1213,7 @@ document
     document.getElementById("box1").style.display = "block";
     document.getElementById("box2").style.display = "none";
     document.getElementById("question").style.display = "block";
-    localStorage.setItem("selectedLanguage", "Singlish");
+    localStorage.setItem("selectedLanguage", "singlish");
     appendLanguageMessage("කරුණාකර ඔබේ ප්‍රශ්නය සිංහලෙන් අසන්න.");
   });
 
@@ -1223,7 +1223,7 @@ document
     document.getElementById("box1").style.display = "none";
     document.getElementById("box2").style.display = "block";
     document.getElementById("question").style.display = "block";
-    localStorage.setItem("selectedLanguage", "Tanglish");
+    localStorage.setItem("selectedLanguage", "tanglish");
     appendLanguageMessage("உங்கள் கேள்வியை தமிழில் கேளுங்கள்.");
   });
 
