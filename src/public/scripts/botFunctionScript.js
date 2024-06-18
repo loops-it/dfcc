@@ -823,9 +823,110 @@ document
           }
 
           if (data.productOrService !== null) {
+            // intent
             console.log("intent data : ", data.productOrService);
             const items = data.productOrService;
 
+            // const generateHTMLForItem = (item, index) => {
+            //   switch (item.type) {
+            //     case "buttonGroup":
+            //       const buttonsHTML = item.node_data
+            //         .map((buttonItem) => {
+            //           if (buttonItem.button.link) {
+            //             return `
+            //                                     <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+            //                                 `;
+            //           } else {
+            //             return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+            //           }
+            //         })
+            //         .join("");
+
+            //       return `
+            //                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+            //                                 ${buttonsHTML}
+            //                             </div>`;
+            //     case "textinput":
+            //       return `
+            //                             <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.title
+            //         }</p>
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.description
+            //         }</p>
+            //                                 </div>
+            //                             </div>`;
+            //     case "cardGroup":
+            //       const buttonsMainCardHTML = item.node_data
+            //         .map((buttonItem) => {
+            //           if (buttonItem.button && buttonItem.button.link) {
+            //             return `
+            //                                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+            //                                         `;
+            //           } else if (buttonItem.button) {
+            //             return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+            //           }
+            //           return "";
+            //         })
+            //         .join("");
+            //       return `
+            //                                 <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                         <img src="../images/bg-1.jpg" alt="" class="cardImage">
+            //                                         <div class="cardGroup px-2" style="box-shadow: none !important">
+            //                                             <h4 class="px-2 mt-2">${item.node_data[0].card
+            //           .title
+            //         }</h4>
+            //                                             <p class="px-2">${item.node_data[0].card
+            //           .description
+            //         }</p>
+            //                                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+            //                                                 ${buttonsMainCardHTML}
+            //                                             </div>
+            //                                         </div>
+            //                                     </div>
+            //                                 </div>`;
+            //     case "textOnly":
+            //       if (item.node_data.text.includes("●")) {
+            //         const bulletPoints = item.node_data.text
+            //           .split("●")
+            //           .filter((point) => point.trim() !== "");
+            //         const bulletPointsHTML = bulletPoints
+            //           .map(
+            //             (point) =>
+            //               `<li class="mb-2" style="min-width: 250px">${point.trim()}</li>`
+            //           )
+            //           .join("");
+            //         return `
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <ul class="px-3 py-2">${bulletPointsHTML}</ul>
+            //                                 </div>`;
+            //       } else {
+            //         return `
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
+            //                                 </div>`;
+            //       }
+            //     case "cardStyleOne":
+            //       return `
+            //                         <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                             <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                 <img src="../images/bg-1.jpg" alt="" class="cardImage">
+            //                                 <div class="cardGroup px-2" style="box-shadow: none !important">
+            //                                     <h4 class="px-2 mt-2">${item.node_data[0].card.title
+            //         }</h4>
+            //                                     <p class="px-2">${item.node_data[0].card.description
+            //         }</p>
+            //                                 </div>
+            //                             </div>
+            //                         </div>`;
+            //     default:
+            //       return "";
+            //   }
+            // };
             const generateHTMLForItem = (item, index) => {
               switch (item.type) {
                 case "buttonGroup":
@@ -926,10 +1027,9 @@ document
                   return "";
               }
             };
-
             async function sendNodeId(nodeId) {
               const response = await fetch(
-                "https://dfcc-chat-bot.vercel.app/chat-bot-get-target-data",
+                "https://dfcc.vercel.app/chat-bot-get-target-data",
                 {
                   method: "POST",
                   headers: {
@@ -1092,37 +1192,37 @@ document
               .map((item, index) => generateHTMLForItem(item, index))
               .join("");
 
-            if (items.length > 1) {
-              // Append the generated HTML to the response as a carousel if there is more than one item
-              appendMessageToResponse(
-                "product",
-                `
-                                <div id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
-                                    <div class="carousel-inner p-0">
-                                    ${carouselItemsHTML}
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                                        <i class="bi bi-caret-left-fill text-danger"></i>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                                        <i class="bi bi-caret-right-fill text-danger"></i>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-                            `
-              );
-            } else if (items.length === 1) {
-              // Append the generated HTML to the response without the carousel if there is only one item
-              appendMessageToResponse(
-                "product",
-                `
-                                <div>
-                                    ${carouselItemsHTML}
-                                </div>
-                            `
-              );
-            }
+              if (items.length > 1) {
+                // Append the generated HTML to the response as a carousel if there is more than one item
+                appendMessageToResponse(
+                  "product",
+                  `
+                                  <div id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                                      <div class="carousel-inner p-0">
+                                      ${carouselItemsHTML}
+                                      </div>
+                                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                                          <i class="bi bi-caret-left-fill text-danger"></i>
+                                          <span class="visually-hidden">Previous</span>
+                                      </button>
+                                      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                                          <i class="bi bi-caret-right-fill text-danger"></i>
+                                          <span class="visually-hidden">Next</span>
+                                      </button>
+                                  </div>
+                              `
+                );
+              } else if (items.length === 1) {
+                // Append the generated HTML to the response without the carousel if there is only one item
+                appendMessageToResponse(
+                  "product",
+                  `
+                                  <div>
+                                      ${carouselItemsHTML}
+                                  </div>
+                              `
+                );
+              }
           } else {
             console.log("if not a product");
           }
