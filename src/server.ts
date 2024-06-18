@@ -355,6 +355,23 @@ app.get('/edit-question', adminLogged, async (req: Request, res: Response) => {
   });
   res.render('edit-question', {question_details: question_details,intent_details: intent_details,intents: intents});
 });
+app.get('/delete-question', adminLogged, async (req: Request, res: Response) => {
+  let id: number | undefined = parseInt(req.query.id as string, 10);
+  let language: string = req.query.language as string;
+
+  await prisma.question.deleteMany({
+    where: { id: id },
+  });
+  if(language == "english"){
+    res.redirect("/english-questions");
+  }
+ else if(language == "sinhala"){
+  res.redirect("/sinhala-questions");
+ }
+ else{
+  res.redirect("/tamil-questions");
+ }
+});
 app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
     const successMessage = req.flash('success')[0];
     const errorMessage = req.flash('error')[0];
