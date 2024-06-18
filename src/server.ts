@@ -569,6 +569,11 @@ app.post("/chat-bot-get-target-data", getTargetData);
 
 app.post("/chat-bot-save-form-submission", saveFormSubmission);
 
+
+app.post('/twillio-chat-webhook', async (req: Request, res: Response) => {
+  const payload = JSON.parse(req.body);
+  console.log("payload", payload);
+});
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
