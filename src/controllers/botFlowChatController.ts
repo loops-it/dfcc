@@ -43,7 +43,7 @@ export const chatFlowResponse = async (
   let userChatId = req.body.chatId || "";
   let language = req.body.language;
   let cachedIntentsList: string[] = [];
-
+  console.log("language",language);
   const questionArray = await prisma.question.findMany({
     where: {
       language: language,
@@ -54,6 +54,7 @@ export const chatFlowResponse = async (
       question: true,
     },
   });
+  console.log("questionArray",questionArray);
   // const questionList = questionArray.map(item => item.dataValues.question);
 
   const questionList = questionArray.map((item) => ({
@@ -61,7 +62,7 @@ export const chatFlowResponse = async (
     id: item.id,
   }));
 
-  console.log(questionList);
+  //console.log(questionList);
 
   async function translateToEnglish(userQuestion: string) {
     const [translationsToEng] = await translate.translate(userQuestion, "en");
@@ -71,7 +72,7 @@ export const chatFlowResponse = async (
     return finalQuestion;
   }
 
-  console.log("language : ", language);
+  //console.log("language : ", language);
   let translatedQuestions: { question: string; id: any }[] = [];
 
   if (language === "Sinhala") {
@@ -85,7 +86,7 @@ export const chatFlowResponse = async (
       })
     );
 
-    console.log("translated questionList sinhala:", translatedQuestions);
+    //console.log("translated questionList sinhala:", translatedQuestions);
   } else if (language === "Tamil") {
     translatedQuestions = await Promise.all(
       questionList.map(async (item) => {
@@ -97,7 +98,7 @@ export const chatFlowResponse = async (
       })
     );
 
-    console.log("translated questionList tamil :", translatedQuestions);
+    //console.log("translated questionList tamil :", translatedQuestions);
   } else {
     translatedQuestions = await Promise.all(
       questionList.map(async (item) => {
@@ -109,11 +110,11 @@ export const chatFlowResponse = async (
       })
     );
 
-    console.log("translated questionList english:", translatedQuestions);
+    //console.log("translated questionList english:", translatedQuestions);
   }
 
-  console.log("translatedQuestions:", translatedQuestions);
-  console.log("questionList : ", questionList);
+  //console.log("translatedQuestions:", translatedQuestions);
+  //console.log("questionList : ", questionList);
   // const questionList:String[] = [
   //     "What is savings account",
   //     "What is creadit card",
@@ -213,7 +214,7 @@ export const chatFlowResponse = async (
 
     // If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes State only its name. If it is not in the intent list, just say this word "not product".
 
-    console.log("translatedQuestion : ", translatedQuestion);
+    //console.log("translatedQuestion : ", translatedQuestion);
     // const productOrServiceQuestion = await openai.completions.create({
     //     model: "gpt-3.5-turbo-instruct",
     //     prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, if it is in the intent list state Only matching intent name from the list. Do not add any other words. If it is not just say this word "not a product".`,
@@ -237,11 +238,11 @@ export const chatFlowResponse = async (
       max_tokens: 20,
       temperature: 0,
     });
-    console.log("--------------------------------------");
-    console.log(
-      "productOrServiceQuestion Question ------- :",
-      productOrServiceQuestion.choices[0].text
-    );
+    // console.log("--------------------------------------");
+    // console.log(
+    //   "productOrServiceQuestion Question ------- :",
+    //   productOrServiceQuestion.choices[0].text
+    // );
 
     let botResponseIntent: string | null =
       productOrServiceQuestion.choices[0].text;
@@ -280,14 +281,14 @@ export const chatFlowResponse = async (
     // ==================================================
     // const stateProduct = productOrServiceQuestion.choices[0].text;
     const stateProduct = botResponseIntent;
-    console.log("--------------------------------------");
+    //console.log("--------------------------------------");
 
     if (
       stateProduct &&
       (await stateProduct).toLowerCase().includes("not a product")
     ) {
-      console.log("It is not a product.");
-      ("--------------------------------------");
+      //console.log("It is not a product.");
+      //("--------------------------------------");
 
       //============= change context ======================
       async function handleSearchRequest(
@@ -336,7 +337,7 @@ export const chatFlowResponse = async (
 
 
 
-        console.log("chatHistory: ", chatHistoryString);
+        //console.log("chatHistory: ", chatHistoryString);
 
         const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevent keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
 ----------
@@ -346,7 +347,7 @@ FOLLOWUP QUESTION: {${translatedQuestion}}
 ----------
 Standalone question:`;
 
-        console.log("questionRephrasePrompt: ", questionRephrasePrompt);
+        //console.log("questionRephrasePrompt: ", questionRephrasePrompt);
 
         const completionQuestion = await openai.completions.create({
           model: "gpt-3.5-turbo-instruct",
@@ -357,10 +358,10 @@ Standalone question:`;
 
         // console.log("chatHistory : ", chatHistory);
         // console.log("Standalone Question PROMPT :", questionRephrasePrompt)
-        console.log(
-          "Standalone Question :",
-          completionQuestion.choices[0].text
-        );
+        //console.log(
+        //  "Standalone Question :",
+        //  completionQuestion.choices[0].text
+        //);
 
         // =============================================================================
         // create embeddings
@@ -383,7 +384,7 @@ Standalone question:`;
         // =============================================================================
         // get vector documents into one string
         const results: string[] = [];
-        console.log("CONTEXT : ", queryResponse.matches[0].metadata);
+        //console.log("CONTEXT : ", queryResponse.matches[0].metadata);
         queryResponse.matches.forEach((match) => {
           if (match.metadata && typeof match.metadata.Title === "string") {
             const result = `Title: ${match.metadata.Title}, \n Content: ${match.metadata.Text} \n \n `;
@@ -391,7 +392,7 @@ Standalone question:`;
           }
         });
         let context = results.join("\n");
-        console.log("CONTEXT : ", context);
+        //console.log("CONTEXT : ", context);
 
         // set system prompt
         // =============================================================================
@@ -445,7 +446,7 @@ Standalone question:`;
         return finalAnswer;
       }
 
-      console.log("GPT response : ", translatedResponse);
+      //console.log("GPT response : ", translatedResponse);
 
       // add assistant to array
       chatHistory.push({ role: "assistant", content: botResponse });
@@ -462,7 +463,7 @@ Standalone question:`;
           viewed_by_admin: "no",
         },
       });
-      console.log("botResponse ---- > ", botResponse);
+      //console.log("botResponse ---- > ", botResponse);
       // console.log("translatedResponse",translatedResponse);
       res.json({
         answer: translatedResponse,
@@ -474,15 +475,15 @@ Standalone question:`;
 
       // run gpt bot
     } else {
-      console.log("It is a product. go to flow builder function");
-      console.log("--------------------------------------");
+      //console.log("It is a product. go to flow builder function");
+      //console.log("--------------------------------------");
 
       try {
         // const intentToSend = stateProduct.toLocaleLowerCase()
         const intentToSend = stateProduct.trim().toLowerCase();
         // const intentToSend =  stateProduct
 
-        console.log("intentToSend (processed): ", intentToSend);
+        //console.log("intentToSend (processed): ", intentToSend);
 
         const response = await fetch(
           "https://dfcc.vercel.app/chat-bot-get-intent-data",
@@ -501,7 +502,7 @@ Standalone question:`;
 
         const responseData = await response.json();
         const intentData = (responseData as ResponseData).intentData;
-        console.log("gpt intentData: ", intentData);
+        //console.log("gpt intentData: ", intentData);
 
         res.json({
           answer: null,
