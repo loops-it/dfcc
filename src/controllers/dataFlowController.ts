@@ -387,7 +387,7 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
         const question_details = await prisma.question.findFirst({
             where: {  id: intent_id},
           });
-          
+
         let intent = "";
         if(question_details){
             const node = await prisma.node.findFirst({
@@ -400,7 +400,7 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
         let intentData: any[] = [];
 
         const node_details = await prisma.node.findMany({ where: {intent: intent}});
-
+        console.log("node_details",node_details);
         for (const node of node_details) {
             const { type, node_id } = node;
             let nodeData;
