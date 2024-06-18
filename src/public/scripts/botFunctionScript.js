@@ -1014,7 +1014,7 @@ document
                                     <div class="carousel-item p-0 ${index === 0 ? "active" : ""
                     }" style="box-shadow: none !important">
                                         <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                                            <img src=${item.node_data[0].card.image} alt="" class="cardImage">
                                             <div class="cardGroup px-2" style="box-shadow: none !important">
                                                 <h4 class="px-2 mt-2">${item.node_data[0].card.title
                     }</h4>
@@ -1023,10 +1023,43 @@ document
                                             </div>
                                         </div>
                                     </div>`;
+                case "formGroup":
+                  return `
+                  <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                          ${generateForm(item.node_data)}
+                      </div>
+                  </div>`;
                 default:
                   return "";
               }
             };
+
+
+
+            function generateForm(node_data) {
+              let formHtml = '<form>';
+          
+              node_data.forEach(item => {
+                  const field = item.field;
+                  formHtml += '<div style="margin-bottom: 15px;">';
+          
+                  if (field.label) {
+                      formHtml += `<label for="${field.node_id}">${field.label}</label>`;
+                  }
+          
+                  if (field.type === 'text') {
+                      formHtml += `<input type="text" id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}" />`;
+                  } else if (field.type === 'message') {
+                      formHtml += `<textarea id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}"></textarea>`;
+                  }
+          
+                  formHtml += '</div>';
+              });
+          
+              formHtml += '</form>';
+              return formHtml;
+          }
             async function sendNodeId(nodeId) {
               const response = await fetch(
                 "https://dfcc.vercel.app/chat-bot-get-target-data",
