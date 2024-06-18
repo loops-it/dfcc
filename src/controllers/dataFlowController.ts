@@ -383,11 +383,11 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
 };
 export const getIntentData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-
+        let intent_id: number | undefined = parseInt(req.body.intent as string, 10);  
         const question_details = await prisma.question.findFirst({
-            where: {  id: req.body.intent},
+            where: {  id: intent_id},
           });
-
+          
         let intent = "";
         if(question_details){
             const node = await prisma.node.findFirst({
