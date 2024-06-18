@@ -28,7 +28,7 @@ import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from '.
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
 import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData,ButtonGroup,formData
-  ,ButtonData,CardData,getIntentData,getTargetData} from './controllers/dataFlowController';
+  ,ButtonData,CardData,getIntentData,getTargetData,saveFormSubmission} from './controllers/dataFlowController';
 import { addQuestion} from './controllers/Questions';
 import { loadLiveChatHistory } from './controllers/loadLiveChatHistory';
 import { getFlowPage } from './controllers/flowController';
@@ -549,6 +549,8 @@ app.post("/data-flow-card-data",handleFileUpload, CardData);
 
 app.post("/chat-bot-get-intent-data", getIntentData);
 app.post("/chat-bot-get-target-data", getTargetData);
+
+app.post("/chat-bot-save-form-submission", saveFormSubmission);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

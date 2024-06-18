@@ -665,3 +665,21 @@ export const formData = async (req: Request, res: Response, next: Function) => {
     console.error('Error inserting data:', error);
     }
 };
+
+export const saveFormSubmission = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        const valuesString = req.body.inputs.map((input: { label: string, value: string }) => `${input.label} - ${input.value}`).join(',');
+
+        await prisma.flowFormSubmissions.create({
+            data: {
+                form_id: req.body.id,
+                field_data: valuesString,
+            },
+          });
+        
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};

@@ -244,3 +244,13 @@ model Sector {
 
    @@map("sectors")
 }
+
+model FlowFormSubmissions {
+  id         Int       @id @default(autoincrement())
+  form_id   String
+  field_data     String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+   @@map("flow_form_submissions")
+}
