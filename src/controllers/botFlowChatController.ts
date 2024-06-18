@@ -54,6 +54,7 @@ export const chatFlowResponse = async (
       question: true,
     },
   });
+  console.log("questionArray",questionArray);
   // const questionList = questionArray.map(item => item.dataValues.question);
 
   const questionList = questionArray.map((item) => ({
