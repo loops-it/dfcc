@@ -5,8 +5,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const addQuestion = async (req: Request, res: Response) => {
-    const {question, intent, language} = req.body;
+    const {question, language} = req.body;
     //console.log(req.body);
+    let intent: number | undefined = parseInt(req.body.intent as string, 10);
     try {
         await prisma.question.create({
           data: {

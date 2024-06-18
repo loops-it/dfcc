@@ -163,7 +163,21 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
         await prisma.flowCardData.deleteMany({where: {node_id: req.body.id }});
 
     }
-
+    if(req.body.type == "formGroup"){
+        await prisma.node.deleteMany({where: {parent_id: req.body.id }});
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+        await prisma.edge.deleteMany({where: {source: req.body.id }});
+        await prisma.edge.deleteMany({where: {target: req.body.id }});
+    }
+    if(req.body.type == "text"){
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+    }
+    if(req.body.type == "date"){
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+    }
+    if(req.body.type == "message"){
+        await prisma.node.deleteMany({where: {node_id: req.body.id }});
+    }
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
@@ -314,7 +328,7 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
         let image_path = req.protocol + '://' + req.get('host')+ '/chat-logo.webp';
           const data_exist = await prisma.flowCardData.findFirst({
             where: {  node_id: req.body.id},
-          });
+        });
           
         if (data_exist) {
             if (req.file) {
@@ -605,5 +619,67 @@ export const getTargetData = async (req: Request, res: Response, next: NextFunct
     } catch (error) {
         console.error('Error retrieving intent data:', error);
         res.status(500).json({ status: "error", message: "Internal server error" });
+    }
+};
+
+export const formData = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        await prisma.node.updateMany({
+            where: { node_id: req.body.id},
+            data: {  intent: req.body.intent},
+        });
+        console.log("FORM DATA",req.body)
+        console.log("FORM DATA Inputs",req.body.inputs)
+        await Promise.all(req.body.inputs.map(async (input) => {
+            const data_exist = await prisma.node.findFirst({
+                where: {  node_id: input.id},
+              });
+
+            if (data_exist) {
+
+                await prisma.node.updateMany({
+                    where: { node_id: input.id},
+                    data: {  value: input.value,placeholder: input.placeholder,label: input.label},
+                  });
+            }
+            else{
+                await prisma.node.create({
+                    data: {
+                        node_id: input.id,
+                        value: input.value,
+                        placeholder: input.placeholder,
+                        label: input.label,
+                        type: input.type,
+                        language: input.language,
+                        parent_id: req.body.id,
+                        position: input.position
+                    },
+                  });
+            }
+
+        }));
+        
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};
+
+export const saveFormSubmission = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        const valuesString = req.body.inputs.map((input: { label: string, value: string }) => `${input.label} - ${input.value}`).join(',');
+
+        await prisma.flowFormSubmissions.create({
+            data: {
+                form_id: req.body.id,
+                field_data: valuesString,
+            },
+          });
+        
+        res.json({ status: "success"}) 
+    } catch (error) { 
+    console.error('Error inserting data:', error);
     }
 };
