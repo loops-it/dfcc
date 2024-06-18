@@ -679,7 +679,7 @@ export const saveFormSubmission = async (req: Request, res: Response, next: Func
           });
         
         res.json({ status: "success"}) 
-    } catch (error) {
+    } catch (error) { 
     console.error('Error inserting data:', error);
     }
 };
