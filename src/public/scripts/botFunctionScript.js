@@ -1036,31 +1036,6 @@ document
             };
 
 
-
-          //   function generateForm(node_data) {
-          //     let formHtml = '<form>';
-          
-          //     node_data.forEach(item => {
-          //         const field = item.field;
-          //         formHtml += '<div style="margin-bottom: 15px;">';
-          
-          //         if (field.label) {
-          //             formHtml += `<label for="${field.node_id}">${field.label}</label>`;
-          //         }
-          
-          //         if (field.type === 'text') {
-          //             formHtml += `<input type="text" id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}" />`;
-          //         } else if (field.type === 'message') {
-          //             formHtml += `<textarea id="${field.node_id}" name="${field.label}" placeholder="${field.placeholder}"></textarea>`;
-          //         }
-          
-          //         formHtml += '</div>';
-          //     });
-          
-          //     formHtml += '</form>';
-          //     return formHtml;
-          // }
-
           function generateForm(node_data) {
             let formHtml = '<form class="leadForm">';
         
