@@ -482,7 +482,8 @@ Standalone question:`;
         // const intentToSend = stateProduct.toLocaleLowerCase()
         const intentToSend = stateProduct.trim().toLowerCase();
         // const intentToSend =  stateProduct
-
+        console.log("intentToSend (processed): ", intentToSend);
+        
         //console.log("intentToSend (processed): ", intentToSend);
 
         const response = await fetch(
