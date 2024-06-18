@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export const addQuestion = async (req: Request, res: Response) => {
     const {question, language} = req.body;
     //console.log(req.body);
-    let intent: number | undefined = parseInt(req.query.intent as string, 10);
+    let intent: number | undefined = parseInt(req.body.intent as string, 10);
     try {
         await prisma.question.create({
           data: {
