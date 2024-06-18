@@ -435,6 +435,14 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
                     nodeData = childData;
                     break;
                 } 
+                case 'formGroup': {
+                    const fields = await prisma.node.findMany({ where: { parent_id: node_id } });
+                    let fieldData = await Promise.all(fields.map(async f => ({
+                        field: await prisma.node.findFirst({ where: { node_id: f.node_id } }),
+                    })));
+                    nodeData = fieldData;
+                    break;
+                } 
                 default:
                     continue;
             }
