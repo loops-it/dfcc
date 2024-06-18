@@ -43,7 +43,7 @@ export const chatFlowResponse = async (
   let userChatId = req.body.chatId || "";
   let language = req.body.language;
   let cachedIntentsList: string[] = [];
-
+  console.log("language",language);
   const questionArray = await prisma.question.findMany({
     where: {
       language: language,
