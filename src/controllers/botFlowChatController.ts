@@ -486,7 +486,7 @@ Standalone question:`;
         console.log("intentToSend (processed): ", intentToSend);
 
         const response = await fetch(
-          "https://dfcc-chat-bot.vercel.app/chat-bot-get-intent-data",
+          "https://dfcc.vercel.app/chat-bot-get-intent-data",
           {
             method: "POST",
             headers: {
