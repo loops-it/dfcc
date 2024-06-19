@@ -1106,7 +1106,7 @@ document
               const formArray = node_data.node_data
               const allItems = node_data;
 
-              const matchingNodes = allItems.nodes.find(node => node.node_id === parent_id);
+              const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
               console.log("node_data : ", matchingNodes)
 
               formArray.forEach(item => {
