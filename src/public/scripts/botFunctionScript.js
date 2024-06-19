@@ -734,8 +734,23 @@ function appendLanguageMessage(content) {
   responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
-function leadFormSubmit() {
+async function leadFormSubmit() {
   console.log('Form submitted');
+    const form = document.getElementById('leadForm');
+              const formData = new FormData(form);
+              const dataFromForm = Object.fromEntries(formData.entries());
+
+              console.log(dataFromForm);
+              const response = await fetch("/data-flow-form-data", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataFromForm),
+              });
+
+              const data = await response.json();
+              console.log("test chat response flow : ", data.body);
 }
 
 // Event listener for question form submission
