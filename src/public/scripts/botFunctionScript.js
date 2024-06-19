@@ -735,20 +735,6 @@ function appendLanguageMessage(content) {
 }
 
 async function leadFormSubmit() {
-  // console.log('Form submitted');
-
-
-  // console.log(dataFromForm);
-  // const response = await fetch("/data-flow-form-data", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(dataFromForm),
-  // });
-
-  // const data = await response.json();
-  // console.log("test chat response flow : ", data.body);
 
   console.log('Form submitted');
 
@@ -758,13 +744,6 @@ async function leadFormSubmit() {
   // Initialize an array to hold the form data
   const dataFromForm = [];
 
-  // Iterate over the form elements
-  // form.querySelectorAll('input, textarea').forEach(element => {
-  //     dataFromForm.push({
-  //       label: element.name,
-  //       value: element.value
-  //     });
-  // });
   form.querySelectorAll('input, textarea').forEach(element => {
     // Find the corresponding label for the current element
     const labelElement = form.querySelector(`label[for="${element.id}"]`);
@@ -785,7 +764,7 @@ async function leadFormSubmit() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(dataFromForm),
+    body: JSON.stringify({ inputs: dataFromForm }),
   });
 
   const data = await response.json();
@@ -1091,11 +1070,12 @@ document
                                         </div>
                                     </div>`;
                 case "formGroup":
-                 
+
 
                   // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
-                  
 
+                  const nodeID = item.type
+                  console.log("type : ", nodeID)
                   return `
                   <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
@@ -1142,24 +1122,6 @@ document
 
 
 
-            // async function leadFormSubmit() {
-
-            //   const form = document.getElementById('leadForm');
-            //   const formData = new FormData(form);
-            //   const dataFromForm = Object.fromEntries(formData.entries());
-
-            //   console.log(dataFromForm);
-            //   const response = await fetch("/data-flow-form-data", {
-            //     method: "POST",
-            //     headers: {
-            //       "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify(dataFromForm),
-            //   });
-
-            //   const data = await response.json();
-            //   console.log("test chat response flow : ", data.body);
-            // }
 
             async function sendNodeId(nodeId) {
               const response = await fetch(
