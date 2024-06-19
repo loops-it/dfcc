@@ -1343,31 +1343,31 @@ document
                   .map((item, index) => {
                     switch (item.type) {
                       case "cardGroup":
-                        if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
-                        if (!Array.isArray(item.node_data)) return "";
+                        if (!item.source_data || item.source_data.length === 0) return "";
               
-                        const cardItem = item.node_data.find(node => node.card);
-                        if (!cardItem) return "";
+                        // Extract the card element from source_data
+                        const cardElement = item.source_data.find(node => node.card);
+                        if (!cardElement || !cardElement.card) return "";
               
+                        // Extract the button elements from source_data
                         const buttonsCardHTML = item.source_data
-                          .slice(1)
+                          .filter(node => node.button)
                           .map((buttonItem) => {
-                            if (buttonItem.button?.link) {
+                            if (buttonItem.button.link) {
                               return `<a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>`;
-                            } else if (buttonItem.button) {
+                            } else {
                               return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                             }
-                            return "";
                           })
                           .join("");
               
                         return `
                           <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                             <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                              <img src=${cardItem.card.image || ''} alt="" class="cardImage">
+                              <img src=${cardElement.card.image || ''} alt="" class="cardImage">
                               <div class="cardGroup px-2" style="box-shadow: none !important">
-                                <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
-                                <p class="px-2">${item.source_data[0].card.description}</p>
+                                <h4 class="px-2 mt-2">${cardElement.card.title}</h4>
+                                <p class="px-2">${cardElement.card.description}</p>
                                 <div class="buttonGroup p-0" style="box-shadow: none !important">${buttonsCardHTML}</div>
                               </div>
                             </div>
@@ -1377,13 +1377,13 @@ document
                         if (!item.source_data || item.source_data.length === 0) return "";
               
                         const buttonsGroupHTML = item.source_data
+                          .filter(node => node.button)
                           .map((buttonItem) => {
-                            if (buttonItem.button?.link) {
+                            if (buttonItem.button.link) {
                               return `<a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>`;
-                            } else if (buttonItem.button) {
+                            } else {
                               return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                             }
-                            return "";
                           })
                           .join("");
               
@@ -1409,19 +1409,18 @@ document
                           </div>`;
               
                       case "cardStyleOne":
-                        if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
-                        if (!Array.isArray(item.node_data)) return "";
+                        if (!item.source_data || item.source_data.length === 0) return "";
               
-                        const cardStyleItem = item.node_data.find(node => node.card);
-                        if (!cardStyleItem) return "";
+                        const cardStyleElement = item.source_data.find(node => node.card);
+                        if (!cardStyleElement || !cardStyleElement.card) return "";
               
                         return `
                           <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                             <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                              <img src=${cardStyleItem.card.image || ''} alt="" class="cardImage">
+                              <img src=${cardStyleElement.card.image || ''} alt="" class="cardImage">
                               <div class="cardGroup px-2" style="box-shadow: none !important">
-                                <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
-                                <p class="px-2">${item.source_data[0].card.description}</p>
+                                <h4 class="px-2 mt-2">${cardStyleElement.card.title}</h4>
+                                <p class="px-2">${cardStyleElement.card.description}</p>
                               </div>
                             </div>
                           </div>`;
@@ -1432,6 +1431,7 @@ document
                   })
                   .join("");
               };
+              
               
               
 
