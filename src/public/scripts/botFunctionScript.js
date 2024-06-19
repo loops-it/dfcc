@@ -734,9 +734,9 @@ function appendLanguageMessage(content) {
   responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
-async function leadFormSubmit(nodeID) {
+async function leadFormSubmit(formNodeID) {
 
-  console.log('Form submitted', nodeID);
+  console.log('Form submitted', formNodeID);
 
   // Get the form element
   const form = document.getElementById('leadForm');
@@ -765,7 +765,7 @@ async function leadFormSubmit(nodeID) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ id: nodeID , inputs: dataFromForm }),
+    body: JSON.stringify({ id: formNodeID , inputs: dataFromForm }),
   });
 
   const data = await response.json();
@@ -1089,9 +1089,9 @@ document
             };
 
 
-            function generateForm(node_data, nodeID) {
+            function generateForm(node_data, formMainID) {
 
-              const nodeID = nodeID;
+              const nodeID = formMainID;
               console.log("nodeID -: ", nodeID)
               let formHtml = '<div id="leadForm" class="leadForm">';
 
