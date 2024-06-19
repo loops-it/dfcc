@@ -762,7 +762,7 @@ async function leadFormSubmit() {
   console.log(dataFromForm);
 
   // Send the form data to the server
-  const response = await fetch("/data-flow-form-data", {
+  const response = await fetch("/chat-bot-save-form-submission", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
