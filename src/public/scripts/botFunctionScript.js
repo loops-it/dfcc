@@ -133,14 +133,14 @@ function showEndChatAlertAgent() {
       "show"
     );
     alertDiv.setAttribute("role", "alert");
-    if(ratingVisible === true){
+    if (ratingVisible === true) {
       alertDiv.innerHTML = `
       Are you sure yo want to colse this chat. Do you want to end the chat?
       <div class="d-flex flex-row">
         <button type="button" class="btnNotoClose ms-2" data-bs-dismiss="alert">Cancel</button>
       </div>
   `;
-    }else{
+    } else {
       alertDiv.innerHTML = `
       Are you sure yo want to colse this chat. Do you want to end the chat?
       <div class="d-flex flex-row">
@@ -149,7 +149,7 @@ function showEndChatAlertAgent() {
       </div>
   `;
     }
-        
+
     responseDiv.appendChild(alertDiv);
     alertDiv.scrollIntoView({ behavior: "smooth" });
 
@@ -533,11 +533,11 @@ function startCheckingForAgent(data) {
           }
         } else if (dataLiveAgent.chat_status === "closed") {
           console.log("response.status failed - ", dataLiveAgent.chat_status);
-          if(ratingVisible === false){
+          if (ratingVisible === false) {
             handleEndChat();
             ratingVisible === true;
           }
-         
+
           chatWithAgent = false;
           clearInterval(intervalId); // Stop sending requests if the chat is closed
         }
@@ -1036,48 +1036,41 @@ document
             };
 
 
-          function generateForm(node_data) {
-            let formHtml = '<form class="leadForm">';
-        
-            node_data.forEach(item => {
+            function generateForm(node_data) {
+              let formHtml = '<form id="leadForm" class="leadForm">';
+
+              node_data.forEach(item => {
                 const field = item.field;
                 // Replace spaces with underscores for the name attribute
                 const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
                 formHtml += '<div style="margin-bottom: 15px;display: flex; flex-direction: column;">';
-        
+
                 if (field.label) {
-                    formHtml += `<label for="${field.node_id}">${field.label}</label>`;
+                  formHtml += `<label for="${field.node_id}">${field.label}</label>`;
                 }
-        
+
                 if (field.type === 'text') {
-                    formHtml += `<input type="text" id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}" />`;
+                  formHtml += `<input type="text" id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}" />`;
                 } else if (field.type === 'message') {
-                    formHtml += `<textarea id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}"></textarea>`;
+                  formHtml += `<textarea id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}"></textarea>`;
                 }
-        
+
                 formHtml += '</div>';
-            });
-        
-            // Add submit button
-            formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="submit">Submit</button></div>';
-            formHtml += '</form>';
-            return formHtml;
-        }
-        
-        function addFormEventListener() {
-          document.querySelector('.leadForm').addEventListener('submit', async function(event) {
-              event.preventDefault(); // Prevent the default form submission behavior
-              
-              const formData = new FormData(event.target);
-              const dataFromForm = {};
-              
-              // Convert FormData to a plain object
-              formData.forEach((value, key) => {
-                dataFromForm[key] = value;
-                console.log("dataFromForm : ",dataFromForm)
               });
-      
-              // Send the form data to the API
+
+              // Add submit button
+              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button onclick="leadFormSubmit()">Submit</button></div>';
+              formHtml += '</form>';
+              return formHtml;
+            }
+
+            async function leadFormSubmit() {
+
+              const form = document.getElementById('leadForm');
+              const formData = new FormData(form);
+              const dataFromForm = Object.fromEntries(formData.entries());
+
+              console.log(dataFromForm);
               const response = await fetch("/data-flow-form-data", {
                 method: "POST",
                 headers: {
@@ -1085,11 +1078,10 @@ document
                 },
                 body: JSON.stringify(dataFromForm),
               });
-    
+
               const data = await response.json();
               console.log("test chat response flow : ", data.body);
-          });
-      }
+            }
             async function sendNodeId(nodeId) {
               const response = await fetch(
                 "https://dfcc.vercel.app/chat-bot-get-target-data",
@@ -1255,11 +1247,11 @@ document
               .map((item, index) => generateHTMLForItem(item, index))
               .join("");
 
-              if (items.length > 1) {
-                // Append the generated HTML to the response as a carousel if there is more than one item
-                appendMessageToResponse(
-                  "product",
-                  `
+            if (items.length > 1) {
+              // Append the generated HTML to the response as a carousel if there is more than one item
+              appendMessageToResponse(
+                "product",
+                `
                                   <div id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
                                       <div class="carousel-inner p-0">
                                       ${carouselItemsHTML}
@@ -1274,18 +1266,18 @@ document
                                       </button>
                                   </div>
                               `
-                );
-              } else if (items.length === 1) {
-                // Append the generated HTML to the response without the carousel if there is only one item
-                appendMessageToResponse(
-                  "product",
-                  `
+              );
+            } else if (items.length === 1) {
+              // Append the generated HTML to the response without the carousel if there is only one item
+              appendMessageToResponse(
+                "product",
+                `
                                   <div>
                                       ${carouselItemsHTML}
                                   </div>
                               `
-                );
-              }
+              );
+            }
           } else {
             console.log("if not a product");
           }
