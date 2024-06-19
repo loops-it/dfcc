@@ -928,11 +928,9 @@ document
             //   }
             // };
 
-            function leadFormSubmit() {
-              console.log('Form submitted');
-            }
+           
 
-            
+
             const generateHTMLForItem = (item, index) => {
               switch (item.type) {
                 case "buttonGroup":
@@ -1043,6 +1041,8 @@ document
 
 
             function generateForm(node_data) {
+
+              
               let formHtml = '<div id="leadForm" class="leadForm">';
 
               node_data.forEach(item => {
@@ -1067,7 +1067,13 @@ document
               // Add submit button
               formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit()">Submit</button></div>';
               formHtml += '</div>';
-              return formHtml;
+              // Insert formHtml into the DOM
+      document.body.innerHTML = formHtml;
+
+      // Define leadFormSubmit function and attach event listener
+      document.getElementById('leadFormSubmitButton').addEventListener('click', function leadFormSubmit() {
+        console.log('Form submitted');
+      });
             }
 
             
