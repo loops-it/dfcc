@@ -759,13 +759,22 @@ async function leadFormSubmit() {
   const dataFromForm = [];
 
   // Iterate over the form elements
+  // form.querySelectorAll('input, textarea').forEach(element => {
+  //     dataFromForm.push({
+  //       label: element.name,
+  //       value: element.value
+  //     });
+  // });
   form.querySelectorAll('input, textarea').forEach(element => {
-      dataFromForm.push({
-          id: element.id,
-          value: element.value,
-          name: element.name
-      });
-  });
+    // Find the corresponding label for the current element
+    const labelElement = form.querySelector(`label[for="${element.id}"]`);
+    const labelText = labelElement ? labelElement.textContent : '';
+
+    dataFromForm.push({
+        label: labelText,
+        value: element.value
+    });
+});
 
   // Log the extracted form data
   console.log(dataFromForm);
@@ -1091,7 +1100,7 @@ document
 
             function generateForm(node_data) {
 
-
+console.log("node_data : ",node_data)
               let formHtml = '<div id="leadForm" class="leadForm">'; 
 
               node_data.forEach(item => {
