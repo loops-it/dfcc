@@ -885,6 +885,11 @@ document
             console.log("intent data : ", data.productOrService);
             const items = data.productOrService;
 
+            // const formArray = item.node_data
+            // const allItems = data.productOrService;
+            // console.log("formArray : ", formArray);
+            console.log("allItems : ", items)
+
             // const generateHTMLForItem = (item, index) => {
             //   switch (item.type) {
             //     case "buttonGroup":
@@ -1086,12 +1091,10 @@ document
                                         </div>
                                     </div>`;
                 case "formGroup":
-                  const formArray = item.node_data
-                  const allItems = data.productOrService;
+                 
 
                   // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
-                  console.log("formArray : ", formArray);
-                  console.log("allItems : ", allItems)
+                  
 
                   return `
                   <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
