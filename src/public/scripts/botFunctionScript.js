@@ -1064,28 +1064,28 @@ document
               return formHtml;
             }
 
-            async function leadFormSubmit() {
-
-              const form = document.getElementById('leadForm');
-              const formData = new FormData(form);
-              const dataFromForm = Object.fromEntries(formData.entries());
-
-              console.log(dataFromForm);
-              const response = await fetch("/data-flow-form-data", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(dataFromForm),
-              });
-
-              const data = await response.json();
-              console.log("test chat response flow : ", data.body);
+            function leadFormSubmit() {
+              console.log('Form submitted');
             }
 
-            document.addEventListener('DOMContentLoaded', () => {
-              document.body.innerHTML = generateForm(node_data);
-            });
+            // async function leadFormSubmit() {
+
+            //   const form = document.getElementById('leadForm');
+            //   const formData = new FormData(form);
+            //   const dataFromForm = Object.fromEntries(formData.entries());
+
+            //   console.log(dataFromForm);
+            //   const response = await fetch("/data-flow-form-data", {
+            //     method: "POST",
+            //     headers: {
+            //       "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify(dataFromForm),
+            //   });
+
+            //   const data = await response.json();
+            //   console.log("test chat response flow : ", data.body);
+            // }
 
             async function sendNodeId(nodeId) {
               const response = await fetch(
