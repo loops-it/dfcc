@@ -980,6 +980,120 @@ document
 
 
 
+            // const generateHTMLForItem = (item, index) => {
+            //   switch (item.type) {
+            //     case "buttonGroup":
+            //       const buttonsHTML = item.node_data
+            //         .map((buttonItem) => {
+            //           if (buttonItem.button.link) {
+            //             return `
+            //                                     <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+            //                                 `;
+            //           } else {
+            //             return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+            //           }
+            //         })
+            //         .join("");
+
+            //       return `
+            //                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+            //                                 ${buttonsHTML}
+            //                             </div>`;
+            //     case "textinput":
+            //       return `
+            //                             <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.title
+            //         }</p>
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.description
+            //         }</p>
+            //                                 </div>
+            //                             </div>`;
+            //     case "cardGroup":
+            //       const buttonsMainCardHTML = item.node_data
+            //         .map((buttonItem) => {
+            //           if (buttonItem.button && buttonItem.button.link) {
+            //             return `
+            //                                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+            //                                         `;
+            //           } else if (buttonItem.button) {
+            //             return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+            //           }
+            //           return "";
+            //         })
+            //         .join("");
+            //       return `
+            //                                 <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                         <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
+            //                                         <div class="cardGroup px-2" style="box-shadow: none !important">
+            //                                             <h4 class="px-2 mt-2">${item.node_data[0].card
+            //           .title
+            //         }</h4>
+            //                                             <p class="px-2">${item.node_data[0].card
+            //           .description
+            //         }</p>
+            //                                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+            //                                                 ${buttonsMainCardHTML}
+            //                                             </div>
+            //                                         </div>
+            //                                     </div>
+            //                                 </div>`;
+            //     case "textOnly":
+            //       if (item.node_data.text.includes("●")) {
+            //         const bulletPoints = item.node_data.text
+            //           .split("●")
+            //           .filter((point) => point.trim() !== "");
+            //         const bulletPointsHTML = bulletPoints
+            //           .map(
+            //             (point) =>
+            //               `<li class="mb-2" style="min-width: 250px">${point.trim()}</li>`
+            //           )
+            //           .join("");
+            //         return `
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <ul class="px-3 py-2">${bulletPointsHTML}</ul>
+            //                                 </div>`;
+            //       } else {
+            //         return `
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
+            //                                 </div>`;
+            //       }
+            //     case "cardStyleOne":
+            //       return `
+            //                         <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                             <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                 <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
+            //                                 <div class="cardGroup px-2" style="box-shadow: none !important">
+            //                                     <h4 class="px-2 mt-2">${item.node_data[0].card.title
+            //         }</h4>
+            //                                     <p class="px-2">${item.node_data[0].card.description
+            //         }</p>
+            //                                 </div>
+            //                             </div>
+            //                         </div>`;
+            //     case "formGroup":
+
+
+            //       // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
+
+            //       formMainID = item.node_id
+            //       console.log("type : ", formMainID)
+            //       return `
+            //       <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+            //           <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //               ${generateForm(item.node_data)}
+            //           </div>
+            //       </div>`;
+            //     default:
+            //       return "";
+            //   }
+            // };
+
             const generateHTMLForItem = (item, index) => {
               switch (item.type) {
                 case "buttonGroup":
@@ -987,60 +1101,61 @@ document
                     .map((buttonItem) => {
                       if (buttonItem.button.link) {
                         return `
-                                                <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                            `;
+                          <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        `;
                       } else {
                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                       }
                     })
                     .join("");
-
+            
                   return `
-                                        <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                            ${buttonsHTML}
-                                        </div>`;
+                    <div class="buttonGroup p-0" style="box-shadow: none !important">
+                      ${buttonsHTML}
+                    </div>`;
+            
                 case "textinput":
                   return `
-                                        <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                    }" style="box-shadow: none !important">
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <p class="px-2" style="min-width: 250px">${item.node_data.title
-                    }</p>
-                                                <p class="px-2" style="min-width: 250px">${item.node_data.description
-                    }</p>
-                                            </div>
-                                        </div>`;
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <p class="px-2" style="min-width: 250px">${item.node_data.title}</p>
+                        <p class="px-2" style="min-width: 250px">${item.node_data.description}</p>
+                      </div>
+                    </div>`;
+            
                 case "cardGroup":
+                  const cardItem = item.node_data.find(node => node.card);
                   const buttonsMainCardHTML = item.node_data
                     .map((buttonItem) => {
                       if (buttonItem.button && buttonItem.button.link) {
                         return `
-                                                        <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                    `;
+                          <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        `;
                       } else if (buttonItem.button) {
                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                       }
                       return "";
                     })
                     .join("");
+                  
+                  if (!cardItem) {
+                    return '';
+                  }
+            
                   return `
-                                            <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                    }" style="box-shadow: none !important">
-                                                <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                    <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
-                                                    <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                        <h4 class="px-2 mt-2">${item.node_data[0].card
-                      .title
-                    }</h4>
-                                                        <p class="px-2">${item.node_data[0].card
-                      .description
-                    }</p>
-                                                        <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                                            ${buttonsMainCardHTML}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>`;
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src=${cardItem.card.image || ''} alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                          <h4 class="px-2 mt-2">${cardItem.card.title}</h4>
+                          <p class="px-2">${cardItem.card.description}</p>
+                          <div class="buttonGroup p-0" style="box-shadow: none !important">
+                            ${buttonsMainCardHTML}
+                          </div>
+                        </div>
+                      </div>
+                    </div>`;
+            
                 case "textOnly":
                   if (item.node_data.text.includes("●")) {
                     const bulletPoints = item.node_data.text
@@ -1053,42 +1168,43 @@ document
                       )
                       .join("");
                     return `
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <ul class="px-3 py-2">${bulletPointsHTML}</ul>
-                                            </div>`;
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <ul class="px-3 py-2">${bulletPointsHTML}</ul>
+                      </div>`;
                   } else {
                     return `
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
-                                            </div>`;
-                  }
-                case "cardStyleOne":
-                  return `
-                                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                    }" style="box-shadow: none !important">
-                                        <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
-                                            <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                <h4 class="px-2 mt-2">${item.node_data[0].card.title
-                    }</h4>
-                                                <p class="px-2">${item.node_data[0].card.description
-                    }</p>
-                                            </div>
-                                        </div>
-                                    </div>`;
-                case "formGroup":
-
-
-                  // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
-
-                  formMainID = item.node_id
-                  console.log("type : ", formMainID)
-                  return `
-                  <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                          ${generateForm(item.node_data)}
+                        <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
+                      </div>`;
+                  }
+            
+                case "cardStyleOne":
+                  const cardStyleItem = item.node_data.find(node => node.card);
+                  
+                  if (!cardStyleItem) {
+                    return '';
+                  }
+            
+                  return `
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src=${cardStyleItem.card.image || ''} alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                          <h4 class="px-2 mt-2">${cardStyleItem.card.title}</h4>
+                          <p class="px-2">${cardStyleItem.card.description}</p>
+                        </div>
                       </div>
-                  </div>`;
+                    </div>`;
+            
+                case "formGroup":
+                  formMainID = item.node_id;
+                  return `
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        ${generateForm(item.node_data)}
+                      </div>
+                    </div>`;
+            
                 default:
                   return "";
               }
