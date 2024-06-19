@@ -1027,7 +1027,7 @@ document
                                             <div class="carousel-item p-0 ${index === 0 ? "active" : ""
                     }" style="box-shadow: none !important">
                                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                    <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                                                    <img src=${item.node_data[0].card.image} alt="" class="cardImage">
                                                     <div class="cardGroup px-2" style="box-shadow: none !important">
                                                         <h4 class="px-2 mt-2">${item.node_data[0].card
                       .title
@@ -1172,7 +1172,7 @@ document
                                                     <div class="carousel-item p-0 ${index === 0 ? "active" : ""
                           }" style="box-shadow: none !important">
                                                         <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                            <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                                                            <img src=${item.node_data[0].card.image} alt="" class="cardImage">
                                                             <div class="cardGroup px-2" style="box-shadow: none !important">
                                                                 <h4 class="px-2 mt-2">${item
                             .source_data[0]
@@ -1234,7 +1234,7 @@ document
                                                 <div class="carousel-item p-0 ${index === 0 ? "active" : ""
                           }" style="box-shadow: none !important">
                                                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                        <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                                                        <img src=${item.node_data[0].card.image} alt="" class="cardImage">
                                                         <div class="cardGroup px-2" style="box-shadow: none !important">
                                                             <h4 class="px-2 mt-2">${item.source_data[0]
                             .card.title
