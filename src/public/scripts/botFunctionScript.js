@@ -1269,6 +1269,8 @@ document
                     switch (item.type) {
                       case "cardGroup":
                         console.log("2 : ",item.node_data )
+
+                        const cardItem = item.node_data.find(node => node.card);
                       
                         if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
                         const buttonsCardHTML = item.source_data
@@ -1278,7 +1280,9 @@ document
                               return `<a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>`;
                             } else {
                               return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;}}).join("");
-
+                              if (!cardItem) {
+                                return '';
+                              }
                         return `
                                   <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
@@ -1321,6 +1325,11 @@ document
                                 </div>`;
 
                       case "cardStyleOne":
+                        const cardStyleItem = item.node_data.find(node => node.card);
+                  
+                  if (!cardStyleItem) {
+                    return '';
+                  }
                         if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
                         return `<div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
