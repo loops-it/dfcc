@@ -735,17 +735,27 @@ function appendLanguageMessage(content) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const submitButton = document.querySelector("#leadForm button[type='button']");
-  if (submitButton) {
-    submitButton.addEventListener("click", leadFormSubmit);
-  }
+  // Assuming you have a function to render the form
+  renderForm();
 });
+
+function renderForm() {
+  const container = document.getElementById('formContainer'); // Change this to your form container ID
+  if (container) {
+    container.innerHTML = generateForm(data.productOrService);
+
+    const submitButton = container.querySelector("#leadForm button[type='button']");
+    if (submitButton) {
+      submitButton.addEventListener("click", leadFormSubmit);
+    }
+  }
+}
 
 async function leadFormSubmit(event) {
   event.preventDefault();  // Prevent any default behavior
   console.log('Form submitted');
   const form = document.getElementById('leadForm');
-  
+
   if (!form) {
     console.error('Form not found');
     return;
@@ -766,6 +776,7 @@ async function leadFormSubmit(event) {
   const data = await response.json();
   console.log("test chat response flow : ", data.body);
 }
+
 
 // Event listener for question form submission
 document
@@ -1074,37 +1085,66 @@ document
 
 
             function generateForm(node_data) {
-
-
-              let formHtml = '<form id="leadForm" class="leadForm">'; 
-
+              let formHtml = '<form id="leadForm" class="leadForm">';
+            
               node_data.forEach(item => {
                 const field = item.field;
                 // Replace spaces with underscores for the name attribute
                 const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
                 formHtml += '<div style="margin-bottom: 15px;display: flex; flex-direction: column;">';
-
+            
                 if (field.label) {
                   formHtml += `<label for="${field.node_id}">${field.label}</label>`;
                 }
-
+            
                 if (field.type === 'text') {
                   formHtml += `<input type="text" id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}" />`;
                 } else if (field.type === 'message') {
                   formHtml += `<textarea id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}"></textarea>`;
                 }
-
+            
                 formHtml += '</div>';
               });
-
+            
               // Add submit button
               formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" id="submitBtn">Submit</button></div>';  // Type is "button"
-              formHtml += '</div>';
-
-
-
+              formHtml += '</form>';  // Ensure this is a closing </form> tag
+            
               return formHtml;
             }
+
+            // function generateForm(node_data) {
+
+
+            //   let formHtml = '<form id="leadForm" class="leadForm">'; 
+
+            //   node_data.forEach(item => {
+            //     const field = item.field;
+            //     // Replace spaces with underscores for the name attribute
+            //     const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
+            //     formHtml += '<div style="margin-bottom: 15px;display: flex; flex-direction: column;">';
+
+            //     if (field.label) {
+            //       formHtml += `<label for="${field.node_id}">${field.label}</label>`;
+            //     }
+
+            //     if (field.type === 'text') {
+            //       formHtml += `<input type="text" id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}" />`;
+            //     } else if (field.type === 'message') {
+            //       formHtml += `<textarea id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}"></textarea>`;
+            //     }
+
+            //     formHtml += '</div>';
+            //   });
+
+            //   // Add submit button
+            //   formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" id="submitBtn">Submit</button></div>';  // Type is "button"
+            //   formHtml += '</div>';
+
+
+
+            //   return formHtml;
+            // }
 
 
 
