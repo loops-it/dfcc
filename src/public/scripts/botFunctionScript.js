@@ -735,14 +735,14 @@ function appendLanguageMessage(content) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById('leadForm');
-  if (form) {
-    form.addEventListener("submit", leadFormSubmit);
+  const submitButton = document.querySelector("#leadForm button[type='button']");
+  if (submitButton) {
+    submitButton.addEventListener("click", leadFormSubmit);
   }
 });
 
 async function leadFormSubmit(event) {
-  event.preventDefault();  // Prevent the default form submission
+  event.preventDefault();  // Prevent any default behavior
   console.log('Form submitted');
   const form = document.getElementById('leadForm');
   
@@ -1098,7 +1098,7 @@ document
               });
 
               // Add submit button
-              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="submit">Submit</button></div>';  // Changed to type="submit"
+              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" id="submitBtn">Submit</button></div>';  // Type is "button"
               formHtml += '</div>';
 
 
