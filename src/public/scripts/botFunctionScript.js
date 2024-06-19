@@ -734,6 +734,10 @@ function appendLanguageMessage(content) {
   responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
+function leadFormSubmit() {
+  console.log('Form submitted');
+}
+
 // Event listener for question form submission
 document
   .getElementById("questionForm")
@@ -1069,7 +1073,7 @@ document
               formHtml += '</div>';
 
 
-              
+
               return formHtml;
             }
 
