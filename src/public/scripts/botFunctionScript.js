@@ -1091,8 +1091,8 @@ document
 
             function generateForm(node_data, formMainID) {
 
-              const nodeID = formMainID;
-              console.log("nodeID -: ", nodeID)
+              const nodeFormID = formMainID;
+              console.log("nodeFormID -: ", nodeFormID)
               let formHtml = '<div id="leadForm" class="leadForm">';
 
               node_data.forEach(item => {
@@ -1115,7 +1115,7 @@ document
               });
 
               // Add submit button
-              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit(nodeID)">Submit</button></div>';
+              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit(nodeFormID)">Submit</button></div>';
               formHtml += '</div>';
 
 
