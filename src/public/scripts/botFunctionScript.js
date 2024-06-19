@@ -1344,6 +1344,7 @@ document
                     switch (item.type) {
                       case "cardGroup":
                         if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
+                        if (!Array.isArray(item.node_data)) return "";
               
                         const cardItem = item.node_data.find(node => node.card);
                         if (!cardItem) return "";
@@ -1409,6 +1410,7 @@ document
               
                       case "cardStyleOne":
                         if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
+                        if (!Array.isArray(item.node_data)) return "";
               
                         const cardStyleItem = item.node_data.find(node => node.card);
                         if (!cardStyleItem) return "";
@@ -1430,6 +1432,7 @@ document
                   })
                   .join("");
               };
+              
               
 
               const carouselDataHTML = generateHTMLForData(data.sourceData);
