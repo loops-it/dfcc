@@ -927,6 +927,12 @@ document
             //       return "";
             //   }
             // };
+
+            function leadFormSubmit() {
+              console.log('Form submitted');
+            }
+
+            
             const generateHTMLForItem = (item, index) => {
               switch (item.type) {
                 case "buttonGroup":
@@ -1064,9 +1070,7 @@ document
               return formHtml;
             }
 
-            function leadFormSubmit() {
-              console.log('Form submitted');
-            }
+            
 
             // async function leadFormSubmit() {
 
