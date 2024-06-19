@@ -734,23 +734,37 @@ function appendLanguageMessage(content) {
   responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
-async function leadFormSubmit() {
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById('leadForm');
+  if (form) {
+    form.addEventListener("submit", leadFormSubmit);
+  }
+});
+
+async function leadFormSubmit(event) {
+  event.preventDefault();  // Prevent the default form submission
   console.log('Form submitted');
-    const form = document.getElementById('leadForm');
-              const formData = new FormData(form);
-              const dataFromForm = Object.fromEntries(formData.entries());
+  const form = document.getElementById('leadForm');
+  
+  if (!form) {
+    console.error('Form not found');
+    return;
+  }
 
-              console.log(dataFromForm);
-              const response = await fetch("/data-flow-form-data", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(dataFromForm),
-              });
+  const formData = new FormData(form);
+  const dataFromForm = Object.fromEntries(formData.entries());
 
-              const data = await response.json();
-              console.log("test chat response flow : ", data.body);
+  console.log(dataFromForm);
+  const response = await fetch("/data-flow-form-data", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dataFromForm),
+  });
+
+  const data = await response.json();
+  console.log("test chat response flow : ", data.body);
 }
 
 // Event listener for question form submission
@@ -947,7 +961,7 @@ document
             //   }
             // };
 
-           
+
 
 
             const generateHTMLForItem = (item, index) => {
@@ -1061,8 +1075,8 @@ document
 
             function generateForm(node_data) {
 
-              
-              let formHtml = '<div id="leadForm" class="leadForm">';
+
+              let formHtml = '<form id="leadForm" class="leadForm">'; 
 
               node_data.forEach(item => {
                 const field = item.field;
@@ -1084,7 +1098,7 @@ document
               });
 
               // Add submit button
-              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit()">Submit</button></div>';
+              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="submit">Submit</button></div>';  // Changed to type="submit"
               formHtml += '</div>';
 
 
@@ -1092,7 +1106,7 @@ document
               return formHtml;
             }
 
-            
+
 
             // async function leadFormSubmit() {
 
