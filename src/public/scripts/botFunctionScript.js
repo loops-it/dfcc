@@ -1107,7 +1107,6 @@ document
 
             function generateForm(node_data) {
 
-              console.log("node_data : ", node_data[0].parent_id)
               let formHtml = '<div id="leadForm" class="leadForm">';
 
               node_data.forEach(item => {
