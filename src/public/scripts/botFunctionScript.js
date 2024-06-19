@@ -736,7 +736,7 @@ function appendLanguageMessage(content) {
 
 async function leadFormSubmit() {
   // console.log('Form submitted');
-  
+
 
   // console.log(dataFromForm);
   // const response = await fetch("/data-flow-form-data", {
@@ -754,7 +754,7 @@ async function leadFormSubmit() {
 
   // Get the form element
   const form = document.getElementById('leadForm');
-  
+
   // Initialize an array to hold the form data
   const dataFromForm = [];
 
@@ -771,21 +771,21 @@ async function leadFormSubmit() {
     const labelText = labelElement ? labelElement.textContent : '';
 
     dataFromForm.push({
-        label: labelText,
-        value: element.value
+      label: labelText,
+      value: element.value
     });
-});
+  });
 
   // Log the extracted form data
   console.log(dataFromForm);
 
   // Send the form data to the server
   const response = await fetch("/data-flow-form-data", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataFromForm),
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dataFromForm),
   });
 
   const data = await response.json();
@@ -1089,7 +1089,7 @@ document
                   return `
                   <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                          ${generateForm(item.node_data)}
+                          ${generateForm(item)}
                       </div>
                   </div>`;
                 default:
@@ -1100,10 +1100,16 @@ document
 
             function generateForm(node_data) {
 
-console.log("node_data : ",node_data)
-              let formHtml = '<div id="leadForm" class="leadForm">'; 
+              
+              let formHtml = '<div id="leadForm" class="leadForm">';
 
-              node_data.forEach(item => {
+              const formArray = node_data.node_data
+              const allItems = node_data;
+
+              const matchingNodes = allItems.nodes.find(node => node.node_id === parent_id);
+              console.log("node_data : ", matchingNodes)
+
+              formArray.forEach(item => {
                 const field = item.field;
                 // Replace spaces with underscores for the name attribute
                 const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
