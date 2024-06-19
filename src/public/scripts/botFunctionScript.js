@@ -734,49 +734,54 @@ function appendLanguageMessage(content) {
   responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Assuming you have a function to render the form
-  renderForm();
-});
+async function leadFormSubmit() {
+  // console.log('Form submitted');
+  
 
-function renderForm() {
-  const container = document.getElementById('formContainer'); // Change this to your form container ID
-  if (container) {
-    container.innerHTML = generateForm(data.productOrService);
+  // console.log(dataFromForm);
+  // const response = await fetch("/data-flow-form-data", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(dataFromForm),
+  // });
 
-    const submitButton = container.querySelector("#leadForm button[type='button']");
-    if (submitButton) {
-      submitButton.addEventListener("click", leadFormSubmit);
-    }
-  }
-}
+  // const data = await response.json();
+  // console.log("test chat response flow : ", data.body);
 
-async function leadFormSubmit(event) {
-  event.preventDefault();  // Prevent any default behavior
   console.log('Form submitted');
+
+  // Get the form element
   const form = document.getElementById('leadForm');
+  
+  // Initialize an array to hold the form data
+  const dataFromForm = [];
 
-  if (!form) {
-    console.error('Form not found');
-    return;
-  }
+  // Iterate over the form elements
+  form.querySelectorAll('input, textarea').forEach(element => {
+      dataFromForm.push({
+          id: element.id,
+          value: element.value,
+          name: element.name
+      });
+  });
 
-  const formData = new FormData(form);
-  const dataFromForm = Object.fromEntries(formData.entries());
-
+  // Log the extracted form data
   console.log(dataFromForm);
+
+  // Send the form data to the server
   const response = await fetch("/data-flow-form-data", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(dataFromForm),
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataFromForm),
   });
 
   const data = await response.json();
-  console.log("test chat response flow : ", data.body);
+  console.log("test chat response flow: ", data.body);
 }
-
 
 // Event listener for question form submission
 document
@@ -1085,66 +1090,37 @@ document
 
 
             function generateForm(node_data) {
-              let formHtml = '<form id="leadForm" class="leadForm">';
-            
+
+
+              let formHtml = '<div id="leadForm" class="leadForm">'; 
+
               node_data.forEach(item => {
                 const field = item.field;
                 // Replace spaces with underscores for the name attribute
                 const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
                 formHtml += '<div style="margin-bottom: 15px;display: flex; flex-direction: column;">';
-            
+
                 if (field.label) {
                   formHtml += `<label for="${field.node_id}">${field.label}</label>`;
                 }
-            
+
                 if (field.type === 'text') {
                   formHtml += `<input type="text" id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}" />`;
                 } else if (field.type === 'message') {
                   formHtml += `<textarea id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}"></textarea>`;
                 }
-            
+
                 formHtml += '</div>';
               });
-            
+
               // Add submit button
-              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" id="submitBtn">Submit</button></div>';  // Type is "button"
-              formHtml += '</form>';  // Ensure this is a closing </form> tag
-            
+              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit()">Submit</button></div>';
+              formHtml += '</div>';
+
+
+
               return formHtml;
             }
-
-            // function generateForm(node_data) {
-
-
-            //   let formHtml = '<form id="leadForm" class="leadForm">'; 
-
-            //   node_data.forEach(item => {
-            //     const field = item.field;
-            //     // Replace spaces with underscores for the name attribute
-            //     const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
-            //     formHtml += '<div style="margin-bottom: 15px;display: flex; flex-direction: column;">';
-
-            //     if (field.label) {
-            //       formHtml += `<label for="${field.node_id}">${field.label}</label>`;
-            //     }
-
-            //     if (field.type === 'text') {
-            //       formHtml += `<input type="text" id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}" />`;
-            //     } else if (field.type === 'message') {
-            //       formHtml += `<textarea id="${field.node_id}" name="${nameWithoutSpaces}" placeholder="${field.placeholder}"></textarea>`;
-            //     }
-
-            //     formHtml += '</div>';
-            //   });
-
-            //   // Add submit button
-            //   formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" id="submitBtn">Submit</button></div>';  // Type is "button"
-            //   formHtml += '</div>';
-
-
-
-            //   return formHtml;
-            // }
 
 
 
