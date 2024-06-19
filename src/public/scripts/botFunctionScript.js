@@ -1082,6 +1082,11 @@ document
               const data = await response.json();
               console.log("test chat response flow : ", data.body);
             }
+
+            document.addEventListener('DOMContentLoaded', () => {
+              document.body.innerHTML = generateForm(node_data);
+            });
+
             async function sendNodeId(nodeId) {
               const response = await fetch(
                 "https://dfcc.vercel.app/chat-bot-get-target-data",
