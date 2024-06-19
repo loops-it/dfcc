@@ -734,12 +734,13 @@ function appendLanguageMessage(content) {
   responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
-async function leadFormSubmit() {
+async function leadFormSubmit(nodeID) {
 
-  console.log('Form submitted');
+  console.log('Form submitted', nodeID);
 
   // Get the form element
   const form = document.getElementById('leadForm');
+ 
 
   // Initialize an array to hold the form data
   const dataFromForm = [];
@@ -764,7 +765,7 @@ async function leadFormSubmit() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ inputs: dataFromForm }),
+    body: JSON.stringify({ id: nodeID , inputs: dataFromForm }),
   });
 
   const data = await response.json();
@@ -1074,12 +1075,12 @@ document
 
                   // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
 
-                  const nodeID = item.type
+                  const nodeID = item.node_id
                   console.log("type : ", nodeID)
                   return `
                   <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                          ${generateForm(item.node_data)}
+                          ${generateForm(item.node_data, nodeID)}
                       </div>
                   </div>`;
                 default:
@@ -1088,8 +1089,10 @@ document
             };
 
 
-            function generateForm(node_data) {
+            function generateForm(node_data, nodeID) {
 
+              const nodeID = nodeID;
+              console.log("nodeID -: ", nodeID)
               let formHtml = '<div id="leadForm" class="leadForm">';
 
               node_data.forEach(item => {
@@ -1112,7 +1115,7 @@ document
               });
 
               // Add submit button
-              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit()">Submit</button></div>';
+              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit(nodeID)">Submit</button></div>';
               formHtml += '</div>';
 
 
