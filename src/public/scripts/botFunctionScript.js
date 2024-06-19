@@ -771,7 +771,11 @@ async function leadFormSubmit() {
   });
 
   const data = await response.json();
-  console.log("test chat response flow: ", data.body);
+  console.log("response node saved: ", data);
+
+  if (data.status === "success") {
+    showAlertSuccess('Successfull...')
+  }
 }
 
 // Event listener for question form submission
