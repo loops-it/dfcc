@@ -1087,7 +1087,7 @@ document
                                     </div>`;
                 case "formGroup":
                   const formArray = item.node_data
-                  const allItems = item;
+                  const allItems = items;
 
                   // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
                   console.log("formArray : ", formArray);
