@@ -448,7 +448,7 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
             }
 
             if (nodeData) {
-                intentData.push({ type, node_data: nodeData });
+                intentData.push({ type,node_id, node_data: nodeData });
             }
         }
 
