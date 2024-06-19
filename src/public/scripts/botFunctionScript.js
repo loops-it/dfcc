@@ -1086,10 +1086,17 @@ document
                                         </div>
                                     </div>`;
                 case "formGroup":
+                  const formArray = item.node_data
+                  const allItems = node_data;
+
+                  // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
+                  console.log("formArray : ", formArray);
+                  console.log("allItems : ", allItems)
+
                   return `
                   <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                          ${generateForm(item)}
+                          ${generateForm(item.node_data)}
                       </div>
                   </div>`;
                 default:
@@ -1100,16 +1107,10 @@ document
 
             function generateForm(node_data) {
 
-              
+              console.log("node_data : ", node_data[0].parent_id)
               let formHtml = '<div id="leadForm" class="leadForm">';
 
-              const formArray = node_data.node_data
-              const allItems = node_data;
-
-              const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
-              console.log("node_data : ", matchingNodes)
-
-              formArray.forEach(item => {
+              node_data.forEach(item => {
                 const field = item.field;
                 // Replace spaces with underscores for the name attribute
                 const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
