@@ -1068,7 +1068,7 @@ document
               formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit()">Submit</button></div>';
               formHtml += '</div>';
               // Insert formHtml into the DOM
-      document.body.innerHTML = formHtml;
+      // document.body.innerHTML = formHtml;
 
       // Define leadFormSubmit function and attach event listener
       document.getElementById('leadFormSubmitButton').addEventListener('click', function leadFormSubmit() {
