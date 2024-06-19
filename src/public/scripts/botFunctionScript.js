@@ -1037,7 +1037,7 @@ document
 
 
             function generateForm(node_data) {
-              let formHtml = '<form id="leadForm" class="leadForm">';
+              let formHtml = '<div id="leadForm" class="leadForm">';
 
               node_data.forEach(item => {
                 const field = item.field;
@@ -1059,8 +1059,8 @@ document
               });
 
               // Add submit button
-              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button onclick="leadFormSubmit()">Submit</button></div>';
-              formHtml += '</form>';
+              formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="button" onclick="leadFormSubmit()">Submit</button></div>';
+              formHtml += '</div>';
               return formHtml;
             }
 
