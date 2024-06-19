@@ -1152,7 +1152,9 @@ document
                   .map((item, index) => {
                     switch (item.type) {
                       case "cardGroup":
-                        console.log(item.node_data[0]?.card.image)
+                        console.log("2 : ",item.node_data )
+                        console.log("1 : ",item.node_data[0]?.card)
+                      
                         if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
                         const buttonsCardHTML = item.source_data
                           .slice(1)
