@@ -545,6 +545,28 @@
       align-items: center;
       /* margin-top: -100px; */
     }
+
+    .leadForm textarea,
+    .leadForm input {
+      min-width: 220px;
+      border: none;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: "Poppins", sans-serif;
+      padding: 5px;
+    }
+
+    .leadForm button {
+      background-color: #fff;
+      border-radius: 5px;
+      border: none;
+      color: #1C73D4;
+      font-weight: 400;
+      font-size: 12px;
+      font-family: "Poppins", sans-serif;
+      padding: 8px;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -606,12 +628,14 @@
     </div>
     <!-- singlish -->
 
-    <form name="questionForm" id="questionForm" style="border-top: solid 1px #e0e0e0; padding-top: 10px;">      
-      <input class="form-control chat-input" required placeholder="Write message here..." id="question" name="question"></input>
+    <form name="questionForm" id="questionForm" style="border-top: solid 1px #e0e0e0; padding-top: 10px;">
+      <input class="form-control chat-input" required placeholder="Write message here..." id="question"
+        name="question"></input>
       <input placeholder="මෙතන සිංග්ලිශ් වලින් ටයිප් කරන්න." onkeyup="startText();" onselect="startText();"
-      onclick="startText();" class="form-control chat-input" id="box1" style="display:none;"></input>
-      <input placeholder="இங்கே Tanglish இல் தட்டச்சு செய்யவும்.." onkeyup="startTextTanglish();" onselect="startTextTanglish();"
-      onclick="startTextTanglish();" class="form-control chat-input" id="box2" name="box2" style="display:none;"></input>
+        onclick="startText();" class="form-control chat-input" id="box1" style="display:none;"></input>
+      <input placeholder="இங்கே Tanglish இல் தட்டச்சு செய்யவும்.." onkeyup="startTextTanglish();"
+        onselect="startTextTanglish();" onclick="startTextTanglish();" class="form-control chat-input" id="box2"
+        name="box2" style="display:none;"></input>
       <button type="submit" class="btn btn-light btn-lg chat-submit-button"><i class="bi bi-send-fill"></i></button>
     </form>
     <!-- <div class="d-flex px-3 pt-0 pb-2 w-100 justify-content-center align-items-center">

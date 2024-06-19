@@ -1043,7 +1043,7 @@ document
                 const field = item.field;
                 // Replace spaces with underscores for the name attribute
                 const nameWithoutSpaces = field.label.replace(/\s+/g, '_');
-                formHtml += '<div style="margin-bottom: 15px;">';
+                formHtml += '<div style="margin-bottom: 15px;display: flex; flex-direction: column;">';
         
                 if (field.label) {
                     formHtml += `<label for="${field.node_id}">${field.label}</label>`;
@@ -1059,11 +1059,37 @@ document
             });
         
             // Add submit button
-            formHtml += '<button type="submit">Submit</button>';
+            formHtml += '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center"><button type="submit">Submit</button></div>';
             formHtml += '</form>';
             return formHtml;
         }
         
+        function addFormEventListener() {
+          document.querySelector('.leadForm').addEventListener('submit', async function(event) {
+              event.preventDefault(); // Prevent the default form submission behavior
+              
+              const formData = new FormData(event.target);
+              const dataFromForm = {};
+              
+              // Convert FormData to a plain object
+              formData.forEach((value, key) => {
+                dataFromForm[key] = value;
+                console.log("dataFromForm : ",dataFromForm)
+              });
+      
+              // Send the form data to the API
+              const response = await fetch("/data-flow-form-data", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataFromForm),
+              });
+    
+              const data = await response.json();
+              console.log("test chat response flow : ", data.body);
+          });
+      }
             async function sendNodeId(nodeId) {
               const response = await fetch(
                 "https://dfcc.vercel.app/chat-bot-get-target-data",
