@@ -75,7 +75,7 @@ export const chatFlowResponse = async (
   //console.log("language : ", language);
   let translatedQuestions: { question: string; id: any }[] = [];
 
-  if (language === "Sinhala") {
+  if (language === "sinhala") {
     translatedQuestions = await Promise.all(
       questionList.map(async (item) => {
         const translatedQuestion = await translateToEnglish(item.question);
@@ -87,7 +87,7 @@ export const chatFlowResponse = async (
     );
 
     //console.log("translated questionList sinhala:", translatedQuestions);
-  } else if (language === "Tamil") {
+  } else if (language === "tamil") {
     translatedQuestions = await Promise.all(
       questionList.map(async (item) => {
         const translatedQuestion = await translateToEnglish(item.question);
@@ -135,7 +135,7 @@ export const chatFlowResponse = async (
   //     .map((intent) => intent.intent);
 
   // console.log("Cached Intents List:", cachedIntentsList);
-  // console.log(req.body.language)
+  console.log(req.body.language)
 
   try {
     // chat id
