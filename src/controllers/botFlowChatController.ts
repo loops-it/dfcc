@@ -357,7 +357,7 @@ Standalone question:`;
         });
 
         // console.log("chatHistory : ", chatHistory);
-        // console.log("Standalone Question PROMPT :", questionRephrasePrompt)
+        console.log("Standalone Question PROMPT :", completionQuestion.choices[0].text)
         //console.log(
         //  "Standalone Question :",
         //  completionQuestion.choices[0].text
@@ -392,7 +392,7 @@ Standalone question:`;
           }
         });
         let context = results.join("\n");
-        //console.log("CONTEXT : ", context);
+        console.log("CONTEXT : ", context);
 
         // set system prompt
         // =============================================================================
