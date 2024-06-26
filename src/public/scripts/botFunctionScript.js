@@ -460,6 +460,7 @@ async function handleOfflineFormSubmission(event) {
   }
 
   try {
+    console.log("selectedLanguage : ",selectedLanguage)
     const response = await fetch("/live-chat-offline-form", {
       method: "POST",
       headers: {
