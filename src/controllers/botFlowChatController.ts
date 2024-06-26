@@ -178,9 +178,9 @@ export const chatFlowResponse = async (
 
     let translatedQuestion = "";
     // console.log("userQuestion : ", userQuestion)
-    if (language == "Sinhala") {
+    if (language == "sinhala") {
       translatedQuestion = await translateToEnglish(userQuestion);
-    } else if (language === "Tamil") {
+    } else if (language === "tamil") {
       translatedQuestion = await translateToEnglish(userQuestion);
     } else {
       translatedQuestion = userQuestion;
@@ -419,12 +419,12 @@ Standalone question:`;
       let selectedLanguage = "en";
       let translatedResponse = "";
       // console.log("botResponse : ", botResponse)
-      if (language == "Sinhala") {
+      if (language == "sinhala") {
         selectedLanguage = "si";
         if (botResponse !== null) {
           translatedResponse = await translateToLanguage(botResponse);
         }
-      } else if (language === "Tamil") {
+      } else if (language === "tamil") {
         selectedLanguage = "ta";
         if (botResponse !== null) {
           translatedResponse = await translateToLanguage(botResponse);
