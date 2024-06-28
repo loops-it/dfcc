@@ -460,6 +460,7 @@ async function handleOfflineFormSubmission(event) {
   }
 
   try {
+    console.log("selectedLanguage : ",selectedLanguage)
     const response = await fetch("/live-chat-offline-form", {
       method: "POST",
       headers: {
@@ -734,37 +735,19 @@ function appendLanguageMessage(content) {
   responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
+let formMainID = ''; 
+
 async function leadFormSubmit() {
-  // console.log('Form submitted');
 
-
-  // console.log(dataFromForm);
-  // const response = await fetch("/data-flow-form-data", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(dataFromForm),
-  // });
-
-  // const data = await response.json();
-  // console.log("test chat response flow : ", data.body);
-
-  console.log('Form submitted');
+  console.log('Form submitted', formMainID);
 
   // Get the form element
   const form = document.getElementById('leadForm');
+ 
 
   // Initialize an array to hold the form data
   const dataFromForm = [];
 
-  // Iterate over the form elements
-  // form.querySelectorAll('input, textarea').forEach(element => {
-  //     dataFromForm.push({
-  //       label: element.name,
-  //       value: element.value
-  //     });
-  // });
   form.querySelectorAll('input, textarea').forEach(element => {
     // Find the corresponding label for the current element
     const labelElement = form.querySelector(`label[for="${element.id}"]`);
@@ -780,16 +763,20 @@ async function leadFormSubmit() {
   console.log(dataFromForm);
 
   // Send the form data to the server
-  const response = await fetch("/data-flow-form-data", {
+  const response = await fetch("/chat-bot-save-form-submission", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(dataFromForm),
+    body: JSON.stringify({ id: formMainID , inputs: dataFromForm }),
   });
 
   const data = await response.json();
-  console.log("test chat response flow: ", data.body);
+  console.log("response node saved: ", data);
+
+  if (data.status === "success") {
+    showAlertSuccess('Successfull...')
+  }
 }
 
 // Event listener for question form submission
@@ -994,6 +981,120 @@ document
 
 
 
+            // const generateHTMLForItem = (item, index) => {
+            //   switch (item.type) {
+            //     case "buttonGroup":
+            //       const buttonsHTML = item.node_data
+            //         .map((buttonItem) => {
+            //           if (buttonItem.button.link) {
+            //             return `
+            //                                     <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+            //                                 `;
+            //           } else {
+            //             return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+            //           }
+            //         })
+            //         .join("");
+
+            //       return `
+            //                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+            //                                 ${buttonsHTML}
+            //                             </div>`;
+            //     case "textinput":
+            //       return `
+            //                             <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.title
+            //         }</p>
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.description
+            //         }</p>
+            //                                 </div>
+            //                             </div>`;
+            //     case "cardGroup":
+            //       const buttonsMainCardHTML = item.node_data
+            //         .map((buttonItem) => {
+            //           if (buttonItem.button && buttonItem.button.link) {
+            //             return `
+            //                                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+            //                                         `;
+            //           } else if (buttonItem.button) {
+            //             return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+            //           }
+            //           return "";
+            //         })
+            //         .join("");
+            //       return `
+            //                                 <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                         <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
+            //                                         <div class="cardGroup px-2" style="box-shadow: none !important">
+            //                                             <h4 class="px-2 mt-2">${item.node_data[0].card
+            //           .title
+            //         }</h4>
+            //                                             <p class="px-2">${item.node_data[0].card
+            //           .description
+            //         }</p>
+            //                                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+            //                                                 ${buttonsMainCardHTML}
+            //                                             </div>
+            //                                         </div>
+            //                                     </div>
+            //                                 </div>`;
+            //     case "textOnly":
+            //       if (item.node_data.text.includes("●")) {
+            //         const bulletPoints = item.node_data.text
+            //           .split("●")
+            //           .filter((point) => point.trim() !== "");
+            //         const bulletPointsHTML = bulletPoints
+            //           .map(
+            //             (point) =>
+            //               `<li class="mb-2" style="min-width: 250px">${point.trim()}</li>`
+            //           )
+            //           .join("");
+            //         return `
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <ul class="px-3 py-2">${bulletPointsHTML}</ul>
+            //                                 </div>`;
+            //       } else {
+            //         return `
+            //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                     <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
+            //                                 </div>`;
+            //       }
+            //     case "cardStyleOne":
+            //       return `
+            //                         <div class="carousel-item p-0 ${index === 0 ? "active" : ""
+            //         }" style="box-shadow: none !important">
+            //                             <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //                                 <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
+            //                                 <div class="cardGroup px-2" style="box-shadow: none !important">
+            //                                     <h4 class="px-2 mt-2">${item.node_data[0].card.title
+            //         }</h4>
+            //                                     <p class="px-2">${item.node_data[0].card.description
+            //         }</p>
+            //                                 </div>
+            //                             </div>
+            //                         </div>`;
+            //     case "formGroup":
+
+
+            //       // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
+
+            //       formMainID = item.node_id
+            //       console.log("type : ", formMainID)
+            //       return `
+            //       <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+            //           <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+            //               ${generateForm(item.node_data)}
+            //           </div>
+            //       </div>`;
+            //     default:
+            //       return "";
+            //   }
+            // };
+
             const generateHTMLForItem = (item, index) => {
               switch (item.type) {
                 case "buttonGroup":
@@ -1001,60 +1102,61 @@ document
                     .map((buttonItem) => {
                       if (buttonItem.button.link) {
                         return `
-                                                <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                            `;
+                          <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        `;
                       } else {
                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                       }
                     })
                     .join("");
-
+            
                   return `
-                                        <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                            ${buttonsHTML}
-                                        </div>`;
+                    <div class="buttonGroup p-0" style="box-shadow: none !important">
+                      ${buttonsHTML}
+                    </div>`;
+            
                 case "textinput":
                   return `
-                                        <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                    }" style="box-shadow: none !important">
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <p class="px-2" style="min-width: 250px">${item.node_data.title
-                    }</p>
-                                                <p class="px-2" style="min-width: 250px">${item.node_data.description
-                    }</p>
-                                            </div>
-                                        </div>`;
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <p class="px-2" style="min-width: 250px">${item.node_data.title}</p>
+                        <p class="px-2" style="min-width: 250px">${item.node_data.description}</p>
+                      </div>
+                    </div>`;
+            
                 case "cardGroup":
+                  const cardItem = item.node_data.find(node => node.card);
                   const buttonsMainCardHTML = item.node_data
                     .map((buttonItem) => {
                       if (buttonItem.button && buttonItem.button.link) {
                         return `
-                                                        <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                    `;
+                          <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        `;
                       } else if (buttonItem.button) {
                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                       }
                       return "";
                     })
                     .join("");
+                  
+                  if (!cardItem) {
+                    return '';
+                  }
+            
                   return `
-                                            <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                    }" style="box-shadow: none !important">
-                                                <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                    <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                                    <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                        <h4 class="px-2 mt-2">${item.node_data[0].card
-                      .title
-                    }</h4>
-                                                        <p class="px-2">${item.node_data[0].card
-                      .description
-                    }</p>
-                                                        <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                                            ${buttonsMainCardHTML}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>`;
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src=${cardItem.card.image || ''} alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                          <h4 class="px-2 mt-2">${cardItem.card.title}</h4>
+                          <p class="px-2">${cardItem.card.description}</p>
+                          <div class="buttonGroup p-0" style="box-shadow: none !important">
+                            ${buttonsMainCardHTML}
+                          </div>
+                        </div>
+                      </div>
+                    </div>`;
+            
                 case "textOnly":
                   if (item.node_data.text.includes("●")) {
                     const bulletPoints = item.node_data.text
@@ -1067,41 +1169,43 @@ document
                       )
                       .join("");
                     return `
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <ul class="px-3 py-2">${bulletPointsHTML}</ul>
-                                            </div>`;
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <ul class="px-3 py-2">${bulletPointsHTML}</ul>
+                      </div>`;
                   } else {
                     return `
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
-                                            </div>`;
-                  }
-                case "cardStyleOne":
-                  return `
-                                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                    }" style="box-shadow: none !important">
-                                        <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <img src=${item.node_data[0].card.image} alt="" class="cardImage">
-                                            <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                <h4 class="px-2 mt-2">${item.node_data[0].card.title
-                    }</h4>
-                                                <p class="px-2">${item.node_data[0].card.description
-                    }</p>
-                                            </div>
-                                        </div>
-                                    </div>`;
-                case "formGroup":
-                 
-
-                  // const matchingNodes = allItems.nodes.filter(node => node.node_id === parent_id);
-                  
-
-                  return `
-                  <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                          ${generateForm(item.node_data)}
+                        <p class="px-2" style="min-width: 250px">${item.node_data.text}</p>
+                      </div>`;
+                  }
+            
+                case "cardStyleOne":
+                  const cardStyleItem = item.node_data.find(node => node.card);
+                  
+                  if (!cardStyleItem) {
+                    return '';
+                  }
+            
+                  return `
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src=${cardStyleItem.card.image || ''} alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                          <h4 class="px-2 mt-2">${cardStyleItem.card.title}</h4>
+                          <p class="px-2">${cardStyleItem.card.description}</p>
+                        </div>
                       </div>
-                  </div>`;
+                    </div>`;
+            
+                case "formGroup":
+                  formMainID = item.node_id;
+                  return `
+                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                      <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        ${generateForm(item.node_data)}
+                      </div>
+                    </div>`;
+            
                 default:
                   return "";
               }
@@ -1110,6 +1214,8 @@ document
 
             function generateForm(node_data) {
 
+              // const nodeFormID = formMainID;
+              // console.log("nodeFormID -: ", nodeFormID)
               let formHtml = '<div id="leadForm" class="leadForm">';
 
               node_data.forEach(item => {
@@ -1142,24 +1248,6 @@ document
 
 
 
-            // async function leadFormSubmit() {
-
-            //   const form = document.getElementById('leadForm');
-            //   const formData = new FormData(form);
-            //   const dataFromForm = Object.fromEntries(formData.entries());
-
-            //   console.log(dataFromForm);
-            //   const response = await fetch("/data-flow-form-data", {
-            //     method: "POST",
-            //     headers: {
-            //       "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify(dataFromForm),
-            //   });
-
-            //   const data = await response.json();
-            //   console.log("test chat response flow : ", data.body);
-            // }
 
             async function sendNodeId(nodeId) {
               const response = await fetch(
@@ -1176,110 +1264,177 @@ document
               const data = await response.json();
               console.log("node data === ", data);
 
+              // const generateHTMLForData = (items) => {
+              //   return items
+              //     .map((item, index) => {
+              //       switch (item.type) {
+              //         case "cardGroup":
+              //           console.log("2 : ",item.node_data )
+                      
+              //           if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
+              //           const buttonsCardHTML = item.source_data
+              //             .slice(1)
+              //             .map((buttonItem) => {
+              //               if (buttonItem.button.link) {
+              //                 return `<a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>`;
+              //               } else {
+              //                 return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;}}).join("");
+
+              //           return `
+              //                     <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+              //                         <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+              //                             <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
+              //                             <div class="cardGroup px-2" style="box-shadow: none !important">
+              //                                 <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+              //                                 <p class="px-2">${item.source_data[0].card.description}</p>
+              //                                 <div class="buttonGroup p-0" style="box-shadow: none !important">${buttonsCardHTML}</div>
+              //                             </div>
+              //                         </div>
+              //                     </div>`;
+              //         case "buttonGroup":
+              //           if (!item.source_data || item.source_data.length === 0) return "";
+              //           const buttonsGroupHTML = item.source_data
+              //             .slice(0)
+              //             .map((buttonItem) => {
+              //               if (buttonItem.button.link) {
+              //                 return `<a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>`;
+              //               } else {
+              //                 return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+              //               }}).join("");
+
+              //           return `<div class="buttonGroup p-0" style="box-shadow: none !important">${buttonsGroupHTML}</div>`;
+
+              //         case "textOnly":
+              //           if (!item.source_data || !item.source_data.text) return "";
+              //           return `<div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+              //                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+              //                       <p class="px-2 mb-0">${item.source_data.text}</p>
+              //                     </div>
+              //                   </div>`;
+
+              //         case "textinput":
+              //           if (!item.source_data) return "";
+              //           return `<div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+              //                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+              //                       <p class="px-2 ">${item.source_data.title}</p>
+              //                       <p class="px-2 mb-0">${item.source_data.description}</p>
+              //                     </div>
+              //                   </div>`;
+
+              //         case "cardStyleOne":
+              //           if (!item.source_data || item.source_data.length === 0 || !item.source_data[0].card) return "";
+              //           return `<div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+              //                       <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+              //                           <img src=${item.node_data[0]?.card.image || ''} alt="" class="cardImage">
+              //                           <div class="cardGroup px-2" style="box-shadow: none !important">
+              //                               <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+              //                               <p class="px-2">${item.source_data[0].card.description}</p>
+              //                           </div>
+              //                       </div>
+              //                   </div>`;
+              //         default:
+              //           return "";
+              //       }
+              //     })
+              //     .join("");
+              // };
+
               const generateHTMLForData = (items) => {
                 return items
                   .map((item, index) => {
                     switch (item.type) {
                       case "cardGroup":
+                        if (!item.source_data || item.source_data.length === 0) return "";
+              
+                        // Extract the card element from source_data
+                        const cardElement = item.source_data.find(node => node.card);
+                        if (!cardElement || !cardElement.card) return "";
+              
+                        // Extract the button elements from source_data
                         const buttonsCardHTML = item.source_data
-                          .slice(1)
+                          .filter(node => node.button)
                           .map((buttonItem) => {
                             if (buttonItem.button.link) {
-                              return `
-                                                        
-                                                            <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                        `;
-                            } else {
-                              return `
-                                                                <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
-                                                            `;
-                            }
-                          })
-                          .join("");
-
-                        return `
-                                                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                          }" style="box-shadow: none !important">
-                                                        <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                            <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                                            <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                                <h4 class="px-2 mt-2">${item
-                            .source_data[0]
-                            .card.title
-                          }</h4>
-                                                                <p class="px-2">${item
-                            .source_data[0]
-                            .card
-                            .description
-                          }</p>
-                                                                <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                                                ${buttonsCardHTML}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>`;
-                      case "buttonGroup":
-                        const buttonsGroupHTML = item.source_data
-                          .slice(0)
-                          .map((buttonItem) => {
-                            if (buttonItem.button.link) {
-                              return `
-                                                            
-                                                                <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                            `;
+                              return `<a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>`;
                             } else {
                               return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                             }
                           })
                           .join("");
-
+              
                         return `
-                        <div class="buttonGroup p-0" style="box-shadow: none !important">
-                            ${buttonsGroupHTML}
-                        </div>`;
+                          <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                              <img src=${cardElement.card.image || ''} alt="" class="cardImage">
+                              <div class="cardGroup px-2" style="box-shadow: none !important">
+                                <h4 class="px-2 mt-2">${cardElement.card.title}</h4>
+                                <p class="px-2">${cardElement.card.description}</p>
+                                <div class="buttonGroup p-0" style="box-shadow: none !important">${buttonsCardHTML}</div>
+                              </div>
+                            </div>
+                          </div>`;
+              
+                      case "buttonGroup":
+                        if (!item.source_data || item.source_data.length === 0) return "";
+              
+                        const buttonsGroupHTML = item.source_data
+                          .filter(node => node.button)
+                          .map((buttonItem) => {
+                            if (buttonItem.button.link) {
+                              return `<a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>`;
+                            } else {
+                              return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                            }
+                          })
+                          .join("");
+              
+                        return `<div class="buttonGroup p-0" style="box-shadow: none !important">${buttonsGroupHTML}</div>`;
+              
                       case "textOnly":
+                        if (!item.source_data || !item.source_data.text) return "";
                         return `
-                                                <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                          }" style="box-shadow: none !important">
-                                                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                        <p class="px-2 mb-0">${item.source_data.text
-                          }</p>
-                                                    </div>
-                                                </div>`;
+                          <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                              <p class="px-2 mb-0">${item.source_data.text}</p>
+                            </div>
+                          </div>`;
+              
                       case "textinput":
+                        if (!item.source_data) return "";
                         return `
-                                                    <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                          }" style="box-shadow: none !important">
-                                                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                        <p class="px-2 ">${item.source_data.title
-                          }</p>
-                                                        <p class="px-2 mb-0">${item.source_data
-                            .description
-                          }</p>
-                                                    </div>
-                                                </div>`;
+                          <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                              <p class="px-2 ">${item.source_data.title}</p>
+                              <p class="px-2 mb-0">${item.source_data.description}</p>
+                            </div>
+                          </div>`;
+              
                       case "cardStyleOne":
+                        if (!item.source_data || item.source_data.length === 0) return "";
+              
+                        const cardStyleElement = item.source_data.find(node => node.card);
+                        if (!cardStyleElement || !cardStyleElement.card) return "";
+              
                         return `
-                                                <div class="carousel-item p-0 ${index === 0 ? "active" : ""
-                          }" style="box-shadow: none !important">
-                                                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                        <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                                        <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                            <h4 class="px-2 mt-2">${item.source_data[0]
-                            .card.title
-                          }</h4>
-                                                            <p class="px-2">${item.source_data[0]
-                            .card.description
-                          }</p>
-                                                        </div>
-                                                    </div>
-                                                </div>`;
+                          <div class="carousel-item p-0 ${index === 0 ? "active" : ""}" style="box-shadow: none !important">
+                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                              <img src=${cardStyleElement.card.image || ''} alt="" class="cardImage">
+                              <div class="cardGroup px-2" style="box-shadow: none !important">
+                                <h4 class="px-2 mt-2">${cardStyleElement.card.title}</h4>
+                                <p class="px-2">${cardStyleElement.card.description}</p>
+                              </div>
+                            </div>
+                          </div>`;
+              
                       default:
                         return "";
                     }
                   })
                   .join("");
               };
+              
+              
+              
 
               const carouselDataHTML = generateHTMLForData(data.sourceData);
 

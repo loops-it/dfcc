@@ -75,7 +75,7 @@ export const chatFlowResponse = async (
   //console.log("language : ", language);
   let translatedQuestions: { question: string; id: any }[] = [];
 
-  if (language === "Sinhala") {
+  if (language === "sinhala") {
     translatedQuestions = await Promise.all(
       questionList.map(async (item) => {
         const translatedQuestion = await translateToEnglish(item.question);
@@ -87,7 +87,7 @@ export const chatFlowResponse = async (
     );
 
     //console.log("translated questionList sinhala:", translatedQuestions);
-  } else if (language === "Tamil") {
+  } else if (language === "tamil") {
     translatedQuestions = await Promise.all(
       questionList.map(async (item) => {
         const translatedQuestion = await translateToEnglish(item.question);
@@ -135,7 +135,7 @@ export const chatFlowResponse = async (
   //     .map((intent) => intent.intent);
 
   // console.log("Cached Intents List:", cachedIntentsList);
-  // console.log(req.body.language)
+  console.log(req.body.language)
 
   try {
     // chat id
@@ -178,9 +178,9 @@ export const chatFlowResponse = async (
 
     let translatedQuestion = "";
     // console.log("userQuestion : ", userQuestion)
-    if (language == "Sinhala") {
+    if (language == "sinhala") {
       translatedQuestion = await translateToEnglish(userQuestion);
-    } else if (language === "Tamil") {
+    } else if (language === "tamil") {
       translatedQuestion = await translateToEnglish(userQuestion);
     } else {
       translatedQuestion = userQuestion;
@@ -357,7 +357,7 @@ Standalone question:`;
         });
 
         // console.log("chatHistory : ", chatHistory);
-        // console.log("Standalone Question PROMPT :", questionRephrasePrompt)
+        console.log("Standalone Question PROMPT :", completionQuestion.choices[0].text)
         //console.log(
         //  "Standalone Question :",
         //  completionQuestion.choices[0].text
@@ -392,7 +392,7 @@ Standalone question:`;
           }
         });
         let context = results.join("\n");
-        //console.log("CONTEXT : ", context);
+        console.log("CONTEXT : ", context);
 
         // set system prompt
         // =============================================================================
@@ -419,12 +419,12 @@ Standalone question:`;
       let selectedLanguage = "en";
       let translatedResponse = "";
       // console.log("botResponse : ", botResponse)
-      if (language == "Sinhala") {
+      if (language == "sinhala") {
         selectedLanguage = "si";
         if (botResponse !== null) {
           translatedResponse = await translateToLanguage(botResponse);
         }
-      } else if (language === "Tamil") {
+      } else if (language === "tamil") {
         selectedLanguage = "ta";
         if (botResponse !== null) {
           translatedResponse = await translateToLanguage(botResponse);
