@@ -355,7 +355,7 @@ export const chatFlowResponse = async (
 // ----------
 // Standalone question:`;
 
-const questionRephrasePrompt = `As a senior banking assistant, assess whether the FOLLOWUP QUESTION relates to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. If it is related, rephrase it as an independent query using relevant keywords from the CHAT HISTORY, even if it pertains to calculations. If the FOLLOWUP QUESTION lacks sufficient detail to provide an answer, ask the user for more specific information or clarification. If the user asks for information like email or address, provide DFCC email and address.
+const questionRephrasePrompt = `As a senior banking assistant, assess whether the FOLLOWUP QUESTION relates to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. If it is related, rephrase it as an independent query using relevant keywords from the CHAT HISTORY, even if it pertains to calculations.If the FOLLOWUP QUESTION lacks sufficient detail to provide an answer, ask the user for more specific information by saying "I need more details." If the user asks for information like email or address, provide DFCC email and address.
 ----------
 CHAT HISTORY: {${chatHistoryString}}
 ----------
