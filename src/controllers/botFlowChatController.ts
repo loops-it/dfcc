@@ -400,7 +400,16 @@ Standalone question:`;
           }
         });
         let context = results.join("\n");
-        console.log("CONTEXT : ", context);
+        // console.log("CONTEXT : ", context);
+
+        queryResponse.matches.forEach((match) => {
+          if (match.metadata && typeof match.metadata.Title === "string") {
+            const result = `Title: ${match.metadata.Title}, \n `;
+            results.push(result);
+          }
+        });
+        let contextTitles = results.join("\n");
+        console.log("CONTEXT : ", contextTitles);
 
         // set system prompt
         // =============================================================================
