@@ -392,6 +392,7 @@ Standalone question:`;
         // =============================================================================
         // get vector documents into one string
         const results: string[] = [];
+        const resultTitles: string[] = [];
         //console.log("CONTEXT : ", queryResponse.matches[0].metadata);
         queryResponse.matches.forEach((match) => {
           if (match.metadata && typeof match.metadata.Title === "string") {
@@ -405,10 +406,10 @@ Standalone question:`;
         queryResponse.matches.forEach((match) => {
           if (match.metadata && typeof match.metadata.Title === "string") {
             const result = `Title: ${match.metadata.Title}, \n `;
-            results.push(result);
+            resultTitles.push(result);
           }
         });
-        let contextTitles = results.join("\n");
+        let contextTitles = resultTitles.join("\n");
         console.log("CONTEXT : ", contextTitles);
 
         // set system prompt
