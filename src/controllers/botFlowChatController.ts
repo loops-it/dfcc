@@ -412,7 +412,7 @@ Standalone question:`;
         model: "gpt-3.5-turbo",
         messages: chatHistory,
         max_tokens: 180,
-        temperature: 0,
+        temperature: 0, 
       });
 
       let botResponse: string | null = completion.choices[0].message.content;
