@@ -339,7 +339,15 @@ export const chatFlowResponse = async (
 
         //console.log("chatHistory: ", chatHistoryString);
 
-        const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevent keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
+//         const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevent keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
+// ----------
+// CHAT HISTORY: {${chatHistoryString}}
+// ----------
+// FOLLOWUP QUESTION: {${translatedQuestion}}
+// ----------
+// Standalone question:`;
+
+const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION relates to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevant keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the FOLLOWUP QUESTION lacks sufficient detail to provide an answer, kindly ask the user for more specific information or clarification. If the user asks for information like email or address, provide DFCC email and address.
 ----------
 CHAT HISTORY: {${chatHistoryString}}
 ----------
@@ -399,7 +407,7 @@ Standalone question:`;
         if (chatHistory.length === 0 || chatHistory[0].role !== "system") {
           chatHistory.unshift({ role: "system", content: "" });
         }
-        chatHistory[0].content = `You are a helpful assistant and you are friendly. if user greet you you will give proper greeting in friendly manner. Your name is DFCC GPT. Answer user question Only based on given Context: ${context}, your answer must be less than 150 words. If the user asks for information like your email or address, you'll provide DFCC email and address. If answer has list give it as numberd list. If it has math question relevent to given Context give calculated answer, If user question is not enough to give answer or user question is not a question ask for more specific details, If user question is not relevent to the Context just say "I'm sorry.. no information documents found for data retrieval.". Do NOT make up any answers and questions not relevant to the context using public information.`;
+        chatHistory[0].content = `You are a helpful assistant and you are friendly. if user greet you you will give proper greeting in friendly manner. Your name is DFCC GPT. Answer user question Only based on given Context: ${context}, your answer must be less than 150 words. If the user asks for information like your email or address, you'll provide DFCC email and address. If answer has list give it as numberd list. If it has math question relevent to given Context give calculated answer, If user question is not enough to give answer ask for more specific details, If user question is not relevent to the Context just say "I'm sorry.. no information documents found for data retrieval.". Do NOT make up any answers and questions not relevant to the context using public information.`;
         // console.log("Frontend Question : ", chatHistory);
       }
 
