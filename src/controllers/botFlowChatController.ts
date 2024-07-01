@@ -435,7 +435,7 @@ Standalone question:`;
         For questions requiring a list, provide a numbered list.
         For math-related questions relevant to the context, give the calculated answer.
         If the user's question lacks details, ask for more specific information.
-        If the question is not relevant to the context, respond with: "I'm sorry, no information documents found for data retrieval."
+        If the question is not relevant to the context, respond with: "I'm sorry.. no information documents found for data retrieval."
         Do not make up answers or use public information for questions not relevant to the context.`;
         // console.log("Frontend Question : ", chatHistory);
       }
